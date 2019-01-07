@@ -1,6 +1,20 @@
+# 공통 영역
 spring:
+  profiles:
+    active: local
+
+# local 환경 영역
+---
+spring:
+  profiles: local
+  datasource:
+    data: classpath:defaultData-h2.sql  # 애플리케이션 실행 시 default로 insert할 쿼리 데이터 파일
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop # 애플리케이션 실행 시 마다 테이블을 drop 후 create함
   h2:
     console:
       enabled: true
   mvc:    view:
-      prefix: /WEB-INF/views/      suffix: .jsp
+      prefix: /WEB-INF/views/ # viewResolver 설정 view 파일을 읽어들일 폴더를 설정함 *.jsp는 반드시 /webapp/WEB-INF/ 경로에서만 인식되는 특성이 있음      suffix: .jsp
