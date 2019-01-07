@@ -8,9 +8,12 @@ spring:
 spring:
   profiles: local
   datasource:
+    platform: h2
     data: classpath:defaultData-h2.sql  # 애플리케이션 실행 시 default로 insert할 쿼리 데이터 파일
-    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
-    url: jdbc:log4jdbc:h2:~/apps/h2db/crm
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy  # log4j 드라이버
+    url: jdbc:log4jdbc:h2:mem:testdb  # H2 DB에 log4j 드라이버 인젝션 // JDBCURL : jdbc:h2:mem:testdb 로 H2-Console에서 접속하면 된다
+    username: sa  # H2 DB에 log4j 드라이버를 인젝션하면 db 접속 계정이 날아감!! // sa로 재설정하여 사용
+    password: 
   jpa:
     show-sql: true  # sql 쿼리 디버깅 로그 표현
     hibernate:
