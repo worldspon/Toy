@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Foodimgfile {
+public class Foodimgfile extends BaseTimeEntity {
 	/**
 	 * Foodimgfile 테이블 엔티티 클래스
 	 * -------------------------------------

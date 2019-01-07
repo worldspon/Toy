@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Fooditem {
+public class Fooditem extends BaseTimeEntity {
 
 	/**
 	 * Fooditem 테이블 엔티티 클래스
@@ -35,6 +35,8 @@ public class Fooditem {
 	private int foodprice;
 	@Column(nullable = false)
 	private Long imgid;
+	@Column(nullable = false)
+	private int status;
 	
 	@Builder
 	public Fooditem(String foodname, int foodprice, Long imgid) {

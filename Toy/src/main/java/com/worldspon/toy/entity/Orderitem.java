@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Orderitem {
+public class Orderitem extends BaseTimeEntity {
 
 	/**
 	 * Orderitem 테이블 엔티티 클래스
