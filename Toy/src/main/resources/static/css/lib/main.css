@@ -1,0 +1,15 @@
+
+.menu_box {width: 700px; margin: 0 auto; text-align: center;padding:0px 15px;}
+.menu_box h2 {font-size: 25px; font-weight: 900; color: red; margin-bottom: 50px;}
+
+.menu {width: 100%; display:inline-block;}
+.menu_l {width:35%; float: left;}
+.menu_l img {width: 100%;}
+.menu_r {width:58%; float:right; text-align: left; padding:30px 0px;}
+.menu_r h1 {font-size: 25px; margin-bottom: 30px; font-weight: 600;}
+.menu_price {display:block; font-size:35px; color: red; margin-bottom: 20px;}
+.quantity_wrap {padding-top:15px;}
+.quantity_text {display:inline-block; font-weight: 800; margin-right: 15px;}
+.quantity_box {display:inline-block; width:30px; height:20px; text-align:center; background-color:white;}
+.quantity_btn {display:inline-block; width:30px; height:20px; background-color: gray; text-align: center; color:white; font-weight: bold; border:none;}
+.add_cart {display:inline-block; background-color: #ef7a01; height:20p;text-align: center; color:white; font-weight: bold; border:none;}
