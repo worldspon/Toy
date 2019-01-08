@@ -47,7 +47,7 @@ public class LoginController {
 	/**
 	 * 로그인 처리 메소드
 	 * args -------------------------------
-	 * UserinfoRequestDto	| 사용자 정보 객체
+	 * UserinfoRequestDto	| 사용자 정보 객체 { userid: '', userpwd: '' }
 	 * HttpServletRequest	| 통신 요청 객체
 	 * ------------------------------------
 	 * return data ------------------------

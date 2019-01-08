@@ -23,6 +23,9 @@ public class JoinService {
 	 * args -------------------------------
 	 * UserinfoRequestDto	| 사용자 정보 DTO
 	 * ------------------------------------
+	 * return data ------------------------
+	 * msg					| 처리 결과 메시지 반환 값		
+	 * ------------------------------------
 	 */
 	@Transactional
 	public String save (UserinfoRequestDto dto) throws Exception{
@@ -30,12 +33,21 @@ public class JoinService {
 		return msg;
 	}
 	
+	/**
+	 * 사용 아이디 중복 체크 처리
+	 * args -------------------------------
+	 * UserinfoRequestDto	| 사용자 정보 DTO
+	 * ------------------------------------
+	 * return data ------------------------
+	 * result				| 조회 결과 카운트 반환 값 [0: 중복되지 않음, n: 중복됨]		
+	 * ------------------------------------
+	 */
 	@Transactional(readOnly = true)
 	public int checkId(String userid) throws Exception {
 		int result = 1;
 		if (!(userid.equals("")) && userid != null)
 		{
-			result = userinfoRepo.checkId(userid);
+			result = userinfoRepo.countByUserid(userid);
 		}
 		return result;
 	}

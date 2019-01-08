@@ -1,14 +1,15 @@
 package com.worldspon.toy.service;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import com.worldspon.toy.dto.userinfo.UserinfoRequestDto;
 import com.worldspon.toy.dto.userinfo.UserinfoResponseDto;
+import com.worldspon.toy.entity.Userinfo;
 import com.worldspon.toy.repository.UserinfoRepository;
 
 import lombok.AllArgsConstructor;
@@ -62,20 +63,18 @@ public class LoginService {
 		String userid = dto.getUserid();
 		String userpwd = dto.getUserpwd();
 		
-		Map<String, Object> userinfoMap = userinfoRepo.findUser(userid, userpwd);
-		
-		if (userinfoMap == null || userinfoMap.isEmpty())
+		Userinfo entity = userinfoRepo.findByUseridAndUserpwd(userid, userpwd);
+		if (entity == null)
 		{
 			map.put("result", 0);
 		}
 		else
 		{
-			UserinfoResponseDto loginInfo = new UserinfoResponseDto();
-			loginInfo.setUsername(userinfoMap.get("username").toString());
-			loginInfo.setUseremail(userinfoMap.get("useremail").toString());
-			loginInfo.setUserid(userinfoMap.get("userid").toString());
-			
-			req.getSession().setAttribute("loginInfo", loginInfo);
+			// BeanUtils 스프링 프레임워크 객체를 이용하여 Entity 객체의 속성들을 DTO 객체의 속성에 복사함.
+			UserinfoResponseDto userinfo = new UserinfoResponseDto();
+			BeanUtils.copyProperties(userinfoRepo.findByUseridAndUserpwd(userid, userpwd), userinfo);
+				
+			req.getSession().setAttribute("loginInfo", userinfo);
 			req.getSession().setMaxInactiveInterval(60 * 30);	// 사용자 정보 세션 유효 기간 30분
 			map.put("result", 1);
 		}
