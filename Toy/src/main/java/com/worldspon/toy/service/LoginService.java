@@ -72,7 +72,7 @@ public class LoginService {
 		{
 			// BeanUtils 스프링 프레임워크 객체를 이용하여 Entity 객체의 속성들을 DTO 객체의 속성에 복사함.
 			UserinfoResponseDto userinfo = new UserinfoResponseDto();
-			BeanUtils.copyProperties(userinfoRepo.findByUseridAndUserpwd(userid, userpwd), userinfo);
+			BeanUtils.copyProperties(entity, userinfo);
 				
 			req.getSession().setAttribute("loginInfo", userinfo);
 			req.getSession().setMaxInactiveInterval(60 * 30);	// 사용자 정보 세션 유효 기간 30분
