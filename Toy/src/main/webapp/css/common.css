@@ -1,0 +1,9 @@
+body {margin:0; padding:0; background-image: url(../images/bg_body.gif)}
+a {text-decoration: none; color:black;}
+ul,li,ol {text-decoration: none; list-style: none;}
+header {height:130px; background-image: url(../images/bg_header.gif); display:flex; margin-bottom: 150px;}
+nav {width: 1200px; height:90px; margin:0 auto; align-self:flex-end; display: flex; justify-content: space-between;}
+nav a {align-self:center;}
+.sign_box {align-self:center;}
+.sign_box ul li {float: left;}
+.sign_box ul li:not(:first-child) {margin-left: 15px;}
