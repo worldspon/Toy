@@ -14,7 +14,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebMvcConfig implements WebMvcConfigurer {
 
 	@Autowired
-	@Qualifier(value = "userInterceptor")
+	@Qualifier(value = "userInterceptor")	// UserInteceptor 클래스 주입
 	private HandlerInterceptor interceptor;
 	
 	@Override
