@@ -21,6 +21,6 @@ spring:
   h2:
     console:
       enabled: true
-  devtools:
-    livereload:      enabled: true
-  thymeleaf:    cache: false
+  devtools: # spring-boot-starter-devtools library
+    livereload: # 정적 파일 애플리케이션 실행 중 실시간 리로드      enabled: true
+  thymeleaf:  # thmeleaf 템플릿 엔진 캐싱 비사용 !!!실 사용 서버에 운영 시 캐시를 false로하면 서버가 터질 우려가 있으니 반드시 캐시 설정을 true로 설정하고 운영 필요    cache: false
