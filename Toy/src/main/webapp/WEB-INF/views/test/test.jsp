@@ -7,12 +7,6 @@
 <title>Insert title here</title>
 </head>
 <body>
-LOGOUT PAGE!
-<script>
-	if ('${msg}' != null)
-	{
-		alert('${msg}');
-	}
-</script>
+THIS IS TEST PAGE.
 </body>
 </html>

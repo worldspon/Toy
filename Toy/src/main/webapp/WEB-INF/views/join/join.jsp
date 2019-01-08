@@ -7,6 +7,7 @@
 <title>Insert title here</title>
 </head>
 <body>
+JOIN PAGE!
 <input type="text" id="txt_userid">
 <input type="button" value="중복체크" id="btn_checkid">
 <script src="/js/jquery-3.3.1.min.js"></script>

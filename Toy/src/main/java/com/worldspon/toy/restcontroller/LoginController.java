@@ -35,7 +35,7 @@ public class LoginController {
 	 */ 
 	@GetMapping("/login")
 	public ModelAndView openLogin(HttpServletRequest req) throws Exception {
-		HashMap<String, Object> map = loginService.loginChceck(req);
+		HashMap<String, Object> map = loginService.loginChceck(req, "login/login");
 		
 		ModelAndView mav = new ModelAndView("");
 		mav.setViewName(map.get("setViewName").toString());

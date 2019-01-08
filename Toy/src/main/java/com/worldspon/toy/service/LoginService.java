@@ -28,12 +28,13 @@ public class LoginService {
 	 * 로그인 상태 체크 서비스
 	 * args -------------------------------
 	 * HttpServletRequest	| 통신 요청 객체
+	 * viewname				| view 페이지 위치 정보 로그인 컨트롤러와 회원가입 컨트롤러를 탈 때 뷰 네임 지정이 다르므로 인자로 직접 받아서 리턴함
 	 * ------------------------------------
 	 * return data ------------------------
 	 * map					| 로그인 판단에 따른 뷰 지정 
 	 * ------------------------------------
 	 */
-	public HashMap<String, Object> loginChceck(HttpServletRequest req) throws Exception {
+	public HashMap<String, Object> loginChceck(HttpServletRequest req, String viewname) throws Exception {
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		
 		if (req.getSession().getAttribute("loginInfo") != null)
@@ -43,7 +44,7 @@ public class LoginService {
 		}
 		else
 		{
-			map.put("setViewName", "login/login");
+			map.put("setViewName", viewname);
 		}
 		
 		return map;
