@@ -85,6 +85,7 @@ id.addEventListener('focusout', function(){
         dataType: 'json',
         data: { "userid": userid }
     }).done(function (result) {
+        // { result: 0 or 1 }
         result = result.result;
         // alert(JSON.stringify(result));
         // location.reload();
@@ -121,7 +122,6 @@ id.addEventListener('focusout', function(){
     }else if(result > 0) {
         idmsg.style.display = "block";
         idmsg.innerHTML = "중복된 아이디입니다.";
-        console.log(result);
         return 0;
     } else {
         id_flag=1;
@@ -244,96 +244,32 @@ email.addEventListener('focusout', function(){
     
 });
 
-$(document).on("click", "#btn_join", function(){
+$(document).on("click", "#btn_join", function () {
+    var data = {
+        "userid": $.trim($("#id").val()),
+        "userpwd": $.trim($("#pw2").val()),
+        "username": $.trim($("#name").val()),
+        "useremail": $.trim($("#email").val()) 
+    };
+
     if (final_flag === 1) 
     {
-        var userid = $.trim($("#id").val());
-    
         $.ajax({
             type: 'POST',
-            url: '/join/checkid',
+            url: '/join',
+            contentType: 'application/json; charset=utf-8',
             dataType: 'json',
-            data: { "userid": userid }
+            data: JSON.stringify(data)
         }).done(function (result) {
-            alert(JSON.stringify(result));
-            location.reload();
+            window.alert(JSON.stringify(result.msg));
+            window.location.href = '/';
         }).fail(function (err) {
-            alert(JSON.stringify(err));
+            window.alert(JSON.stringify(err));
             console.log(err);
         });
     }
     else
     {
-        alert("2222");
+        window.alert("유효성 검사를 모두 완료해주세요.");
     }
 });
-
-/*
-btnjoin.addEventListener('click',function(){
-    if(final_flag==1){
-        self.location = 'join_finish.html';
-    }
-
-
-});
-*/
-
-// 비동기 통신 처리를 위한 XMLHttpRequest 객체 구하기 함수
-function getXMLHttpRequest() {
-    // 브라우저가 IE일 경우 XMLHttpRequest 객체 구하기
-    if(window.ActiveXObject)
-    {
-        try
-        {
-            return new ActiveXObject('Msxml2.XMLHTTP');
-        }
-        catch(e)
-        {
-            try
-            {
-                return new ActiveXObject('Microsoft.XMLHTTP');
-            }
-            catch(e2)
-            {
-                return null;
-            }
-        }
-    }
-    // IE외 브라우저에서 XMLHttpRequest 객체 구하기
-    else if(window.XMLHttpRequest)
-    {
-        return new XMLHttpRequest();
-    }
-    else
-    {
-        return null;
-    }
-}
-
-
-
-    var join_obj = {};
-
-	$(document).ready(function () {
-		$("#btn_checkid").on('click', function () {
-			checkId();
-		});
-	});
-	
-	function checkId() {
-		var userid = $.trim($("#txt_userid").val());
-		
-		$.ajax({
-			type: 'POST',
-			url: '/join/checkid',
-			dataType: 'json',
-			data: { "userid": userid }
-		}).done(function (result) {
-			alert(JSON.stringify(result));
-			location.reload();
-		}).fail(function (err) {
-			alert(JSON.stringify(err));
-			console.log(err);
-		});
-    }
-    
