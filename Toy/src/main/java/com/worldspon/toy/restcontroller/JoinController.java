@@ -54,7 +54,7 @@ public class JoinController {
 	@PostMapping("/join/checkid")
 	public HashMap<String, Object> checkId(@RequestParam(name="userid") String userid) throws Exception {
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("result", joinService.checkId(userid));
+		map.put("chkval", joinService.checkId(userid));
 		
 		return map;
 	}

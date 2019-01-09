@@ -86,7 +86,7 @@ id.addEventListener('focusout', function(){
         data: { "userid": userid }
     }).done(function (result) {
         // { result: 0 or 1 }
-        result = result.result;
+        result = result.chkval;
         // alert(JSON.stringify(result));
         // location.reload();
     }).fail(function (err) {
