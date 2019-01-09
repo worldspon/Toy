@@ -92,8 +92,9 @@ public class LoginService {
 	 */
 	public String logoutProcess(HttpServletRequest req) throws Exception {
 		String msg = "";
+		Object loginInfo = req.getSession().getAttribute("loginInfo");
 		
-		if (req.getSession().getAttribute("loginInfo") == null || req.getSession().getAttribute("loginInfo").equals(""))
+		if (loginInfo == null || loginInfo.equals(""))
 		{
 			msg = "로그아웃 처리 중 에러가 발생하였습니다.";
 		}

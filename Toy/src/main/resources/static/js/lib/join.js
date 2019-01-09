@@ -2,7 +2,6 @@ var id_flag = pw1_flag = pw2_flag = username_flag = email_flag = 0;
 // 각 구간마다 올바른 검증이 되었을시 1 저장
 var final_flag=0;
 //모든 영역의 검증이 충족되면 1을 저장
-
 var id = document.querySelector("#id");
 var idmsg = document.querySelector('#id_msg');
 var pw1 = document.querySelector("#pw1");
@@ -70,8 +69,16 @@ var check_flag = function(){
     }
 }; // flag 변수 확인함수, 모든 flag에 1이 저장되면 final_flag에 1 저장
 
+/**
+ * 
+ * @author Johnny
+ * @Params []
+ * @date 2019-01-09
+ * @descript 아이디 입력 시 최초 서버로 아이디 중복 조회 시도
+ */
 id.addEventListener('focusout', function(){
-    val_id();
+    fn_checkId();
+    // val_id();
 });
 
 
@@ -111,7 +118,7 @@ $(document).on("click", "#btn_join", function () {
             dataType: 'json',
             data: JSON.stringify(data)
         }).done(function (result) {
-            window.alert(JSON.stringify(result.msg));
+            window.alert(result.msg);
             window.location.href = '/';
         }).fail(function (err) {
             window.alert(JSON.stringify(err));
@@ -124,29 +131,21 @@ $(document).on("click", "#btn_join", function () {
     }
 });
 
-function val_id(){
+/**
+ * 
+ * @author Johnny
+ * @Params [chkval]
+ * number chkval = 0 or n | 중복된 아이디 판단 결과 정보
+ * @date 2019-01-09
+ * @descript 아이디 입력 시 중복 체크 통신 이후 검증 함수 진행
+ */
+function val_id(chkval){
     var idval = id.value;
     idmsg.style.color = "red";
     id_flag=0;
     check_flag();
-    
-    var userid = $.trim($("#id").val());
-    let result = 0;
-    
-    $.ajax({
-        type: 'POST',
-        url: '/join/checkid',
-        dataType: 'json',
-        data: { "userid": userid }
-    }).done(function (result) {
-        // { result: 0 or 1 }
-        result = result.chkval;
-        // alert(JSON.stringify(result));
-        // location.reload();
-    }).fail(function (err) {
-        alert(JSON.stringify(err));
-        console.log(err);
-    });
+
+    console.log("chkval: " + chkval);
 
     if(!check_null(idval)){
         idmsg.style.display = "block";
@@ -173,7 +172,7 @@ function val_id(){
         idmsg.style.display = "block";
         idmsg.innerHTML = "아이디 특수문자는 허용되지않습니다.";
         return 0;
-    }else if(result > 0) {
+    }else if(chkval > 0) {
         idmsg.style.display = "block";
         idmsg.innerHTML = "중복된 아이디입니다.";
         return 0;
@@ -311,10 +310,36 @@ function val_email() {
 
 function final_check() {
     console.log("A");
-    val_id();
+    fn_checkId();
     val_pw1();
     val_pw2();
     val_name();
     val_email();
     console.log("B");
+}
+
+
+/**
+ * 
+ * @author Johnny
+ * @Params [obj]
+ * result = { checkvaal: 0 or n } | 중복된 아이디 판단 결과 정보
+ * @date 2019-01-09
+ * @descript 로그인 처리 함수
+ */
+function fn_checkId() {
+    var userid = $.trim($("#id").val());
+    let result = 0;
+    
+    $.ajax({
+        type: 'POST',
+        url: '/join/checkid',
+        dataType: 'json',
+        data: { "userid": userid }
+    }).done(function (result) {
+        val_id(Number(result.chkval));
+    }).fail(function (err) {
+        alert(JSON.stringify(err));
+        console.log(err);
+    });
 }

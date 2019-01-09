@@ -1,36 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-    <link rel="stylesheet" href="css/reset.css">
-    <link rel="stylesheet" href="css/common.css">
-    <link rel="stylesheet" href="css/main.css">
+<html lang="ko" xmlns = "http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head th:include="/layout/header :: headtitle ('main')">
 </head>
 <body>
-    <header>
-        <nav>
-            <a href=""><img src="images/logo.png" alt=""></a>
-            <div class="sign_box">
-                <ul>
-                    <li><a href="join.html">회원가입</a></li>
-                    <li><a href="login.html">로그인</a></li>
-                    <li><a href=""><img src="images/head_cart.png" alt="">장바구니</a></li>
-                </ul>
-            </div>
-        </nav>
-    </header>
+    <header th:include="/layout/header :: header"></header>
     <div class="menu_box">
         <h2>Best Seller</h2>
-
         <div class="menu">
             <div class="menu_l">
                 <img src="images/beaf_buger.png" alt="">
             </div>
             <div class="menu_r">
-                <h1 class="menu_name">더블비프불고기버거 단품</h3>
+                <h1 class="menu_name">더블비프불고기버거!! 단품</h1>
                 <span class="menu_price">5900원</span>
                 <div class="quantity_wrap">
                     <span class="quantity_text">수량선택</span>
@@ -47,7 +28,7 @@
                 <img src="images/beaf_buger.png" alt="">
             </div>
             <div class="menu_r">
-                <h1 class="menu_name">더블비프불고기버거 단품</h3>
+                <h1 class="menu_name">더블비프불고기버거 단품</h1>
                 <span class="menu_price">5,900원</span>
                 <span class=""></span>
                 <div class="quantity_wrap">
@@ -65,7 +46,7 @@
                 <img src="images/beaf_buger.png" alt="">
             </div>
             <div class="menu_r">
-                <h1 class="menu_name">더블비프불고기버거 단품</h3>
+                <h1 class="menu_name">더블비프불고기버거 단품</h1>
                 <span class="menu_price">5,900원</span>
                 <div class="quantity_wrap">
                     <span class="quantity_text">수량선택</span>
@@ -82,7 +63,7 @@
                 <img src="images/beaf_buger.png" alt="">
             </div>
             <div class="menu_r">
-                <h1 class="menu_name">더블비프불고기버거 단품</h3>
+                <h1 class="menu_name">더블비프불고기버거 단품</h1>
                 <span class="menu_price">5,900원</span>
                 <div class="quantity_wrap">
                     <span class="quantity_text">수량선택</span>
@@ -97,8 +78,8 @@
 
     </div>
     
-    <script src="js/jquery-3.3.1.min.js"></script>
-    <script src="js/common.js"></script>
-    <script src="js/main.js"></script>
+    <div th:include="/layout/footer :: footer ('main')">
+    
+    </div>
 </body>
 </html>

@@ -66,14 +66,15 @@ public class LoginController {
 	 * HttpServletRequest	| 통신 요청 객체
 	 * ------------------------------------
 	 * return data ------------------------
-	 * ModelAndView			| 로그아웃 처리 결과 메시지와 로그아웃 뷰 페이지 정보
+	 * map					| 로그아웃 처리 결과 메시지 정보
 	 * ------------------------------------
 	 */
 	@GetMapping("/logout")
-	public ModelAndView logout(HttpServletRequest req) throws Exception {
+	public HashMap<String, Object> logout(HttpServletRequest req) throws Exception {
+		HashMap<String, Object> map = new HashMap<String, Object>();
 		String msg = loginService.logoutProcess(req);
-		ModelAndView mav = new ModelAndView("login/logout");
-		mav.addObject("msg", msg);
-		return mav;
+		map.put("msg", msg);
+		
+		return map;
 	}
 }

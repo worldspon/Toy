@@ -1,40 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-    <link rel="stylesheet" href="css/reset.css">
-    <link rel="stylesheet" href="css/common.css">
-    <link rel="stylesheet" href="css/login.css">
+<html lang="ko" xmlns = "http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head th:include="/layout/header :: headtitle ('login')">
 </head>
 <body>
-    <header>
-        <nav>
-            <a href="index.html"><img src="images/logo.png" alt=""></a>
-            <div class="sign_box">
-                <ul>
-                    <li><a href="join.html">회원가입</a></li>
-                    <li><a href="">로그인</a></li>
-                    <li><a href=""><img src="images/head_cart.png" alt="">장바구니</a></li>
-                </ul>
-            </div>
-        </nav>
+    <header th:include="/layout/header :: header">
+    
     </header>
     <h1>로그인</h1>
     <div class="join">
-        <form action="" method="POST">
-            <h3>아이디</h3>
-            <input type="text" id="id" maxlength="12">
-            <h3>비밀번호</h3>
-            <input type="password" id="pw1" maxlength="20">
-            <button id="btn_join">로그인</button>
-        </form>
+        <h3>아이디</h3>
+        <input type="text" id="id" maxlength="12">
+        <h3>비밀번호</h3>
+        <input type="password" id="pw1" maxlength="20">
+        <button id="btn_join">로그인</button>
     </div>
 
-    <script src="js/jquery-3.3.1.min.js"></script>
-    <script src="js/common.js"></script>
-    <script src="js/login.js"></script>
+	<div th:include="/layout/footer :: footer ('login')">
+	
+	</div>
 </body>
 </html>

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head th:include = "/layout/header :: headtitle">
+<head th:include = "/layout/header :: headtitle ('join')">
 </head>
 <body>
 <!-- 
@@ -23,7 +23,7 @@
  		속성값 : { 템플릿 파일 명 } :: { 템플릿 파일 내 fragment 명 }
  		템플릿 파일 명에서 확장자는 View Resolver를 통해 설정되어 생략이 가능하다.
  	 -->
- 	<header th:include = "/layout/header :: header"></header>
+ 	<header th:include = "/layout/header::header"></header>
     <h1>회원가입</h1>
     <div class="join">
 		<h3>아이디</h3>
@@ -46,7 +46,8 @@
 		</div>
     </div>
 
-    <script src="/js/lib/jquery-3.3.1.min.js"></script>
-    <script src="/js/lib/join.js"></script>
+	<div th:include="/layout/footer :: footer ('join')">
+	
+	</div>
 </body>
 </html>

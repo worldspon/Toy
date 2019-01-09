@@ -1,14 +1,19 @@
 <!DOCTYPE html>
 <html xmlns = "http://www.w3.org/1999/xhtml"
 		xmlns:th = "http://www.thymeleaf.org">
-<head th:fragment = "headtitle">
+<head th:fragment = "headtitle (template)">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>버거킹</title>
     <link rel="stylesheet" href="/css/lib/reset.css">
     <link rel="stylesheet" href="/css/lib/common.css">
-    <link rel="stylesheet" href="/css/lib/join.css">
+    <!-- 회원가입 페이지 css -->
+    <link th:if="${template} == 'join' " rel="stylesheet" href="/css/lib/join.css">
+    <!-- 메인 페이지 css -->
+    <link th:if="${template} == 'main' " rel="stylesheet" href="/css/lib/main.css">
+    <!-- 로그인 페이지 css -->
+    <link th:if="${template} == 'login' " rel="stylesheet" href="/css/lib/login.css">
 </head>
 <body>
 	<!-- 
@@ -22,14 +27,22 @@
             <a href="/"><img src="../img/site/logo.png" alt=""></a>
             <div class="sign_box">
                 <ul>
-                    <li><a href="/join">회원가입</a></li>
                     <li>
-                    	<a th:if="" href="/login">로그인</a>
-                    	<a th:if="" href="/logout">로그아웃</a>
+                    	<a th:if="${session.loginInfo} == null"  href="/join">회원가입</a>
                    	</li>
-                    <li><a href=""><img src="../img/site/head_cart.png" alt="">장바구니</a></li>
+                    <li>
+                    	<!-- 세션 객체의 loginInfo라는 속성으로 정의한 사용자 정보를 판단 -->
+                    	<a th:if="${session.loginInfo} == null" href="/login">로그인</a>
+                    	<a th:if="${session.loginInfo} != null" href="/logout" id="a-logout">로그아웃</a>
+                   	</li>
+                    <li><a href="#"><img src="../img/site/head_cart.png" alt="">장바구니</a></li> 
                 </ul>
             </div>
+        </nav>
+        <nav style="display: none;">
+        	<div th:include="/layout/footer :: footer ('logout')">
+        	
+        	</div>
         </nav>
     </header>
 </body>
