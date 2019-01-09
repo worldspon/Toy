@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns = "http://www.w3.org/1999/xhtml"
+		xmlns:th = "http://www.thymeleaf.org">
+<head th:fragment = "headtitle">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>버거킹</title>
+    <link rel="stylesheet" href="/css/lib/reset.css">
+    <link rel="stylesheet" href="/css/lib/common.css">
+    <link rel="stylesheet" href="/css/lib/join.css">
+</head>
+<body>
+	<!-- 
+ 		Thymeleaf 구문 -
+ 		th:fragment = 다른 템플릿에 include할 위치 태그 지정
+ 		속성값 : { 템플릿 파일 명 }
+ 		템플릿 파일 명에서 확장자는 View Resolver를 통해 설정되어 생략이 가능하다.
+ 	 -->
+    <header th:fragment = "header">
+        <nav>
+            <a href="/"><img src="../img/site/logo.png" alt=""></a>
+            <div class="sign_box">
+                <ul>
+                    <li><a href="/join">회원가입</a></li>
+                    <li>
+                    	<a th:if="" href="/login">로그인</a>
+                    	<a th:if="" href="/logout">로그아웃</a>
+                   	</li>
+                    <li><a href=""><img src="../img/site/head_cart.png" alt="">장바구니</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+</body>
+</html>
