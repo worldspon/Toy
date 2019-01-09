@@ -71,11 +71,65 @@ var check_flag = function(){
 }; // flag 변수 확인함수, 모든 flag에 1이 저장되면 final_flag에 1 저장
 
 id.addEventListener('focusout', function(){
-    var idval = this.value;
+    val_id();
+});
+
+
+pw1.addEventListener('focusout',function(){
+    val_pw1();
+});
+
+
+pw2.addEventListener('focusout', function(){
+    val_pw2();
+});
+
+username.addEventListener('focusout', function(){
+    val_name();
+});
+
+email.addEventListener('focusout', function(){
+    val_email();
+});
+
+$(document).on("click", "#btn_join", function () {
+    final_check();
+    var data = {
+        "userid": $.trim($("#id").val()),
+        "userpwd": $.trim($("#pw2").val()),
+        "username": $.trim($("#name").val()),
+        "useremail": $.trim($("#email").val()) 
+    };
+
+    if (final_flag === 1) 
+    {
+        console.log("C");
+        $.ajax({
+            type: 'POST',
+            url: '/join',
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            data: JSON.stringify(data)
+        }).done(function (result) {
+            window.alert(JSON.stringify(result.msg));
+            window.location.href = '/';
+        }).fail(function (err) {
+            window.alert(JSON.stringify(err));
+            console.log(err);
+        });
+    }
+    else
+    {
+        window.alert("유효성 검사를 모두 완료해주세요.");
+    }
+});
+
+function val_id(){
+    var idval = id.value;
     idmsg.style.color = "red";
     id_flag=0;
     check_flag();
-
+    
     var userid = $.trim($("#id").val());
     let result = 0;
     
@@ -130,13 +184,25 @@ id.addEventListener('focusout', function(){
         idmsg.innerHTML = "멋진 아이디입니다!";
     }
     check_flag();
-});
+}
 
-pw1.addEventListener('focusout', function(){
-    let pw1val = this.value;
+function val_pw1() {
+    let pw1val = pw1.value;
     pw1msg.style.color = "red";
     pw1_flag=0;
     check_flag();
+
+    if(pw1.value != pw2.value){
+        pw2msg.style.color = "red";
+        pw2msg.style.display = "block";
+        pw2msg.innerHTML = "비밀번호가 다릅니다.";
+    } else {
+        pw2_flag=1;
+        pw2msg.style.display = "block";
+        pw2msg.style.color = "green";
+        pw2msg.innerHTML = "올바르게 입력하셨습니다!";
+    }
+
     if(!check_null(pw1val)){
         pw1msg.style.display = "block";
         pw1msg.innerHTML = "비밀번호를 입력해주십시오.";
@@ -157,18 +223,17 @@ pw1.addEventListener('focusout', function(){
         pw1msg.style.display = "block";
         pw1msg.innerHTML = "비밀번호에 특수문자가 한 개 이상 포함되어야합니다.";
         return 0;
-    }else {
+    }  else {
         pw1_flag=1;
         pw1msg.style.display = "block";
         pw1msg.style.color = "green";
         pw1msg.innerHTML = "안전한 비밀번호입니다!";
     }
     check_flag();
-});
+}
 
-
-pw2.addEventListener('focusout', function(){
-    let pw2val = this.value;
+function val_pw2() {
+    let pw2val = pw2.value;
     pw2msg.style.color = "red";
     pw2_flag=0;
     check_flag();
@@ -185,10 +250,11 @@ pw2.addEventListener('focusout', function(){
         pw2msg.innerHTML = "올바르게 입력하셨습니다!";
     }
     check_flag();
-});
+}
 
-username.addEventListener('focusout', function(){
-    let usernameval = this.value;
+function val_name() {
+    
+    let usernameval = username.value;
     namemsg.style.color = "red";
     username_flag=0;
     check_flag();
@@ -215,10 +281,11 @@ username.addEventListener('focusout', function(){
         namemsg.innerHTML = "멋진 이름입니다!";
     }
     check_flag();
-});
+}
 
-email.addEventListener('focusout', function(){
-    let emailval = this.value;
+function val_email() {
+    
+    let emailval = email.value;
     emailmsg.style.color = "red";
     email_flag = 0;
     check_flag();
@@ -227,7 +294,6 @@ email.addEventListener('focusout', function(){
         emailmsg.innerHTML = "이메일을 입력해주십시오.";
         return 0;
     } else if(!check_space(emailval)){
-        console.log("A");
         emailmsg.style.display = "block";
         emailmsg.innerHTML = "이메일에 공백을 제거해주십시오.";
         return 0;
@@ -241,35 +307,14 @@ email.addEventListener('focusout', function(){
         emailmsg.innerHTML = "이메일이 확인되었습니다!";
     }
     check_flag();
-    
-});
+}
 
-$(document).on("click", "#btn_join", function () {
-    var data = {
-        "userid": $.trim($("#id").val()),
-        "userpwd": $.trim($("#pw2").val()),
-        "username": $.trim($("#name").val()),
-        "useremail": $.trim($("#email").val()) 
-    };
-
-    if (final_flag === 1) 
-    {
-        $.ajax({
-            type: 'POST',
-            url: '/join',
-            contentType: 'application/json; charset=utf-8',
-            dataType: 'json',
-            data: JSON.stringify(data)
-        }).done(function (result) {
-            window.alert(JSON.stringify(result.msg));
-            window.location.href = '/';
-        }).fail(function (err) {
-            window.alert(JSON.stringify(err));
-            console.log(err);
-        });
-    }
-    else
-    {
-        window.alert("유효성 검사를 모두 완료해주세요.");
-    }
-});
+function final_check() {
+    console.log("A");
+    val_id();
+    val_pw1();
+    val_pw2();
+    val_name();
+    val_email();
+    console.log("B");
+}
