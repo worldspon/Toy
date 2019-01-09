@@ -329,7 +329,7 @@ function final_check() {
  */
 function fn_checkId() {
     var userid = $.trim($("#id").val());
-    let result = 0;
+    //let result = 0;
     
     $.ajax({
         type: 'POST',

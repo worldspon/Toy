@@ -25,6 +25,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 		List<String> excludePattern = new ArrayList<String>();	// 인터셉터 예외 패턴
 		excludePattern.add("/join/**");
 		excludePattern.add("/login/**");
+		excludePattern.add("/logout/**");
 		
 		registry.addInterceptor(interceptor)
 			.addPathPatterns(addPattern)

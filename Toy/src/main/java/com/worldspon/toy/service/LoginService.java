@@ -91,6 +91,7 @@ public class LoginService {
 	 * ------------------------------------
 	 */
 	public String logoutProcess(HttpServletRequest req) throws Exception {
+		
 		String msg = "";
 		Object loginInfo = req.getSession().getAttribute("loginInfo");
 		
@@ -100,7 +101,7 @@ public class LoginService {
 		}
 		else
 		{
-			req.getSession().removeAttribute("loginInfo");
+			req.getSession().invalidate();
 			msg = "로그아웃이 처리되었습니다.";
 		}
 		
