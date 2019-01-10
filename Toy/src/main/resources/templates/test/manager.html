@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns = "http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head th:include="/layout/header :: headtitle ('login')">
+</head>
+<body>
+    <header th:include="/layout/header :: header">
+    
+    </header>
+    <h1>매니저 로그인</h1>
+    <div class="join">
+        <h3>매니저 아이디</h3>
+        <input type="text" id="managerid" maxlength="12">
+        <h3>매니저 비밀번호</h3>
+        <input type="password" id="managerpw" maxlength="20">
+        <button id="btn_join">로그인</button>
+    </div>
+
+	<div th:include="/layout/footer :: footer ('managerLogin')">
+	
+	</div>
+</body>
+</html>

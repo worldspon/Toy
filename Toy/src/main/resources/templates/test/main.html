@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns = "http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head th:include="/layout/header :: headtitle ('main')">
+</head>
+<body>
+
+
+
+    <header th:include="/layout/header :: header"></header>
+    
+    
+    
+    <div th:each="food : ${foodlist}" class="menu_box">
+        <h2>Best Seller</h2>
+        <div class="menu">
+            <div class="menu_l">
+                <img src="images/beaf_buger.png" alt="">
+            </div>
+            <div class="menu_r">
+                <h1 th:text="${food.foodname}" class="menu_name"></h1>
+                <span th:text="${food.foodprice} + '원'" class="menu_price"></span>
+                <div class="quantity_wrap">
+                    <span class="quantity_text">수량선택</span>
+                    <span class="quantity_box">1</span>
+                    <button class="quantity_plus quantity_btn">+</button>
+                    <button class="quantity_minus quantity_btn">-</button>
+                    <button class="add_cart">장바구니에 담기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div th:include="/layout/footer :: footer ('main')">
+    
+    </div>
+</body>
+</html>
