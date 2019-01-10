@@ -37,11 +37,15 @@ public class Fooditem extends BaseTimeEntity {
 	private Long imgid;
 	@Column(nullable = false)
 	private int status;
+	@Column(nullable = false)
+	private int stock;
 	
 	@Builder
-	public Fooditem(String foodname, int foodprice, Long imgid) {
+	public Fooditem(String foodname, int foodprice, Long imgid, int status, int stock) {
 		this.foodname = foodname;
 		this.foodprice = foodprice;
 		this.imgid = imgid;
+		this.status = status;
+		this.stock = stock;
 	}
 }

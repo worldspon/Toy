@@ -20,12 +20,13 @@ public class WebMvcConfig implements WebMvcConfigurer {
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		List<String> addPattern = new ArrayList<String>(); // 인터셉터 등록 패턴
-		addPattern.add("/test/**");
+		addPattern.add("/test2/**");
 		
 		List<String> excludePattern = new ArrayList<String>();	// 인터셉터 예외 패턴
 		excludePattern.add("/join/**");
 		excludePattern.add("/login/**");
 		excludePattern.add("/logout/**");
+		excludePattern.add("/manager/**");
 		
 		registry.addInterceptor(interceptor)
 			.addPathPatterns(addPattern)

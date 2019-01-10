@@ -15,7 +15,6 @@ public class HelloRestController {
 	@GetMapping("/")
 	public ModelAndView main() throws Exception {
 		ModelAndView mav = new ModelAndView("main");
-		mav.addObject("message", "MAIN PAGE!");
 		return mav;
 	}
 }

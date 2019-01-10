@@ -27,15 +27,22 @@
             <a href="/"><img src="../img/site/logo.png" alt=""></a>
             <div class="sign_box">
                 <ul>
-                    <li>
+                    <li th:if="${session.managerInfo} == null">
                     	<a th:if="${session.loginInfo} == null"  href="#" id="a-join">회원가입</a>
                    	</li>
-                    <li>
+                    <li th:if="${session.managerInfo} == null">
                     	<!-- 세션 객체의 loginInfo라는 속성으로 정의한 사용자 정보를 판단 -->
                     	<a th:if="${session.loginInfo} == null" href="#" id="a-login">로그인</a>
                     	<a th:if="${session.loginInfo} != null" href="#" id="a-logout">로그아웃</a>
                    	</li>
-                    <li><a href="#"><img src="../img/site/head_cart.png" alt="">장바구니</a></li> 
+                   	<li th:if="${session.managerInfo} == null">
+                    	<a href="#">
+                    		<img src="../img/site/head_cart.png" alt="">장바구니
+                   		</a>
+					</li> 
+                   	<li th:if="${session.managerInfo} != null">
+                   		<a href="#" id="a-managerlogout">로그아웃</a>
+                   	</li>
                 </ul>
             </div>
         </nav>

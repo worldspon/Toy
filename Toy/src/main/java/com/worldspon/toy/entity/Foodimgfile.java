@@ -30,12 +30,15 @@ public class Foodimgfile extends BaseTimeEntity {
 	private Long imgid;
 	@Column(length = 1000, nullable = false)
 	private String imgfilename;
+	@Column(length = 1000, nullable = false)
+	private String orgfilename;
 	@Column(nullable = false)
 	private Long mid;
 	
 	@Builder
-	public Foodimgfile(String imgfilename, Long mid) {
+	public Foodimgfile(String imgfilename, String orgfilename, Long mid) {
 		this.imgfilename = imgfilename;
+		this.orgfilename = orgfilename;
 		this.mid = mid;
 	}
 }
