@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
-    <link rel="stylesheet" href="css/reset.css">
-    <link rel="stylesheet" href="css/common.css">
-    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="../../static/css/lib/reset.css">
+    <link rel="stylesheet" href="../../static/css/lib/common.css">
+    <link rel="stylesheet" href="../../static/css/lib/manager.css">
 </head>
 <body>
     <header>
@@ -15,8 +15,8 @@
             <a href="index.html"><img src="images/logo.png" alt=""></a>
             <div class="admin_box">
                 <ul>
-                    <li><a href="javascript:on_product_page();">상품등록/제거</a></li>
-                    <li><a href="javascript:on_sell_page();">판매등록/제거</a></li>
+                    <li><a href="manager_product.html">상품등록/제거</a></li>
+                    <li><a href="manager_sell.html">판매등록/제거</a></li>
                 </ul>
             </div>
             <div class="sign_box">
@@ -42,6 +42,8 @@
                         <input type="text" class="product_name">
                         <h3>상품가격</h3>
                         <input type="text" class="product_price">
+                        <h3>상품수량</h3>
+                        <input type="text" class="product_quantity">
                     </form>
                     <button id="add_div">+</button>
                 </div>
@@ -53,28 +55,9 @@
                 </form>
             </div>
         </div>
-
-        <div id="sell_area">
-            <div id="sell_reg">
-                <h1>판매등록</h1>
-                <form action="" method="post" id="sell_reg_form">
-                    <button id="sell_reg_btn">제거</button><br/>
-                    <input type="checkbox" name="" id="">
-                    <label for="">Buger</label>
-                </form>
-            </div>
-            <div id="sell_del">
-                <h1>판매제거</h1>
-                <form action="" method="post" id="sell_del_form">
-                    <button id="sell_del_btn">제거</button><br/>
-                    <input type="checkbox" name="" id="">
-                    <label for="">Buger</label>
-                </form>
-            </div>
-        </div>
     </div>
-    <script src="js/jquery-3.3.1.min.js"></script>
-    <script src="js/common.js"></script>
-    <script src="js/admin.js"></script>
+    <script src="../../static/js/lib/jquery-3.3.1.min.js"></script>
+    <script src="../../static/js/lib/common.js"></script>
+    <script src="../../static/js/lib/manager_product.js"></script>
 </body>
 </html>
