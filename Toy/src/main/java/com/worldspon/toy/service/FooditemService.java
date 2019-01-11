@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +34,8 @@ public class FooditemService {
 	 */
 	public ArrayList<FooditemResponseDto> listFooditem() throws Exception {
 		// 모든 음식 메뉴를 엔티티 클래스로 받아옴
-		List<Fooditem> entitylist = fooditemRepo.findAll();
+		// List<Fooditem> entitylist = fooditemRepo.findAll();
+		List<Fooditem> entitylist = fooditemRepo.findfood();
 		
 		ArrayList<FooditemResponseDto> foodlist = new ArrayList<FooditemResponseDto>();
 

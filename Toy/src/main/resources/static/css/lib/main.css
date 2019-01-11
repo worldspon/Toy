@@ -1,3 +1,6 @@
+.admin_box {align-self:center;}
+.admin_box ul li {float: left;}
+.admin_box ul li:not(:first-child) {margin-left: 25px;}
 
 .menu_box {width: 700px; margin: 0 auto; text-align: center;padding:0px 15px;}
 .menu_box h2 {font-size: 25px; font-weight: 900; color: red; margin-bottom: 50px;}

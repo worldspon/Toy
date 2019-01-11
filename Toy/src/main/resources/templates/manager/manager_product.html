@@ -21,18 +21,20 @@
             <div id="reg_area">
                 <h1>상품 등록</h1>
                 <div id="product_list">
-                    <form id="reg_form" action="" method="POST">
-                        <button id="reg_btn">등록</button>
-                        <h3>이미지 업로드</h3>
-                        <input type="file" class="image_file" accept=".jpg,.jpeg,.png">
-                        <h3>상품명</h3>
-                        <input type="text" class="product_name">
-                        <h3>상품가격</h3>
-                        <input type="text" class="product_price">
-                        <h3>상품수량</h3>
-                        <input type="text" class="product_quantity">
-                    </form>
-                    <button id="add_div">+</button>
+                    <div id="reg_form">
+                    	<button id="reg_btn">등록</button>
+                    	<div>
+	                        <h3>이미지 업로드</h3>
+	                        <input type="file" class="image_file" accept=".jpg,.jpeg,.png" id="btn-file-0">
+	                        <h3>상품명</h3>
+	                        <input type="text" class="product_name" id="txt-foodname">
+	                        <h3>상품가격</h3>
+	                        <input type="text" class="product_price" id="txt-foodprice">
+	                        <h3>상품수량</h3>
+	                        <input type="text" class="product_quantity" id="txt-foodstock">
+                        </div>
+                    </div>
+                    <button id="add_div" type="button">+</button>
                 </div>
             </div>
             <div id="del_area">

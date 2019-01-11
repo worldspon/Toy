@@ -59,18 +59,19 @@ var bur_ary = [buger1,buger2,buger3,buger4,buger5];
 
 /**
  * 
- * @author 작성자
+ * @author Johnny
  * @Params []
- * @date 최초생성일
+ * @date 2019-01-11
  * @description 음식 메뉴 수량 증가 버튼 기능
  */
 $('.quantity_plus').click(function(){
-    let index = $('.quantity_plus').index(this);
-    let foodpirce = Number($(this).parent().parent().find('#foodprice_' + index).val());
     let menu_quantity = document.getElementsByClassName("quantity_box");
     let menu_price = document.getElementsByClassName('menu_price');
+    let index = $('.quantity_plus').index(this);    // 상품 인덱스
+    let foodpirce = Number($(this).parent().parent().find('#foodprice_' + index).val());    // 상품 가격값
+    let max_stock = $('#foodstock_' + index).val(); // 상품 최대 수량값
 
-    if(menu_quantity[index].innerHTML!=5){
+    if(menu_quantity[index].innerHTML != max_stock){
         menu_quantity[index].innerHTML++;
         menu_price[index].innerHTML = foodpirce * menu_quantity[index].innerHTML + '원';
     } else {
@@ -82,16 +83,16 @@ $('.quantity_plus').click(function(){
 
 /**
  * 
- * @author 작성자
+ * @author Johnny
  * @Params []
- * @date 최초생성일
+ * @date 2019-01-10
  * @description 음식 메뉴 수량 감소 버튼 기능
  */
 $('.quantity_minus').click(function(){
-    let index=$(".quantity_minus").index(this);
-    let foodpirce = Number($(this).parent().parent().find('#foodprice_' + index).val());
     let menu_quantity = document.getElementsByClassName("quantity_box");
     let menu_price = document.getElementsByClassName('menu_price');
+    let index=$(".quantity_minus").index(this); // 상품 인덱스
+    let foodpirce = Number($(this).parent().parent().find('#foodprice_' + index).val());    // 상품 가격값
 
     if(menu_quantity[index].innerHTML!=1){
         menu_quantity[index].innerHTML--;

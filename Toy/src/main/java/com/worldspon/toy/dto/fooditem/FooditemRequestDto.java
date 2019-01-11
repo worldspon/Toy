@@ -1,5 +1,8 @@
 package com.worldspon.toy.dto.fooditem;
 
+import java.util.List;
+
+import com.worldspon.toy.entity.Foodimgfile;
 import com.worldspon.toy.entity.Fooditem;
 
 import lombok.Getter;
@@ -23,15 +26,19 @@ public class FooditemRequestDto {
 	 * */
 	private String foodname;
 	private int foodprice;
-	private Long imgid;
+	//private Long imgid;
 	private int status;
+	private int stock;
+	private List<Foodimgfile> foodimgfile;
 	
 	public Fooditem toEntity() {
 		return Fooditem.builder()
 				.foodname(foodname)
 				.foodprice(foodprice)
-				.imgid(imgid)
+				//.imgid(imgid)
+				.foodimgfile(foodimgfile)
 				.status(status)
+				.stock(stock)
 				.build();
 	}
 }

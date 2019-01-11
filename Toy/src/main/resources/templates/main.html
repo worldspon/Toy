@@ -25,6 +25,7 @@
                 <div class="quantity_wrap">
                     <span class="quantity_text">수량선택</span>
                     <span class="quantity_box">1</span>
+                    <input th:id="foodstock_ + ${idx.index}" th:value="${food.stock}" type="hidden">
                     <button class="quantity_plus quantity_btn">+</button>
                     <button class="quantity_minus quantity_btn">-</button>
                     <button class="add_cart">장바구니에 담기</button>
