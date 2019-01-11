@@ -1,0 +1,41 @@
+a:hover {text-decoration: none;}
+.wrap {width:80%; height: 200000PX;}
+.table-title {padding:20px 0px; color:white; background-color:#8b532e;}
+input[type=checkbox]
+{
+    -ms-transform: scale(2); /* IE */
+    -moz-transform: scale(2); /* FF */
+    -webkit-transform: scale(1.5); /* Safari and Chrome */
+    -o-transform: scale(1.5); /* Opera */
+    color:#8b532e;
+    background-color: white;
+}
+
+.main-checkbox, .list-checkbox {margin-left:20px;}
+.menu-list {padding:20px 0px; position: relative;}
+.list-image {width:140px; border:1px solid #666;}
+.menu-list > div {align-self: center;}
+.quantity-box > * {align-content: center; background-color:blue;}
+.quantity-box > a {display: inline-block; vertical-align: text-bottom; color:white; width:30px; height:30px; background-color:#777; font-size: 25px;}
+.list-quantity {display: inline-block; vertical-align: text-bottom; width:60px; height:30px; background-color: white; border:1px solid #666; text-align: center; line-height: 27px;}
+.menu-price {font-size: 25px; color:red; font-weight: 600;}
+.o-d-btn {position: absolute; right:0; font-size: 13px; border-radius: 5px; border: none;}
+.menu-order {top:50px; border:1px solid black; background-color: white; padding:5px 15px;}
+.menu-del {top:80px; padding:5px 17px;}
+
+.list-hr{width:100%; border: 0; height: 1px; background: #666;}
+
+.total-box > div {align-self: center;}
+.total-quantity {font-size:20px;}
+.total-quantity span {font-size:25px;}
+.total-price {font-size:20px;}
+.total-price span {color:red; font-weight: 800; font-size: 25px;}
+
+footer {position: fixed; bottom:-10px;}
+.footer-logo {width:120px;}
+.footer-bar {position:relative; width:80%; margin:0 auto; padding:40px 30px;border-radius: 10px; background-color:#eee;}
+.slide-btn {position: absolute; top:-22px; right:30px; background-color: inherit; border:none; width:60px; font-size:15px; padding:3px 0px 5px; border-bottom: none; color:black; font-weight:bolder; z-index: 99;}
+.footer-bar > * > * {align-self: center;}
+.footer-top-row {margin-bottom: 20px;}
+.all-order {border:1px solid black; background-color: white; padding:5px 15px; border-radius: 5px;}
+.select-order {border:none; padding:5px 17px; border-radius: 5px;}
