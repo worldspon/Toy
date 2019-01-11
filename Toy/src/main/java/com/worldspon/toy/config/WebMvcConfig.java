@@ -15,21 +15,28 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
 	@Autowired
 	@Qualifier(value = "userInterceptor")	// UserInteceptor 클래스 주입
-	private HandlerInterceptor interceptor;
+	private HandlerInterceptor userinterceptor;
+	//@Qualifier(value = "managerInterceptor")
+	//private HandlerInterceptor managerinterceptor;
+	
 	
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		List<String> addPattern = new ArrayList<String>(); // 인터셉터 등록 패턴
-		addPattern.add("/test2/**");
+		List<String> addUserPattern = new ArrayList<String>(); // 인터셉터 등록 패턴
+		addUserPattern.add("/test/**");
 		
-		List<String> excludePattern = new ArrayList<String>();	// 인터셉터 예외 패턴
-		excludePattern.add("/join/**");
-		excludePattern.add("/login/**");
-		excludePattern.add("/logout/**");
-		excludePattern.add("/manager/**");
+		List<String> excludeUserPattern = new ArrayList<String>();	// 인터셉터 예외 패턴
+		excludeUserPattern.add("/join/**");
+		excludeUserPattern.add("/login/**");
+		excludeUserPattern.add("/logout/**");
+		excludeUserPattern.add("/manager/**");
 		
-		registry.addInterceptor(interceptor)
-			.addPathPatterns(addPattern)
-			.excludePathPatterns(excludePattern);
+		registry.addInterceptor(userinterceptor)
+			.addPathPatterns(addUserPattern)
+			.excludePathPatterns(excludeUserPattern);
+		/*
+		 * registry.addInterceptor(managerinterceptor) .addPathPatterns("")
+		 * .excludePathPatterns("");
+		 */
 	}
 }

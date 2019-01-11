@@ -12,7 +12,17 @@ $(document).ready(function() {
         fn_logout('user');
     });
     
-    // 관리자 전용 로그아웃 클릭 이벤트
+    // 매니저 전용 상품 등록 이동 클릭 이벤트
+    $('#a-foodproduct').on('click', function () {
+		fn_move('manager/food_product');
+	});
+
+	// 매니저 전용 상품 판매 이동 클릭 이벤트
+	$('#a-foodsell').on('click', function () {
+		fn_move('manager/food_sell');
+	});
+    
+    // 매니저 전용 로그아웃 클릭 이벤트
     $('#a-managerlogout').on('click', function () {
     	fn_logout('manager');
     });

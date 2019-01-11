@@ -14,6 +14,8 @@
     <link th:if="${template} == 'main' " rel="stylesheet" href="/css/lib/main.css">
     <!-- 로그인 페이지 css -->
     <link th:if="${template} == 'login' " rel="stylesheet" href="/css/lib/login.css">
+    <!-- 매니저 관련 모든 페이지 css -->
+    <link th:if="${template} == 'manager' " rel="stylesheet" href="/css/lib/manager.css">
 </head>
 <body>
 	<!-- 
@@ -25,6 +27,12 @@
     <header th:fragment = "header">
         <nav>
             <a href="/"><img src="../img/site/logo.png" alt=""></a>
+            <div th:if="${session.managerInfo} != null" class="admin_box">
+                <ul>
+                    <li><a href="#" id="a-foodproduct">상품등록/제거</a></li>
+                    <li><a href="#" id="a-foodsell">판매등록/제거</a></li>
+                </ul>
+            </div>
             <div class="sign_box">
                 <ul>
                     <li th:if="${session.managerInfo} == null">

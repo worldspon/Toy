@@ -1,33 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-    <link rel="stylesheet" href="../../static/css/lib/reset.css">
-    <link rel="stylesheet" href="../../static/css/lib/common.css">
-    <link rel="stylesheet" href="../../static/css/lib/manager.css">
+<html lang="ko" xmlns = "http://www.w3.org/1999/xhtml"
+		xmlns:th = "http://www.thymeleaf.org">
+<head th:include="/layout/header :: headtitle ('manager') ">
+
 </head>
+
+
 <body>
-    <header>
-        <nav>
-            <a href="index.html"><img src="images/logo.png" alt=""></a>
-            <div class="admin_box">
-                <ul>
-                    <li><a href="manager_product.html">상품등록/제거</a></li>
-                    <li><a href="manager_sell.html">판매등록/제거</a></li>
-                </ul>
-            </div>
-            <div class="sign_box">
-                <ul>
-                    <li><a href="join.html">회원가입</a></li>
-                    <li><a href="login.html">로그인</a></li>
-                    <li><a href=""><img src="images/head_cart.png" alt="">장바구니</a></li>
-                </ul>
-            </div>
-        </nav>
+
+
+    <header th:include="/layout/header :: header">
+
     </header>
+
+
+
+
     
     <div id=wrap>
         <div id="sell_area">
@@ -45,8 +33,13 @@
             </div>
         </div>
     </div>
-    <script src="../../static/js/lib/jquery-3.3.1.min.js"></script>
-    <script src="../../static/js/lib/common.js"></script>
-    <script src="../../static/js/lib/manager_sell.js"></script>
+    
+    
+    
+    <div th:include="/layout/footer :: footer ('manager_sell')">
+    
+    </div>
+    
+    
 </body>
 </html>

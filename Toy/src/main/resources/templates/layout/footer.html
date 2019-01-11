@@ -11,16 +11,31 @@
 	<script th:if="${tempalte} != header" src="/js/lib/jquery-3.3.1.min.js"></script>
     <script src="/js/lib/common.js"></script>
     
-    <!-- 메인 페이지 js -->
+    <!-- main.html js -->
     <script th:if="${template} == 'main' " src="/js/lib/main.js"></script>
-    <!-- 회원가입 페이지 js -->
+    
+    <!-- join.html js -->
     <script th:if="${template} == 'join' " src="/js/lib/join.js"></script>
-    <!-- 로그인 페이지 js -->
+    
+    <!-- login.html js -->
     <script th:if="${template} == 'login' " src="/js/lib/login.js"></script>
-    <!-- 매니저 로그인 페이지 js -->
-    <script th:if="${template} == 'managerLogin' " src="/js/lib/managerlogin.js"></script>
-    <!-- 헤더 페이지 js -->
+    
+    <!-- manager.html js -->
+    <script th:if="${template} == 'manager_login' " src="/js/lib/managerlogin.js"></script>
+    
+    <!-- header.html js -->
     <script th:if="${template} == 'header' " src="/js/lib/header.js"></script>
-</div>	
+    
+    <!-- manager_mod.html js -->
+    <script th:if="${template} == 'manager_mod' " src="/js/lib/manager_mod.js"></script>
+    
+    <!-- manager_product.html js -->
+    <script th:if="${template} == 'manager_product' " src="/js/lib/manager_product.js"></script>
+
+	<!-- manager_sell.html js -->
+	<script th:if="${template} == 'manager_sell' " src="/js/lib/manager_sell.js"></script>    
+    
+</div>
+	
 </body>
 </html>

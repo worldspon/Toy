@@ -25,15 +25,19 @@ public class ManagerController {
 	 */
 	private ManagerService managerService;
 	
+	
+	
+	
+	
 	/**
 	 * 매니저 로그인 페이지 이동 메소드
 	 * return data ------------------------
 	 * mav					| 뷰 페이지 정보
 	 * ------------------------------------
 	 */ 
-	@GetMapping("/manager")
+	@GetMapping("/manager/login")
 	public ModelAndView openManagerLogin() throws Exception {
-		ModelAndView mav = new ModelAndView("test/manager");
+		ModelAndView mav = new ModelAndView("login/manager");
 		
 		return mav;
 	}
@@ -55,6 +59,15 @@ public class ManagerController {
 		return map;
 	}
 	
+	/**
+	 * 매니저 로그아웃 처리 메소드
+	 * args -------------------------------
+	 * HttpServletRequest		| 통신 요청 객체
+	 * ------------------------------------
+	 * return data ------------------------
+	 * map						| 매니저 계정 로그아웃 처리에 대한 메시지
+	 * ------------------------------------
+	 */ 
 	@GetMapping("/manager/logout")
 	public HashMap<String, Object> managerLogout(HttpServletRequest req) throws Exception {
 		HashMap<String, Object> map = new HashMap<String, Object>();
@@ -62,5 +75,32 @@ public class ManagerController {
 		map.put("msg", msg);
 		
 		return map;
+	}
+	
+	
+	/**
+	 * 매니저 상품 등록 페이지 이동 메소드
+	 * return data ------------------------
+	 * mav						| 상품 등록 뷰 페이지 이동 정보
+	 * ------------------------------------
+	 */ 
+	@GetMapping("/manager/food_product")
+	public ModelAndView openManagerProduct() throws Exception {
+		ModelAndView mav = new ModelAndView("manager/manager_product");
+		
+		return mav;
+	}
+	
+	/**
+	 * 매니저 상품 판매 페이지 이동 메소드
+	 * return data ------------------------
+	 * mav						| 상품 판매 뷰 페이지 이동 정보
+	 * ------------------------------------
+	 */ 
+	@GetMapping("/manager/food_sell")
+	public ModelAndView openManagerSell() throws Exception {
+		ModelAndView mav = new ModelAndView("manager/manager_sell");
+		
+		return mav;
 	}
 }

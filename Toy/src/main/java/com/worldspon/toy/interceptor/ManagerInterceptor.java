@@ -7,24 +7,21 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-
 @Component
-public class UserInterceptor extends HandlerInterceptorAdapter {  
-	
+public class ManagerInterceptor extends HandlerInterceptorAdapter {
+
 	/**
-	 * 사용자 기능 전용 인터셉터
+	 * 매니저 기능 전용 인터셉터
 	 * */
+	
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
-		
 		try {
-			// 로그인 상태가 아닌 경우 로그인 화면으로 이동처리
-			if (request.getSession().getAttribute("loginInfo") == null) 
+			if (request.getSession().getAttribute("managerInfo") == null)
 			{
-				// 프로젝트의 Context Path 명을 반환하고 그 경로에 /login URL 요청을 보낸다.
-				// LoginController로 요청이 전달됨
-				response.sendRedirect(request.getContextPath() + "/login");
+				// 매니저 전용 기능을 URL로 타이핑으로 접근할 경우 매니저 로그인 페이지로 이동시킨다
+				response.sendRedirect(request.getContextPath() + "/login/manager");
 				return false;
 			}
 			else
@@ -41,7 +38,6 @@ public class UserInterceptor extends HandlerInterceptorAdapter {
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception {
-		// TODO Auto-generated method stub
 		super.postHandle(request, response, handler, modelAndView);
 	}
 }

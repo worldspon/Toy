@@ -14,13 +14,14 @@
     
     <div class="menu_box">
         <h2>Best Seller</h2>
-        <div class="menu">
+        <div th:each="food, idx : ${foodlist}" class="menu">
             <div class="menu_l">
                 <img src="images/beaf_buger.png" alt="">
             </div>
             <div class="menu_r">
-                <h1 class="menu_name">더블비프불고기버거!! 단품</h1>
-                <span class="menu_price">5900원</span>
+                <h1 th:text="${food.foodname}" class="menu_name"></h1>
+                <span th:text="${food.foodprice} + '원'" class="menu_price"></span>
+                <input th:id="foodprice_ + ${idx.index}" th:value="${food.foodprice}" type="hidden">
                 <div class="quantity_wrap">
                     <span class="quantity_text">수량선택</span>
                     <span class="quantity_box">1</span>
@@ -30,60 +31,6 @@
                 </div>
             </div>
         </div>
-
-        <div class="menu">
-            <div class="menu_l">
-                <img src="images/beaf_buger.png" alt="">
-            </div>
-            <div class="menu_r">
-                <h1 class="menu_name">더블비프불고기버거 단품</h1>
-                <span class="menu_price">5,900원</span>
-                <span class=""></span>
-                <div class="quantity_wrap">
-                    <span class="quantity_text">수량선택</span>
-                    <span class="quantity_box">1</span>
-                    <button class="quantity_plus quantity_btn">+</button>
-                    <button class="quantity_minus quantity_btn">-</button>
-                    <button class="add_cart">장바구니에 담기</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="menu">
-            <div class="menu_l">
-                <img src="images/beaf_buger.png" alt="">
-            </div>
-            <div class="menu_r">
-                <h1 class="menu_name">더블비프불고기버거 단품</h1>
-                <span class="menu_price">5,900원</span>
-                <div class="quantity_wrap">
-                    <span class="quantity_text">수량선택</span>
-                    <span class="quantity_box">1</span>
-                    <button class="quantity_plus quantity_btn">+</button>
-                    <button class="quantity_minus quantity_btn">-</button>
-                    <button class="add_cart">장바구니에 담기</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="menu">
-            <div class="menu_l">
-                <img src="images/beaf_buger.png" alt="">
-            </div>
-            <div class="menu_r">
-                <h1 class="menu_name">더블비프불고기버거 단품</h1>
-                <span class="menu_price">5,900원</span>
-                <div class="quantity_wrap">
-                    <span class="quantity_text">수량선택</span>
-                    <span class="quantity_box">1</span>
-                    <button class="quantity_plus quantity_btn">+</button>
-                    <button class="quantity_minus quantity_btn">-</button>
-                    <button class="add_cart">장바구니에 담기</button>
-                </div>
-            </div>
-        </div>
-
-
     </div>
     
     <div th:include="/layout/footer :: footer ('main')">

@@ -29,17 +29,16 @@ public class FooditemController {
 	
 	
 	/**
-	 * 음식 메뉴 목록 처리 서비스
+	 * 메인 홈페이지 / 음식 메뉴 목록 처리 서비스
 	 * return data ------------------------
 	 * mav						| 뷰 페이지 정보, 음식 리스트 정보
 	 * ------------------------------------
 	 */
-	@GetMapping("/test/main")
+	@GetMapping("/")
 	public ModelAndView main() throws Exception {
 		ArrayList<FooditemResponseDto> list = fooditemService.listFooditem();
 		
-		ModelAndView mav = new ModelAndView("test/main");
-		mav.addObject("message", "MAIN PAGE!");
+		ModelAndView mav = new ModelAndView("main");
 		mav.addObject("foodlist", list);
 
 		return mav;
@@ -76,6 +75,7 @@ public class FooditemController {
 		String msg = fooditemService.modifyFooditem(dto);
 		
 		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("msg", msg);
 		
 		return map;
 	}
