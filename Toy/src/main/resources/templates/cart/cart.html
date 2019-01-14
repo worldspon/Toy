@@ -50,19 +50,17 @@
                 <input type="checkbox" class="list-checkbox align-self-center" checked="true" />
                 <div class="col-sm-1"></div>
                 <div class="col-sm-2 text-center"><img src="beaf_buger.png" class="list-image" alt="burger image" ></div>
-                <div class="col-sm-4">트리플머쉬룸와퍼주니어 세트</div>
+                <div class="col-sm-4">트리플머쉬룸와퍼주니어 세트1</div>
                 <div class="col-sm-2 quantity-box">
                     <span class="list-quantity">1</span>
-                    <a href="">+</a>
-                    <a href="">-</a>
+                    <a href="javascript:;" class="quantity-plus">+</a>
+                    <a href="javascript:;" class="quantity-minus">-</a>
                 </div>
                 <div class="col-sm-2">
-                    <span class="menu-price">7,600원</span>
+                    <span class="menu-price">7600</span>
                 </div>
                 <button type="button" class="o-d-btn menu-order">주문</button>
                 <button type="button" class="o-d-btn menu-del">삭제</button>
-            </div>
-            <div class="row">
                 <hr class="list-hr" />
             </div>
 
@@ -70,19 +68,17 @@
                 <input type="checkbox" class="list-checkbox align-self-center" checked="true" />
                 <div class="col-sm-1"></div>
                 <div class="col-sm-2 text-center"><img src="beaf_buger.png" class="list-image" alt="burger image" ></div>
-                <div class="col-sm-4">트리플머쉬룸와퍼주니어 세트</div>
+                <div class="col-sm-4">트리플머쉬룸와퍼주니어 세트1</div>
                 <div class="col-sm-2 quantity-box">
                     <span class="list-quantity">1</span>
-                    <a href="">+</a>
-                    <a href="">-</a>
+                    <a href="javascript:;" class="quantity-plus">+</a>
+                    <a href="javascript:;" class="quantity-minus">-</a>
                 </div>
                 <div class="col-sm-2">
-                    <span class="menu-price">7,600원</span>
+                    <span class="menu-price">7600</span>
                 </div>
                 <button type="button" class="o-d-btn menu-order">주문</button>
                 <button type="button" class="o-d-btn menu-del">삭제</button>
-            </div>
-            <div class="row">
                 <hr class="list-hr" />
             </div>
 
@@ -90,28 +86,45 @@
                 <input type="checkbox" class="list-checkbox align-self-center" checked="true" />
                 <div class="col-sm-1"></div>
                 <div class="col-sm-2 text-center"><img src="beaf_buger.png" class="list-image" alt="burger image" ></div>
-                <div class="col-sm-4">트리플머쉬룸와퍼주니어 세트</div>
+                <div class="col-sm-4">트리플머쉬룸와퍼주니어 세트1</div>
                 <div class="col-sm-2 quantity-box">
                     <span class="list-quantity">1</span>
-                    <a href="">+</a>
-                    <a href="">-</a>
+                    <a href="javascript:;" class="quantity-plus">+</a>
+                    <a href="javascript:;" class="quantity-minus">-</a>
                 </div>
                 <div class="col-sm-2">
-                    <span class="menu-price">7,600원</span>
+                    <span class="menu-price">7600</span>
                 </div>
                 <button type="button" class="o-d-btn menu-order">주문</button>
                 <button type="button" class="o-d-btn menu-del">삭제</button>
-            </div>
-            <div class="row">
                 <hr class="list-hr" />
             </div>
+
+            <div class="row menu-list text-center">
+                <input type="checkbox" class="list-checkbox align-self-center" checked="true" />
+                <div class="col-sm-1"></div>
+                <div class="col-sm-2 text-center"><img src="beaf_buger.png" class="list-image" alt="burger image" ></div>
+                <div class="col-sm-4">트리플머쉬룸와퍼주니어 세트3</div>
+                <div class="col-sm-2 quantity-box">
+                    <span class="list-quantity">1</span>
+                    <a href="javascript:;" class="quantity-plus">+</a>
+                    <a href="javascript:;" class="quantity-minus">-</a>
+                </div>
+                <div class="col-sm-2">
+                    <span class="menu-price">7600</span>
+                </div>
+                <button type="button" class="o-d-btn menu-order">주문</button>
+                <button type="button" class="o-d-btn menu-del">삭제</button>
+                <hr class="list-hr" />
+            </div>
+
 <!---------------------------------------------------반복 끝----------------------------------------------------------->
             <div class="row total-box">
                 <div class="col-sm-6"></div>
                 <div class="col-sm-1"></div>
-                <div class="col-sm-2 total-quantity text-right">총수량 : <span>3개</span></div>
+                <div class="col-sm-2 total-quantity text-right">총수량 : <span id="total-quantity-inner">1</span></div>
                 
-                <div class="col-sm-3 text-left total-price">총금액 : <span>7,600원</span></div>
+                <div class="col-sm-3 text-left total-price">총금액 : <span id="total-price-inner">22800</span></div>
             </div>
             <div class="row">
                     <hr class="list-hr" />
@@ -121,7 +134,7 @@
 
     <footer class="container-fluid" id="ft">
         <div class="container footer-bar">
-            <button type="button" class="slide-btn">△</button>
+            <button type="button" class="slide-btn">▽</button>
             <div class="row">
                 <div class="col-sm-1"></div>
                 <div class="col-sm-3 text-center">
@@ -131,10 +144,10 @@
                 </div>
                 <div class="col-sm-3">
                     <div class="row footer-top-row">
-                        <div class="col-sm-12 total-quantity">총수량 : <span>3개</span></div>
+                        <div class="col-sm-12 total-quantity">총수량 : <span id="ft-total-quantity">3</span></div>
                     </div>
                     <div class="row">
-                        <div class="col-sm-12 total-price">총금액 : <span>7,600원</div>
+                        <div class="col-sm-12 total-price">총금액 : <span id="ft-total-price">22800</div>
                     </div>
                 </div>
                 <div class="col-sm-3">

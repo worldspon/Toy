@@ -3,6 +3,7 @@ $(document).ready(function () {
 	$('#btn_join').on('click', function () {
 		fn_login();
 	});
+
 });
 
 
