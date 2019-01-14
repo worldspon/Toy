@@ -21,19 +21,19 @@
             <div id="reg_area">
                 <h1>상품 등록</h1>
                 <div id="product_list">
-                    <div id="reg_form">
-                    	<button id="reg_btn">등록</button>
+                    <form id="reg_form" enctype="multipart/form-data" method="POST">
+                    	<input type="submit" id="reg_btn">등록</input>
                     	<div>
 	                        <h3>이미지 업로드</h3>
 	                        <input type="file" class="image_file" accept=".jpg,.jpeg,.png" id="btn-file-0">
 	                        <h3>상품명</h3>
-	                        <input type="text" class="product_name" id="txt-foodname">
+	                        <input type="text" class="product_name" id="txt-foodname" placeholder="ex)와퍼 주니어">
 	                        <h3>상품가격</h3>
-	                        <input type="text" class="product_price" id="txt-foodprice">
+	                        <input type="text" class="product_price" id="txt-foodprice" placeholder="ex)5700" maxlength="7">
 	                        <h3>상품수량</h3>
-	                        <input type="text" class="product_quantity" id="txt-foodstock">
+	                        <input type="text" class="product_quantity" id="txt-foodstock" placeholder="ex)70 최대 5자리수" maxlength="5">
                         </div>
-                    </div>
+                    </form>
                     <button id="add_div" type="button">+</button>
                 </div>
             </div>
@@ -42,6 +42,15 @@
                 <form action="javascript:del_product();"method="post" id="del_form">
                     <button id="del_btn">제거</button>
                 </form>
+                <hr>
+                <div class="del_food_list">
+                    <div th:each="food : ${foodlist}" class="del_menu_box">
+                        <input type="checkbox" name="del_checkbox" class="del_checkbox">
+                        <label th:text="${food.foodname} + ' 수량 : '+ ${food.stock} + '개' "></label>
+                        <input type="button" value="수정">
+                        <span th:text="${food.status} == 0 ? '비 판매 중' : '판매 중' " style="float:right;"></span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

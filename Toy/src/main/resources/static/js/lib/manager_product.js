@@ -5,9 +5,7 @@ var del_form = document.getElementById('del_form'); // 상품제거 아래 현�
 var del_btn = document.getElementById('del_btn'); // 상품제거 '제거' button id
 var mod_btn;
 
-
 var bur_ary =[]; // 현재 서버에 있는 상품목록을 받아올 변수
-
 
 /*----------------------------------------------------------------------------
 //↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
@@ -55,9 +53,6 @@ var bur_ary = [buger1,buger2,buger3,buger4,buger5];
 
 
 $(document).ready(function () {
-    // 서버의 상품목록을 받아 화면에 그리는 함수
-    view_product_list(bur_ary);
-
     // + button click event
     add_btn.addEventListener('click', function() {
         // 상품등록 박스를 추가하는 함수
@@ -75,49 +70,59 @@ $(document).ready(function () {
         else
         {
             isRun = true;
-
-            //@see 각 input tag는 .image_flie / .product_name / .product_price .product_quantity Class로 지정돼있음
-            
-            // reg_form(div) > div > input type = "file"
-            var files_value = $(reg_form).children().find('input[type=file]').val();
-            var start_idx = [];
-            var files_name = [];
-
-            for (var i = 0; i < files_value.length; i += 1)
+            if (window.confirm('작성하신 상품을 등록하시겠습니까?'))
             {
-                // fakepath를 제거한 파일명의 시작 인덱스 EX) c:\fakepath\치즈버거.png -> '치'의 index 위치
-                start_idx = files_value[i].lastIndexOf('\\');
+                // 이미지 파일 정보를 담는 배열 변수
+                var files = [];
+                files = $('.image_file');
 
-                // c:\fakepath를 제거한 순수 파일명
-                files_name = files_value[i].substring(start_idx, files_value[i].length);
+                var start_idx = [],     // 파일 명의 시작 인덱스 변수
+                    files_name = [];    // 순수 파일 명을 담을 변수 
+
+                var foodname = [],  // 음식 메뉴 이름 정보
+                    foodprice = [], // 음식 메뉴 가격 정보
+                    foodstock = []; // 음식 메뉴 수량 정보
+
+                foodname = $('.product_name').val();
+                foodprice = $('.product_price').val();
+                foodstock = $('.product_quantity').val();
+
+                /*
+                검증할 데이터 정보들
+                var validate_data = [
+                    foodname, 
+                    foodprice, 
+                    foodstock
+                ];
+                */
+
+                // 서버에 전송할 데이터
+                var data = {
+                    'foodimgfile'   : files,
+                    'foodname'      : foodname,
+                    'foodprice'     : foodprice,
+                    'foodstock'     : foodstock
+                };
+                
+
+                /*
+                데이터 검증 처리 미완성
+                for (var i = 0;  i < validate_data.length; i += 1)
+                {
+                    switch (fn_validation(validate_data[i]))
+                    {
+                        case -1: 
+                            window.alert('검증할 데이터가 존재하지 않습니다.');
+                            break;
+                        case 0: 
+                            window.alert('모든 입력 내용을 작성해주시기 바랍니다.');
+                            break;
+                        default:
+                            break; 
+                    }
+                }
+                */
             }
-            for (var j = 0; j < files_name.length; j += 1)
-            {
-                console.log(files_name[i]);
-            }
-
-            var files = []; // 이미지 파일을 담는 태그의 배열 변수
-            var foodname = $('#txt-foodname').val();
-            var foodprice = $('#txt-foodprice').val();
-            var foodstock = $('#txt-foodstock').val();
-            var data = {
-                'foodname': foodname,
-                'foodprice': foodprice,
-                'foodstock': foodstock
-            };
-
-            $.ajax({
-                type        : 'POST',
-                url         : '',
-                contentType : 'application/json; charset=utf-8',
-                dataType    : 'json',
-                data        : data
-            }).done(function () {
-
-            }).fail(function (err) {
-                window.alert(JSON.stringify(err));
-                console.log(err);
-            });
         }
     });
     
@@ -197,6 +202,7 @@ function plus_reg_box() {
     let pd_input = document.createElement('input');
     pd_input.type = "text";
     pd_input.className = "product_name";
+    pd_input.setAttribute('placeholder', 'ex)와퍼 주니어');
 
     let price_title = document.createElement('h3');
     let price_title_text = document.createTextNode('상품가격');
@@ -205,6 +211,7 @@ function plus_reg_box() {
     let price_input = document.createElement('input');
     price_input.type = "text";
     price_input.className = "product_price";
+    price_input.setAttribute('placeholder', 'ex)5700');
 
     let quantity_title = document.createElement('h3');
     let quantity_title_text = document.createTextNode('상품수량');
@@ -213,6 +220,7 @@ function plus_reg_box() {
     let quantity_input = document.createElement('input');
     quantity_input.type = "text";
     quantity_input.className = "product_quantity";
+    quantity_input.setAttribute('placeholder', 'ex)70 최대 5자리수');
 
     form_div.appendChild(img_title);
     form_div.appendChild(img_input);
@@ -240,6 +248,7 @@ function plus_reg_box() {
  * @param val 서버에서 받아온 배열
  * @date 2019.01.10
 */
+/*
 function view_product_list(val){
     let index = val.length;
     for(let i=0; i<index; i++){
@@ -255,7 +264,7 @@ function view_product_list(val){
     }
     mod_btn = document.getElementsByClassName("mod_btn");
 };
-
+*/
 
 
 
@@ -276,3 +285,31 @@ function del_product(){
     }
     location.reload();
 };
+
+/**
+ * @Authur Johnny
+ * @role input 태그들의 데이터 유효성 검사
+ * @TODO 유효성 검사할 태그 데이터를 배열로써 인자에 전달해야함
+ * @return -1: 검증할 데이터가 없음, 0: 데이터 요소 검증이 되지 않음 (데이터가 없음), 1: 데이터 요소의 검증이 완료됨
+ * @date 2019.01.14
+*/
+function fn_validation(arr) {
+    // 검증할 데이터가 존재하는지 판단
+    if (arr)
+    {
+        for (var i = 0; i < arr.length; i += 1)
+        {
+            // 검증할 데이터가 작성되지 않았다면 0을 반환
+            if (arr[i].length < 1)
+            {
+                return 0;
+            }
+        }
+
+        return 1;   // 데이터 요소 검증 완료
+    }
+    else
+    {
+        return -1;
+    }
+}

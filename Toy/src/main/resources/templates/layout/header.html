@@ -16,6 +16,8 @@
     <link th:if="${template} == 'login' " rel="stylesheet" href="/css/lib/login.css">
     <!-- 매니저 관련 모든 페이지 css -->
     <link th:if="${template} == 'manager' " rel="stylesheet" href="/css/lib/manager.css">
+    <!-- 장바구니 페이지 css -->
+    <link th:if="${template} == 'cart' " rel="stylesheet" href="/css/lib/cart.css">
 </head>
 <body>
 	<!-- 
@@ -44,7 +46,7 @@
                     	<a th:if="${session.loginInfo} != null" href="#" id="a-logout">로그아웃</a>
                    	</li>
                    	<li th:if="${session.managerInfo} == null">
-                    	<a href="#">
+                    	<a href="#" id="a-cart">
                     		<img src="../img/site/head_cart.png" alt="">장바구니
                    		</a>
 					</li> 

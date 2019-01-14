@@ -1,7 +1,5 @@
 package com.worldspon.toy.dto.fooditem;
 
-import java.util.List;
-
 import com.worldspon.toy.entity.Foodimgfile;
 import com.worldspon.toy.entity.Fooditem;
 
@@ -30,7 +28,7 @@ public class FooditemResponseDto {
 	//private Long imgid;
 	private int status;
 	private int stock;
-	private List<Foodimgfile> foodimgfile;
+	private Foodimgfile foodimgfile;
 	
 	public Fooditem toEntity() {
 		return Fooditem.builder()

@@ -1,5 +1,6 @@
 package com.worldspon.toy.restcontroller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,7 +11,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.worldspon.toy.dto.fooditem.FooditemResponseDto;
 import com.worldspon.toy.dto.managerInfo.ManagerinfoRequestDto;
+import com.worldspon.toy.entity.Fooditem;
+import com.worldspon.toy.service.FooditemService;
 import com.worldspon.toy.service.ManagerService;
 
 import lombok.AllArgsConstructor;
@@ -20,14 +24,26 @@ import lombok.AllArgsConstructor;
 public class ManagerController {
 
 	/**
-	 * JoinService 주입
+	 * ManagerService 주입
+	 * FooditemService 주입
 	 * lombok 라이브러리의 AllArgsConstructor 어노테이션으로 생성자 자동 처리
 	 */
 	private ManagerService managerService;
+	private FooditemService fooditemService;
 	
 	
-	
-	
+	/**
+	 * 매니저 로그인 페이지 리다이렉션 메소드
+	 * return data ------------------------
+	 * mav					| 매니저 로그인 페이지 요청 리다이렉션 정보
+	 * ------------------------------------
+	 * */
+	@GetMapping("/manager")
+	public ModelAndView openManagerHome() throws Exception {
+		ModelAndView mav = new ModelAndView("redirect:manager/login");
+		
+		return mav;
+	}
 	
 	/**
 	 * 매니저 로그인 페이지 이동 메소드
@@ -86,10 +102,42 @@ public class ManagerController {
 	 */ 
 	@GetMapping("/manager/food_product")
 	public ModelAndView openManagerProduct() throws Exception {
+		ArrayList<FooditemResponseDto> list = fooditemService.listFooditem();
+		
 		ModelAndView mav = new ModelAndView("manager/manager_product");
+		mav.addObject("foodlist", list);
 		
 		return mav;
 	}
+	
+	/**
+	 * 매니저 상품 등록 처리 메소드
+	 * return data ------------------------
+	 * mav						| 상품 등록 뷰 페이지 이동 정보
+	 * ------------------------------------
+	 */
+	@PostMapping("/manager/food_product")
+	public HashMap<String, Object> managerProduct(@RequestBody Fooditem fooditem) throws Exception {
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		
+		System.out.println(fooditem.getFoodname());
+		
+		return map;
+	}
+	
+	/**
+	 * 매니저 상품 수정 페이지 이동 메소드
+	 * return data ------------------------
+	 * mav						| 상품 등록 뷰 페이지 이동 정보
+	 * ------------------------------------
+	 */
+	@GetMapping("/manager/food_mod")
+	public ModelAndView openManagerMod() throws Exception {
+		ModelAndView mav = new ModelAndView("manager/manager_mod");
+		
+		return mav;
+	}
+	
 	
 	/**
 	 * 매니저 상품 판매 페이지 이동 메소드

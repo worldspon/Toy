@@ -2,7 +2,7 @@
 .admin_box ul li {float: left;}
 .admin_box ul li:not(:first-child) {margin-left: 25px;}
 
-#wrap {width:300px; margin:0 auto;}
+#wrap {width:600px; margin:0 auto;}
 #product_area {width: 100%;}
 #reg_area {margin-bottom: 30px;}
 #reg_btn {margin-bottom: 30px;}

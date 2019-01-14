@@ -2,12 +2,9 @@ package com.worldspon.toy.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
 import lombok.AccessLevel;
@@ -38,8 +35,7 @@ public class Foodimgfile extends BaseTimeEntity {
 	private String orgfilename;
 	@Column(nullable = false)
 	private Long mid;
-	@OneToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="fid")
+	@OneToOne
 	private Fooditem fooditem;
 	
 	@Builder
@@ -49,7 +45,4 @@ public class Foodimgfile extends BaseTimeEntity {
 		this.mid = mid;
 	}
 	
-	public void updateFooditem(Fooditem fooditem) {
-		this.fooditem = fooditem;
-	}
 }
