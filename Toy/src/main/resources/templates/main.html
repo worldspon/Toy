@@ -16,7 +16,7 @@
         <h2>Best Seller</h2>
         <div th:each="food, idx : ${foodlist}" class="menu">
             <div class="menu_l">
-                <img src="images/beaf_buger.png" alt="">
+                <img th:src="@{'/img/fooditem/' + ${food.foodimgfile.imgfilename} }" alt="">
             </div>
             <div class="menu_r">
                 <h1 th:text="${food.foodname}" class="menu_name"></h1>

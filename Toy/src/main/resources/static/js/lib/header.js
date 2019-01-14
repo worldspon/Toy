@@ -10,7 +10,12 @@ $(document).ready(function() {
 	// 로그아웃 클릭 이벤트
     $('#a-logout').on('click', function () {
         fn_logout('user');
-    });
+	});
+	
+	// 장바구니 클릭 이벤트
+	$('#a-cart').on('click', function () {
+		fn_move('cart');
+	});
     
     // 매니저 전용 상품 등록 이동 클릭 이벤트
     $('#a-foodproduct').on('click', function () {
@@ -59,8 +64,7 @@ function fn_logout(accounttype) {
 	{
 		url = '/manager/logout';
 	}
-	console.log(accounttype);
-	console.log(url);
+
     $.ajax({
         type        : 'GET',
         url         : url,

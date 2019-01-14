@@ -1,4 +1,13 @@
 $(document).ready(function () {
+	// 엔터 입력 이벤트
+	$(document).keyup(function (e) {
+		// 엔터 입력 시 로그인 함수를 호출함
+		if(e.keyCode == 13)
+		{
+			fn_login();
+		}
+	});
+
 	// 로그인 버튼 클릭 이벤트
 	$('#btn_join').on('click', function () {
 		fn_login();

@@ -26,10 +26,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
 		addUserPattern.add("/test/**");
 		
 		List<String> excludeUserPattern = new ArrayList<String>();	// 인터셉터 예외 패턴
-		excludeUserPattern.add("/join/**");
-		excludeUserPattern.add("/login/**");
-		excludeUserPattern.add("/logout/**");
-		excludeUserPattern.add("/manager/**");
+		excludeUserPattern.add("/join/**");		// 회원가입 서비스
+		excludeUserPattern.add("/login/**");	// 로그인 서비스
+		excludeUserPattern.add("/logout/**");	// 로그아웃 서비스
+		excludeUserPattern.add("/manager/**");	// 매니저 전용 서비스
+		excludeUserPattern.add("/cart/**");		// 장바구니 서비스
 		
 		registry.addInterceptor(userinterceptor)
 			.addPathPatterns(addUserPattern)

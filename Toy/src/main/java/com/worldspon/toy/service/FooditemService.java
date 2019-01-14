@@ -34,8 +34,7 @@ public class FooditemService {
 	 */
 	public ArrayList<FooditemResponseDto> listFooditem() throws Exception {
 		// 모든 음식 메뉴를 엔티티 클래스로 받아옴
-		// List<Fooditem> entitylist = fooditemRepo.findAll();
-		List<Fooditem> entitylist = fooditemRepo.findfood();
+		List<Fooditem> entitylist = fooditemRepo.findAll();
 		
 		ArrayList<FooditemResponseDto> foodlist = new ArrayList<FooditemResponseDto>();
 

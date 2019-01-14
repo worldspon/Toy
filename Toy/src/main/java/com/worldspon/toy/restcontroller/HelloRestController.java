@@ -10,7 +10,12 @@ public class HelloRestController {
 	public String hello() throws Exception {
 		return "Hello world!";
 	}
+	
+	
 	/*
+	 * main.html에 대한 요청은 FooditemController에서 확인해주시기 바랍니다.
+	 * 
+	 * 
 	@GetMapping("/")
 	public ModelAndView main() throws Exception {
 		ModelAndView mav = new ModelAndView("main");

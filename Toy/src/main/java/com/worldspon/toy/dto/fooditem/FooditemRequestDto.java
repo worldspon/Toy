@@ -29,7 +29,7 @@ public class FooditemRequestDto {
 	//private Long imgid;
 	private int status;
 	private int stock;
-	private List<Foodimgfile> foodimgfile;
+	private Foodimgfile foodimgfile;
 	
 	public Fooditem toEntity() {
 		return Fooditem.builder()
