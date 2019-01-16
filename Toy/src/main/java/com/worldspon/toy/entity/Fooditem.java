@@ -56,7 +56,8 @@ public class Fooditem extends BaseTimeEntity {
 	private int stock;
 	
 	@Builder
-	public Fooditem(String foodname, int foodprice, Foodimgfile foodimgfile, int status, int stock) {
+	public Fooditem(Long fid, String foodname, int foodprice, Foodimgfile foodimgfile, int status, int stock) {
+		this.fid = fid;
 		this.foodname = foodname;
 		this.foodprice = foodprice;
 		if (foodimgfile != null)
@@ -67,10 +68,4 @@ public class Fooditem extends BaseTimeEntity {
 		this.status = status;
 		this.stock = stock;
 	}
-	/*
-	public void addFooditemfile(Foodimgfile foodimgfile) {
-		this.foodimgfile.add(foodimgfile);
-		foodimgfile.updateFooditem(this);
-	}
-	*/
 }

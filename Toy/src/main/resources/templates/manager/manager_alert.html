@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns = "http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+
+<input th:value="${msg }" type="hidden" id="hid-msg">
+
+
+<div th:include="/layout/footer :: footer (manager_product)">
+
+</div>
+
+<script>
+	$(document).ready(function () {
+		fn_alert();
+	});
+	
+	function fn_alert() {
+		var msg = $('#hid-msg').val();
+		
+		window.alert(msg);
+		
+		window.location.href = '/manager/food_product';
+	} 
+</script>
+</body>
+</html>

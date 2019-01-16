@@ -69,71 +69,74 @@ var check_flag = function(){
     }
 }; // flag 변수 확인함수, 모든 flag에 1이 저장되면 final_flag에 1 저장
 
-/**
- * 
- * @author Johnny
- * @Params []
- * @date 2019-01-09
- * @descript 아이디 입력 시 최초 서버로 아이디 중복 조회 시도
- */
-id.addEventListener('focusout', function(){
-    fn_checkId();
-    // val_id();
-});
 
 
-pw1.addEventListener('focusout',function(){
-    val_pw1();
-});
 
-
-pw2.addEventListener('focusout', function(){
-    val_pw2();
-});
-
-username.addEventListener('focusout', function(){
-    val_name();
-});
-
-email.addEventListener('focusout', function(){
-    val_email();
-});
-
-$(document).on("click", "#btn_join", function () {
-    final_check();
-    var data = {
-        "userid": $.trim($("#id").val()),
-        "userpwd": $.trim($("#pw2").val()),
-        "username": $.trim($("#name").val()),
-        "useremail": $.trim($("#email").val()) 
-    };
-
-    if (final_flag === 1) 
-    {
-        console.log("C");
-        $.ajax({
-            type: 'POST',
-            url: '/join',
-            contentType: 'application/json; charset=utf-8',
-            dataType: 'json',
-            data: JSON.stringify(data)
-        }).done(function (result) {
-            window.alert(result.msg);
-            window.location.href = '/';
-        }).fail(function (err) {
-            window.alert(JSON.stringify(err));
-            console.log(err);
-        });
-    }
-    else
-    {
-        window.alert("유효성 검사를 모두 완료해주세요.");
-    }
-});
 
 /**
+ * @Authur Johnny
+ * @role 화면 내 메뉴들의 이벤트 정의 목록
+ * @date 2019.01.16
+*/
+$(document).ready(function () {
+    id.addEventListener('focusout', function(){
+        if (fn_isRun(false))
+        {
+            fn_checkId();
+        }
+    });
+    
+    
+    pw1.addEventListener('focusout',function(){
+        if (fn_isRun(false))
+        {
+            val_pw1();
+        }
+    });
+    
+    
+    pw2.addEventListener('focusout', function(){
+        if (fn_isRun(false))
+        {
+            val_pw2();
+        }
+    });
+    
+    username.addEventListener('focusout', function(){
+        if (fn_isRun(false))
+        {
+            val_name();
+        }
+    });
+    
+    email.addEventListener('focusout', function(){
+        if (fn_isRun(false))
+        {
+            val_email();
+        }
+    });
+    
+    $(document).on("click", "#btn_join", function () {
+        if (fn_isRun(false))
+        {
+            final_check();
+
+            if (final_flag === 1) 
+            {
+                fn_join();
+            }
+            else
+            {
+                window.alert("유효성 검사를 모두 완료해주세요.");
+            }
+        }
+    });
+});
+
+
+/**
  * 
- * @author Johnny
+ * @author JJH
  * @Params [chkval]
  * number chkval = 0 or n | 중복된 아이디 판단 결과 정보
  * @date 2019-01-09
@@ -340,6 +343,40 @@ function fn_checkId() {
         val_id(Number(result.chkval));
     }).fail(function (err) {
         alert(JSON.stringify(err));
+        console.log(err);
+    });
+}
+
+
+
+
+/**
+ * 
+ * @author Johnny
+ * @Params [obj]
+ * result = { checkvaal: 0 or n } | 중복된 아이디 판단 결과 정보
+ * @date 2019-01-16
+ * @descript 회원가입 처리 함수
+ */
+function fn_join() {
+    var data = {
+        "userid": $.trim($("#id").val()),
+        "userpwd": $.trim($("#pw2").val()),
+        "username": $.trim($("#name").val()),
+        "useremail": $.trim($("#email").val()) 
+    };
+
+    $.ajax({
+        type: 'POST',
+        url: '/join',
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        data: JSON.stringify(data)
+    }).done(function (result) {
+        window.alert(result.msg);
+        window.location.href = '/';
+    }).fail(function (err) {
+        window.alert(JSON.stringify(err));
         console.log(err);
     });
 }

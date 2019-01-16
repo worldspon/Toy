@@ -21,17 +21,19 @@
             <div id="reg_area">
                 <h1>상품 등록</h1>
                 <div id="product_list">
-                    <form id="reg_form" enctype="multipart/form-data" method="POST">
-                    	<input type="submit" id="reg_btn">등록</input>
-                    	<div>
+                    <form id="reg_form" enctype="multipart/form-data" method="POST" action="/manager/food_product">
+                    	<input type="button" id="reg_btn" value="등록">
+                    	<div class="food_form">
 	                        <h3>이미지 업로드</h3>
-	                        <input type="file" class="image_file" accept=".jpg,.jpeg,.png" id="btn-file-0">
+	                        <input type="file" class="image_file" accept=".jpg,.jpeg,.png" name="imgfile[0]" required>
 	                        <h3>상품명</h3>
-	                        <input type="text" class="product_name" id="txt-foodname" placeholder="ex)와퍼 주니어">
+	                        <input type="text" class="product_name" name="foodlist[0].foodname" placeholder="ex)와퍼 주니어" required>
 	                        <h3>상품가격</h3>
-	                        <input type="text" class="product_price" id="txt-foodprice" placeholder="ex)5700" maxlength="7">
+	                        <input type="text" class="product_price" name="foodlist[0].foodprice" placeholder="ex)5700" maxlength="7" required>
 	                        <h3>상품수량</h3>
-	                        <input type="text" class="product_quantity" id="txt-foodstock" placeholder="ex)70 최대 5자리수" maxlength="5">
+                            <input type="text" class="product_quantity" name="foodlist[0].stock" placeholder="ex)70 최대 5자리수" maxlength="5" required>
+                            <!-- 상품 판매 처리 디폴트 값 -->
+                            <input type="hidden" value="0" name="status">
                         </div>
                     </form>
                     <button id="add_div" type="button">+</button>
@@ -39,16 +41,15 @@
             </div>
             <div id="del_area">
                 <h1>상품제거</h1>
-                <form action="javascript:del_product();"method="post" id="del_form">
-                    <button id="del_btn">제거</button>
-                </form>
+                <button id="del_btn">제거</button>
                 <hr>
                 <div class="del_food_list">
-                    <div th:each="food : ${foodlist}" class="del_menu_box">
+                    <div th:each="food : ${foodlist }" class="del_menu_box">
                         <input type="checkbox" name="del_checkbox" class="del_checkbox">
-                        <label th:text="${food.foodname} + ' 수량 : '+ ${food.stock} + '개' "></label>
-                        <input type="button" value="수정">
-                        <span th:text="${food.status} == 0 ? '비 판매 중' : '판매 중' " style="float:right;"></span>
+                        <input th:value="${food.fid }" type="hidden" class="del_food_fid">
+                        <label th:text="${food.foodname } + ' 수량 : '+ ${food.stock } + '개' "></label>
+                        <input type="button" value="수정" class="mod_btn">
+                        <span th:text="${food.status } == 0 ? '비 판매 중' : '판매 중' " style="float:right;"></span>
                     </div>
                 </div>
             </div>

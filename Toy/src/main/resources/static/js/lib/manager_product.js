@@ -1,150 +1,49 @@
-var add_btn = document.getElementById("add_div"); // 상품등록 + button id
 var reg_form = document.getElementById('reg_form'); // 상품등록 아래 innerHTML을 위한 form id
-var reg_btn = document.getElementById('reg_btn'); // 상품등록 '등록' button id
-var del_form = document.getElementById('del_form'); // 상품제거 아래 현재 상품 목록 innerHTML을 위한 form id
-var del_btn = document.getElementById('del_btn'); // 상품제거 '제거' button id
-var mod_btn;
+var whitereg = /\s/;
 
-var bur_ary =[]; // 현재 서버에 있는 상품목록을 받아올 변수
 
-/*----------------------------------------------------------------------------
-//↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-// view_product_list() 함수 테스트 코드, 확인 후 삭제요망
+
+/**
+ * @Authur Johnny
+ * @role 화면 내 메뉴들의 이벤트 정의 목록
+ * @date 2019.01.16
 */
-
-var buger1 = {
-    name:'불고기',
-    price:5900,
-    quantity:5,
-    is_sell:true
-};
-var buger2 = {
-    name:'물고기',
-    price:5900,
-    quantity:3,
-    is_sell:true
-};
-var buger3 = {
-    name:'흙고기',
-    price:5900,
-    quantity:15,
-    is_sell:false
-};
-var buger4 = {
-    name:'바람고기',
-    price:5900,
-    quantity:35,
-    is_sell:true
-};
-var buger5 = {
-    name:'번개고기',
-    price:5900,
-    quantity:0,
-    is_sell:false
-};
-
-var bur_ary = [buger1,buger2,buger3,buger4,buger5];
-
-/*
-//↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
-----------------------------------------------------------------------------//
-*/
-
-
-
 $(document).ready(function () {
-    // + button click event
-    add_btn.addEventListener('click', function() {
-        // 상품등록 박스를 추가하는 함수
-        plus_reg_box();
+    // 음식 항목 등록 폼 추가 클릭 이벤트
+    $(document).on('click', '#add_div', function () {
+        if (fn_isRun(false))
+        {
+            // 상품등록 박스를 추가하는 함수
+            fn_plus_reg_box();
+        }
     });
 
+    // 음식 항목 등록 클릭 이벤트
     $(document).on('click', '#reg_btn', function () {
-        var isRun = false;  // 바인딩 차단 판단값
-        
-        // 여러번의 클릭 바인딩 차단
-        if(isRun)
+        if (fn_isRun(false))
         {
-            return false;
-        }
-        else
-        {
-            isRun = true;
-            if (window.confirm('작성하신 상품을 등록하시겠습니까?'))
-            {
-                // 이미지 파일 정보를 담는 배열 변수
-                var files = [];
-                files = $('.image_file');
-
-                var start_idx = [],     // 파일 명의 시작 인덱스 변수
-                    files_name = [];    // 순수 파일 명을 담을 변수 
-
-                var foodname = [],  // 음식 메뉴 이름 정보
-                    foodprice = [], // 음식 메뉴 가격 정보
-                    foodstock = []; // 음식 메뉴 수량 정보
-
-                foodname = $('.product_name').val();
-                foodprice = $('.product_price').val();
-                foodstock = $('.product_quantity').val();
-
-                /*
-                검증할 데이터 정보들
-                var validate_data = [
-                    foodname, 
-                    foodprice, 
-                    foodstock
-                ];
-                */
-
-                // 서버에 전송할 데이터
-                var data = {
-                    'foodimgfile'   : files,
-                    'foodname'      : foodname,
-                    'foodprice'     : foodprice,
-                    'foodstock'     : foodstock
-                };
-                
-
-                /*
-                데이터 검증 처리 미완성
-                for (var i = 0;  i < validate_data.length; i += 1)
-                {
-                    switch (fn_validation(validate_data[i]))
-                    {
-                        case -1: 
-                            window.alert('검증할 데이터가 존재하지 않습니다.');
-                            break;
-                        case 0: 
-                            window.alert('모든 입력 내용을 작성해주시기 바랍니다.');
-                            break;
-                        default:
-                            break; 
-                    }
-                }
-                */
-            }
+            fn_add_product();
         }
     });
-    
-    
-    
-    del_btn.addEventListener('click',function(){
-        //@TODO del_product() 함수 활용하여 상품 제거코드 구현
+
+    // 음식 항목 삭제 클릭 이벤트
+    $(document).on('click', '#del_btn', function () {
+        if (fn_isRun(false))
+        {
+            // 음식 항목 삭제 함수
+            fn_del_product();
+        }
     });
-    
-    
-    
-    
-    //@TODO 수정버튼 클릭시 해당 index에 해당하는 객체를 수정페이지로 이동시키는 코드 구현
-    $(mod_btn).on('click',function(){
-        console.log($(mod_btn).index(this));
-        window.location.href = 'manager_mod.html';
-    });    
+
+    // 음식 항목 수정 클릭 이벤트
+    $(document).on('click', '.mod_btn', function () {
+        if (fn_isRun(false))
+        {
+            // 음식 항목 수정 함수
+            fn_mod_product(this);
+        }
+    });
 });
-
-
-
-
 
 
 
@@ -156,34 +55,14 @@ $(document).ready(function () {
  * @see 현재 3개로 제한
  * @date 2019.01.10
 */
-function plus_reg_box() {
-    /*
+function fn_plus_reg_box() {
+    let formidx = $('#reg_form > div').length;
+
     let img_file = document.getElementsByClassName('image_file');
-    let file_idx = $('.image_file').length;   // 상품 등록 태그들의 인덱스 구하기
 
-    var file = $('.image_file').val();
-    console.log(file);
-
-    if(img_file.length<3){
-        reg_form.innerHTML += '<div>'
-            + '<h3>이미지 업로드</h3>'
-            + '<input type="file" class="image_file" accept=".jpg,.jpeg,.png" id="btn-file-' + (file_idx) + '">'
-            + '<h3>상품명</h3>'
-            + '<input type="text" class="product_name">'
-            + '<h3>상품가격</h3>' 
-            + '<input type="text" class="product_price">'
-            + '<h3>상품수량</h3>'
-            + '<input type="text" class="product_quantity">'
-            + '</div>';
-    }
-    */
-    let img_file = document.getElementsByClassName('image_file');
-    // let file_idx = $('.image_file').length;   // 상품 등록 태그들의 인덱스 구하기
-
-    // var file = $('.image_file').val();
-    // console.log(file);
 
     let form_div = document.createElement('div');
+    form_div.className = 'food_form';
 
     let img_title = document.createElement('h3');
     let img_title_text = document.createTextNode('이미지 업로드');
@@ -192,7 +71,10 @@ function plus_reg_box() {
     let img_input = document.createElement('input');
     img_input.type = "file";
     img_input.className = "image_file";
+    img_input.name = 'imgfile[' + formidx + ']';
     img_input.accept = ".jpg, .jpeg, .png";
+    img_input.setAttribute('required', 'required');
+    
     //img_input.id = "btn-file-"+(file_idx);
 
     let pd_title = document.createElement('h3');
@@ -202,7 +84,10 @@ function plus_reg_box() {
     let pd_input = document.createElement('input');
     pd_input.type = "text";
     pd_input.className = "product_name";
+    pd_input.name = 'foodlist[' + formidx + '].foodname';
     pd_input.setAttribute('placeholder', 'ex)와퍼 주니어');
+    pd_input.setAttribute('required', 'required');
+    
 
     let price_title = document.createElement('h3');
     let price_title_text = document.createTextNode('상품가격');
@@ -211,7 +96,11 @@ function plus_reg_box() {
     let price_input = document.createElement('input');
     price_input.type = "text";
     price_input.className = "product_price";
+    price_input.name = 'foodlist[' + formidx + '].foodprice';
     price_input.setAttribute('placeholder', 'ex)5700');
+    price_input.setAttribute('maxlength', '7');
+    price_input.setAttribute('required', 'required');
+    
 
     let quantity_title = document.createElement('h3');
     let quantity_title_text = document.createTextNode('상품수량');
@@ -220,7 +109,11 @@ function plus_reg_box() {
     let quantity_input = document.createElement('input');
     quantity_input.type = "text";
     quantity_input.className = "product_quantity";
+    quantity_input.name = 'foodlist[' + formidx + '].stock';
     quantity_input.setAttribute('placeholder', 'ex)70 최대 5자리수');
+    quantity_input.setAttribute('maxlength', '5');
+    quantity_input.setAttribute('required', 'required');
+    
 
     form_div.appendChild(img_title);
     form_div.appendChild(img_input);
@@ -234,82 +127,114 @@ function plus_reg_box() {
     if(img_file.length<3){
         reg_form.appendChild(form_div);
     }
-};
+}
 
 
 
-
-
-
-
-/**
- * @Authur JJH
- * @role 서버에서 받아온 상품 목록을 상품제거 form 아래에 '이름' '상품등록여부' 순으로 나열
- * @param val 서버에서 받아온 배열
- * @date 2019.01.10
-*/
-/*
-function view_product_list(val){
-    let index = val.length;
-    for(let i=0; i<index; i++){
-        
-        let sell_val=''
-        
-        if(val[i].is_sell==true){
-            sell_val="판매등록"
-        } else {
-            sell_val="판매 미등록"
-        }
-        del_form.innerHTML += '<br/><input type="checkbox" name="del_checkbox" class="del_checkbox"><label class="">'+val[i].name+'\t수량 : '+val[i].quantity+'\t<button type="button" class="mod_btn">수정</button><span style="float:right;">'+sell_val+'</span></label>';
-    }
-    mod_btn = document.getElementsByClassName("mod_btn");
-};
-*/
-
-
-
-
-/**
- * @Authur JJH
- * @role 상품목록 중 checked 된 상품을 골라 서버와 통신하여 제거하는 함수
- * @TODO console.log() 삭제 후 서버통신 및 삭제코드 구현
- * @see del_checkbox는 view_product_list() 함수 구동시 생성되는 checkbox의 class name
- * @date 2019.01.10
-*/
-function del_product(){
-    let del_checkbox_name = document.getElementsByClassName('del_checkbox');
-    for(let i=0; i<bur_ary.length; i++){
-        if(del_checkbox_name[i].checked==true){
-            console.log(bur_ary[i]);
-        }
-    }
-    location.reload();
-};
 
 /**
  * @Authur Johnny
- * @role input 태그들의 데이터 유효성 검사
- * @TODO 유효성 검사할 태그 데이터를 배열로써 인자에 전달해야함
- * @return -1: 검증할 데이터가 없음, 0: 데이터 요소 검증이 되지 않음 (데이터가 없음), 1: 데이터 요소의 검증이 완료됨
+ * @role 상품 등록 처리 함수
+ * @date 2019.01.16
+*/
+function fn_add_product() {
+    // 이미지 파일 정보를 담는 배열 변수
+    var file_arr = [];
+
+    var foodname_arr = [],  // 음식 메뉴 이름 정보
+        foodprice_arr = [], // 음식 메뉴 가격 정보
+        foodstock_arr = []; // 음식 메뉴 수량 정보
+
+    // 검증할 데이터들 배열에 채워넣기
+    $('.food_form').each(function (i) {
+        // div (.food_form) > elements
+        file_arr.push($(this).find('.image_file').val());
+        foodname_arr.push($(this).find('.product_name').val());
+        foodprice_arr.push($(this).find('.product_price').val());
+        foodstock_arr.push($(this).find('.product_quantity').val());
+    });
+
+
+    // 각 입력 항목들 데이터 검증
+    if (fn_validation(file_arr) && fn_validation(foodname_arr) && fn_validation(foodprice_arr) && fn_validation(foodstock_arr))
+    {
+        if (window.confirm('작성하신 상품을 등록하시겠습니까?'))
+        {
+            document.forms[0].submit();
+        }
+    }
+}
+
+
+
+
+/**
+ * @Authur JJH
+ * @role 상품 목록 중 checked 된 상품을 골라 서버와 통신하여 제거하는 함수
+ * @date 2019.01.10
+*/
+function fn_del_product(){
+    var del_checkbox = $('.del_checkbox'); // 모든 체크박스 객체
+    var checked_box = [], // 체크된 체크박스 객체
+        fooditem_id = []; // 체크된 음식 항목의 아이디
+
+    var data = {}; // 서버로 전달하는 data
+
+    // 체크된 체크박스 찾기
+    for (var i = 0; i < del_checkbox.length; i++) 
+    {
+        if ($(del_checkbox[i]).prop('checked'))
+        {
+            checked_box.push(del_checkbox[i]);
+        }
+    }
+
+    // 체크된 항목의 id 찾기
+    $(checked_box).each(function (index) {
+        // input='checkbox' > div (부모) > input='hidden'
+        fooditem_id.push($(this).parent().find('.del_food_fid').val());
+    });
+
+    if (fooditem_id && fooditem_id.length > 0)
+    {
+        data.fid = fooditem_id; // data객체에 fid 속성 정의
+
+        $.ajax({
+            url             : '/manager/food_delete',
+            type            : 'POST',
+            contentType     : 'application/json; charset=utf-8',
+            dataType        : 'json',
+            data            : JSON.stringify(data)
+        }).done(function (obj) {
+            // obj 삭제 처리 결과 정보 [0: 삭제 처리 성공, 1: 삭제 처리 중 문제 발생]
+            if (obj === 0)
+            {
+                window.alert('선택한 항목이 삭제되었습니다.');
+                window.location.reload();
+            }
+            else
+            {
+                window.alert('처리 중 에러가 발생하였습니다.');
+                window.location.reload();
+            }
+        }).fail(function (err) {
+            window.alert(JSON.stringify(err));
+            console.log(err);
+        });
+    }
+}
+
+
+
+
+/**
+ * @Authur Johnny
+ * @role 상품 수정 페이지 이동 함수
  * @date 2019.01.14
 */
-function fn_validation(arr) {
-    // 검증할 데이터가 존재하는지 판단
-    if (arr)
-    {
-        for (var i = 0; i < arr.length; i += 1)
-        {
-            // 검증할 데이터가 작성되지 않았다면 0을 반환
-            if (arr[i].length < 1)
-            {
-                return 0;
-            }
-        }
+function fn_mod_product(this_) {
+    var food_id = $(this_).parent().find('.del_food_fid').val(); // 수정할 음식 항목의 아이디
 
-        return 1;   // 데이터 요소 검증 완료
-    }
-    else
-    {
-        return -1;
-    }
+    // 수정 페이지로 이동
+    window.location.href = '/manager/food_modify?fid=' + food_id;
 }

@@ -55,20 +55,20 @@ public class FooditemController {
 	 */
 	@PostMapping("/test/addFooditem")
 	public HashMap<String, Object> addFooditem(@RequestBody FooditemRequestDto dto) throws Exception {
-		String msg = fooditemService.addFooditem(dto);
+		//String msg = fooditemService.addFooditem(dto);
 		
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("msg", msg);
+		//map.put("msg", msg);
 		
 		return map;
 	}
 	
 	/**
-	 * 음식 메뉴 등록 처리 서비스
+	 * 음식 메뉴 수정 처리 서비스
 	 * args -------------------------------
-	 * dto			| 등록할 음식 메뉴 정보
+	 * dto			| 수정할 음식 메뉴 정보
 	 * return data ------------------------
-	 * map			| 등록 처리 결과 메시지 정보
+	 * map			| 수정 처리 결과 메시지 정보
 	 * ------------------------------------
 	 */
 	@PostMapping("/test/modifyFooditem")

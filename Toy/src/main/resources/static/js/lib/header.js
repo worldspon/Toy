@@ -1,35 +1,56 @@
 $(document).ready(function() {
 	// 회원가입 클릭 이벤트
 	$('#a-join').on('click', function () {
-		fn_move('join');
+		if (fn_isRun(false))
+		{
+			fn_move('join');
+		}
 	});
 	// 로그인 클릭 이벤트
 	$('#a-login').on('click', function () {
-		fn_move('login');
+		if (fn_isRun(false))
+		{
+			fn_move('login');
+		}
 	});
 	// 로그아웃 클릭 이벤트
     $('#a-logout').on('click', function () {
-        fn_logout('user');
+		if (fn_isRun(false))
+		{
+			fn_logout('user');
+		}
 	});
 	
 	// 장바구니 클릭 이벤트
 	$('#a-cart').on('click', function () {
-		fn_move('cart');
+		if (fn_isRun(false))
+		{
+			fn_move('cart');
+		}
 	});
     
     // 매니저 전용 상품 등록 이동 클릭 이벤트
     $('#a-foodproduct').on('click', function () {
-		fn_move('manager/food_product');
+		if (fn_isRun(false))
+		{
+			fn_move('manager/food_product');
+		}
 	});
 
 	// 매니저 전용 상품 판매 이동 클릭 이벤트
 	$('#a-foodsell').on('click', function () {
-		fn_move('manager/food_sell');
+		if (fn_isRun(false))
+		{
+			fn_move('manager/food_sell');
+		}
 	});
     
     // 매니저 전용 로그아웃 클릭 이벤트
     $('#a-managerlogout').on('click', function () {
-    	fn_logout('manager');
+		if (fn_isRun(false))
+		{
+			fn_logout('manager');
+		}
     });
 });
 

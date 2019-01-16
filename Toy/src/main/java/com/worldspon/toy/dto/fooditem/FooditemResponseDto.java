@@ -22,7 +22,7 @@ public class FooditemResponseDto {
 	 * managerpwd		| 매니저 비밀번호 정보
 	 * -------------------------------------
 	 * */
-	
+	private Long fid;
 	private String foodname;
 	private int foodprice;
 	//private Long imgid;
@@ -32,6 +32,7 @@ public class FooditemResponseDto {
 	
 	public Fooditem toEntity() {
 		return Fooditem.builder()
+				.fid(fid)
 				.foodname(foodname)
 				.foodprice(foodprice)
 				//.imgid(imgid)

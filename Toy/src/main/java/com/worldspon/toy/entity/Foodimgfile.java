@@ -23,7 +23,7 @@ public class Foodimgfile extends BaseTimeEntity {
 	 * -------------------------------------
 	 * imgid		| 음식 메뉴 이미지 테이블 고유 아이디
 	 * imgfilename	| 음식 메뉴 이미지 파일의 오리지널 이름
-	 * mid			| 음식 메뉴 이미지를 등록한 관리자의 고유 아이디
+	 * fooditem		| 부모 테이블 정보
 	 * -------------------------------------
 	 * */
 	@Id
@@ -33,16 +33,16 @@ public class Foodimgfile extends BaseTimeEntity {
 	private String imgfilename;
 	@Column(length = 1000, nullable = false)
 	private String orgfilename;
-	@Column(nullable = false)
-	private Long mid;
 	@OneToOne
 	private Fooditem fooditem;
 	
 	@Builder
-	public Foodimgfile(String imgfilename, String orgfilename, Long mid) {
+	public Foodimgfile(String imgfilename, String orgfilename, Fooditem fooditem) {
 		this.imgfilename = imgfilename;
 		this.orgfilename = orgfilename;
-		this.mid = mid;
+		if (fooditem != null)
+		{
+			this.fooditem = fooditem;
+		}
 	}
-	
 }

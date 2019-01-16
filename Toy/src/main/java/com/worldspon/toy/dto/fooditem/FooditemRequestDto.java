@@ -1,6 +1,5 @@
 package com.worldspon.toy.dto.fooditem;
 
-import java.util.List;
 
 import com.worldspon.toy.entity.Foodimgfile;
 import com.worldspon.toy.entity.Fooditem;
@@ -24,6 +23,8 @@ public class FooditemRequestDto {
 	 * managerpwd		| 매니저 비밀번호 정보
 	 * -------------------------------------
 	 * */
+
+	private Long fid;
 	private String foodname;
 	private int foodprice;
 	//private Long imgid;
@@ -33,9 +34,9 @@ public class FooditemRequestDto {
 	
 	public Fooditem toEntity() {
 		return Fooditem.builder()
+				.fid(fid)
 				.foodname(foodname)
 				.foodprice(foodprice)
-				//.imgid(imgid)
 				.foodimgfile(foodimgfile)
 				.status(status)
 				.stock(stock)

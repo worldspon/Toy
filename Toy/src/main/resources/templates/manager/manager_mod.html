@@ -16,12 +16,24 @@
 
     
     <div id=wrap>
-        <div class="modification_area">
+        <div id="product_area">
+            <div id="reg_area">
                 <h1>상품수정</h1>
-                
-                <div id="mod_form">
-                    <button type="button" id="mod_btn">수정</button> 
-                </div>
+                <form id="reg_form">
+                    <input type="button" id="mod_btn" value="수정">
+                    <div>
+                        <h3>이미지 수정</h3>
+                        <input type="file" class="image_file" accept=".jpg, .jpeg, .png" name="imgfile">
+                        <input th:value="${fooditemMap.fooditem.foodimgfile.imgfilename }" type="hidden" id="hid-orgimgfile">
+                        <h3>상품명</h3>
+                        <input th:value="${fooditemMap.fooditem.foodname }" type="text" name="foodname" placeholder="ex)와퍼 주니어" required>
+                        <h3>상품가격</h3>
+                        <input th:value="${fooditemMap.fooditem.foodprice }" type="text" name="foodprice" placeholder="ex)5700" required>
+                        <h3>상품수량</h3>
+                        <input th:value="${fooditemMap.fooditem.stock }" type="text" name="stock" placeholder="ex)70 최대 5자리수" required>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
     
