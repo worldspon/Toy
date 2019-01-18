@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.worldspon.toy.dto.fooditem.FooditemRequestArrayDto;
+import com.worldspon.toy.dto.fooditem.FooditemRequestDto;
 import com.worldspon.toy.dto.fooditem.FooditemResponseDto;
 import com.worldspon.toy.dto.managerInfo.ManagerinfoRequestDto;
 import com.worldspon.toy.service.FooditemService;
@@ -27,6 +28,7 @@ import lombok.AllArgsConstructor;
 public class ManagerController {
 	
 	/* 예외처리 */
+	/*
 	@ExceptionHandler(value = Exception.class)
 	public String nfeHandler(Exception e) {
 		System.out.println("error!!!");
@@ -34,7 +36,7 @@ public class ManagerController {
 		//return mav;
 		return e.getMessage();
 	}
-	
+	*/
 	
 
 	/**
@@ -139,7 +141,12 @@ public class ManagerController {
 	 * ------------------------------------
 	 */
 	@PostMapping("/manager/food_product")
-	public ModelAndView managerFoodProduct(@ModelAttribute FooditemRequestArrayDto dtolist, HttpServletRequest req) throws Exception{
+	public ModelAndView managerFoodProduct(@ModelAttribute FooditemRequestArrayDto dtolist, HttpServletRequest req) throws Exception {
+		/*
+		 * 참고 ----------------------------------
+		 * @ModelAttribute가 아닌 @RequestBody 어노테이션을 사용할 경우 파일 객체를 핸들링할 수 없는 사이드 이펙트가 발생함
+		 * */ 
+		
 		String msg = fooditemService.addFooditem(dtolist, req);
 		
 		ModelAndView mav = new ModelAndView("manager/manager_alert");
@@ -148,8 +155,17 @@ public class ManagerController {
 		return mav;
 	}
 	
+	
+	
+	
+	
+	
+	
 	/**
 	 * 매니저 상품 수정 페이지 이동 메소드
+	 * args -------------------------------
+	 * fid						| 수정할 상품의 아이디 정보
+	 * ------------------------------------
 	 * return data ------------------------
 	 * mav						| 상품 등록 뷰 페이지 이동 정보
 	 * ------------------------------------
@@ -164,6 +180,31 @@ public class ManagerController {
 		return mav;
 	}
 	
+	/**
+	 * 매니저 상품 수정 처리 메소드
+	 * args -------------------------------
+	 * fooditemDto				| 수정된 상품의 정보 객체
+	 * HttpServletRequest		| 통신 요청 객체
+	 * ------------------------------------
+	 * return data ------------------------
+	 * mav						| 상품 등록 뷰 페이지 이동 정보
+	 * ------------------------------------
+	 */
+	@PostMapping("/manager/food_modify")
+	public ModelAndView managerFoodModify(@ModelAttribute FooditemRequestDto fooditemDto, HttpServletRequest req) {
+		String msg = fooditemService.modifyFooditem(fooditemDto, req);
+		
+		ModelAndView mav = new ModelAndView("manager/manager_alert");
+		mav.addObject("msg", msg);
+		
+		return mav;
+	}
+	
+	
+	
+	
+	
+	
 
 	/**
 	 * 매니저 상품 삭제 처리 메소드
@@ -175,7 +216,7 @@ public class ManagerController {
 	 * ------------------------------------
 	 */
 	@PostMapping("/manager/food_delete")
-	public int managerFoodDelete(@RequestBody HashMap<String, Long[]> fidMap) throws Exception {
+	public int managerFoodDelete(@RequestBody HashMap<String, Long[]> fidMap) {
 		int delProcException = fooditemService.deleteFooditem(fidMap);
 		
 		return delProcException;

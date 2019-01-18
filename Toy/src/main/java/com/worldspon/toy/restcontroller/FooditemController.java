@@ -73,10 +73,10 @@ public class FooditemController {
 	 */
 	@PostMapping("/test/modifyFooditem")
 	public HashMap<String, Object> modifyFooditem(@RequestBody FooditemRequestDto dto) throws Exception {
-		String msg = fooditemService.modifyFooditem(dto);
+		// String msg = fooditemService.modifyFooditem(dto);
 		
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("msg", msg);
+		// map.put("msg", msg);
 		
 		return map;
 	}

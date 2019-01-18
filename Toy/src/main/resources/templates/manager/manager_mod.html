@@ -19,18 +19,22 @@
         <div id="product_area">
             <div id="reg_area">
                 <h1>상품수정</h1>
-                <form id="reg_form">
+                <form id="reg_form" enctype="multipart/form-data" action="/manager/food_modify" method="POST">
                     <input type="button" id="mod_btn" value="수정">
                     <div>
                         <h3>이미지 수정</h3>
                         <input type="file" class="image_file" accept=".jpg, .jpeg, .png" name="imgfile">
-                        <input th:value="${fooditemMap.fooditem.foodimgfile.imgfilename }" type="hidden" id="hid-orgimgfile">
+                        <!--
+                        <input th:value="${fooditemMap.fooditem.foodimgfile.orgfilename} " type="hidden" name="foodimgfile.orgfilename">
+                        <input th:value="${fooditemMap.fooditem.foodimgfile.imgfilename }" type="hidden" name="foodimgfile.imgfilename">
+                        -->
                         <h3>상품명</h3>
-                        <input th:value="${fooditemMap.fooditem.foodname }" type="text" name="foodname" placeholder="ex)와퍼 주니어" required>
+                        <input th:value="${fooditemMap.fooditem.foodname }" type="text" name="foodname" id="txt-foodname" placeholder="ex)와퍼 주니어" required>
+                        <input th:value="${fooditemMap.fooditem.fid}" type="hidden" name="fid">
                         <h3>상품가격</h3>
-                        <input th:value="${fooditemMap.fooditem.foodprice }" type="text" name="foodprice" placeholder="ex)5700" required>
+                        <input th:value="${fooditemMap.fooditem.foodprice }" type="text" name="foodprice" id="txt-foodprice" maxlength="7" placeholder="ex)5700" required>
                         <h3>상품수량</h3>
-                        <input th:value="${fooditemMap.fooditem.stock }" type="text" name="stock" placeholder="ex)70 최대 5자리수" required>
+                        <input th:value="${fooditemMap.fooditem.stock }" type="text" name="stock" id="txt-stock" maxlength="5" placeholder="ex)70 최대 5자리수" required>
                     </div>
                 </form>
             </div>

@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
 import lombok.AccessLevel;
@@ -34,10 +35,12 @@ public class Foodimgfile extends BaseTimeEntity {
 	@Column(length = 1000, nullable = false)
 	private String orgfilename;
 	@OneToOne
+	@JoinColumn(name = "fooditem_fid")
 	private Fooditem fooditem;
 	
 	@Builder
-	public Foodimgfile(String imgfilename, String orgfilename, Fooditem fooditem) {
+	public Foodimgfile(Long imgid, String imgfilename, String orgfilename, Fooditem fooditem) {
+		this.imgid = imgid;
 		this.imgfilename = imgfilename;
 		this.orgfilename = orgfilename;
 		if (fooditem != null)

@@ -197,30 +197,33 @@ function fn_del_product(){
 
     if (fooditem_id && fooditem_id.length > 0)
     {
-        data.fid = fooditem_id; // data객체에 fid 속성 정의
+        if (window.confirm('상품을 삭제하시겠습니까?'))
+        {
+            data.fid = fooditem_id; // data객체에 fid 속성 정의
 
-        $.ajax({
-            url             : '/manager/food_delete',
-            type            : 'POST',
-            contentType     : 'application/json; charset=utf-8',
-            dataType        : 'json',
-            data            : JSON.stringify(data)
-        }).done(function (obj) {
-            // obj 삭제 처리 결과 정보 [0: 삭제 처리 성공, 1: 삭제 처리 중 문제 발생]
-            if (obj === 0)
-            {
-                window.alert('선택한 항목이 삭제되었습니다.');
-                window.location.reload();
-            }
-            else
-            {
-                window.alert('처리 중 에러가 발생하였습니다.');
-                window.location.reload();
-            }
-        }).fail(function (err) {
-            window.alert(JSON.stringify(err));
-            console.log(err);
-        });
+            $.ajax({
+                url             : '/manager/food_delete',
+                type            : 'POST',
+                contentType     : 'application/json; charset=utf-8',
+                dataType        : 'json',
+                data            : JSON.stringify(data)
+            }).done(function (obj) {
+                // obj 삭제 처리 결과 정보 [0: 삭제 처리 성공, 1: 삭제 처리 중 문제 발생]
+                if (obj === 0)
+                {
+                    window.alert('선택한 항목이 삭제되었습니다.');
+                    window.location.reload();
+                }
+                else
+                {
+                    window.alert('처리 중 에러가 발생하였습니다.');
+                    window.location.reload();
+                }
+            }).fail(function (err) {
+                window.alert(JSON.stringify(err));
+                console.log(err);
+            });
+        }
     }
 }
 

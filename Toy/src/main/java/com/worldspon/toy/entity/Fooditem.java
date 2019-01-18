@@ -1,12 +1,12 @@
 package com.worldspon.toy.entity;
 
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
 import lombok.AccessLevel;
@@ -40,14 +40,9 @@ public class Fooditem extends BaseTimeEntity {
 	@Column(nullable = false)
 	private int foodprice;
 	/*
-	@Column(nullable = false)
-	private Long imgid;
-	*/
-	/*
-	 * cascade	| 영속성 전이 옵션 = 부모 엔티티를 저장할 때 자식 엔티티도 함께 저장한다.
+	 * cascade	| 영속성 전이 옵션 = 부모 엔티티를 insert, update, delete등 수정할 때 연관된 자식 엔티티도 함께 작업을 처리한다.
 	 * */
-	@OneToOne(mappedBy = "fooditem")
-	@JoinColumn(name = "parent_id")
+	@OneToOne(mappedBy="fooditem", cascade = CascadeType.ALL)
 	private Foodimgfile foodimgfile;
 	
 	@Column(nullable = false)

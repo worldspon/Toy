@@ -27,4 +27,4 @@ spring:
       servlet:    multipart:      max-file-size: 10MB # 업로드 파일 사이즈 제한
       
       
-server:  error:    whitelabel:      enabled: true  # 에러 페이지 비활성화    path: /error
+server:  error:    whitelabel:      enabled: true  # 에러 페이지 비활성화    #path: /error

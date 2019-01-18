@@ -10,10 +10,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class FoodimgfileRequestDto {
+public class FoodimgfileResponseDto {
 
 	/**
-	 * Foodimgfile 요청 전용 DTO 클래스
+	 * Foodimgfile 응답 전용 DTO 클래스
 	 * -------------------------------------
 	 * 컬럼명			| 설명
 	 * -------------------------------------
@@ -24,7 +24,7 @@ public class FoodimgfileRequestDto {
 	 * */
 	Long imgid;
 	private String imgfilename;
-	private String	orgfilename;
+	private String orgfilename;
 	private Fooditem fooditem;
 	
 	public Foodimgfile toEntity() {

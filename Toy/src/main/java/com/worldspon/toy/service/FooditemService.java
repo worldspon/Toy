@@ -8,6 +8,8 @@ import java.util.List;
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.worldspon.toy.dto.foodimgfile.FoodimgfileRequestDto;
+import com.worldspon.toy.dto.foodimgfile.FoodimgfileResponseDto;
 import com.worldspon.toy.dto.fooditem.FooditemRequestArrayDto;
 import com.worldspon.toy.dto.fooditem.FooditemRequestDto;
 import com.worldspon.toy.dto.fooditem.FooditemResponseDto;
@@ -22,7 +25,6 @@ import com.worldspon.toy.entity.Foodimgfile;
 import com.worldspon.toy.entity.Fooditem;
 import com.worldspon.toy.repository.FoodimgfileRepository;
 import com.worldspon.toy.repository.FooditemRepository;
-import com.worldspon.toy.utils.CommonUtils;
 import com.worldspon.toy.utils.FileUtils;
 
 import lombok.AllArgsConstructor;
@@ -30,6 +32,8 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @Service
 public class FooditemService {
+	
+	private static Logger logger = LoggerFactory.getLogger(FooditemService.class);
 
 	/**
 	 * JPA repository 주입
@@ -167,41 +171,40 @@ public class FooditemService {
 				// 이미지 파일들 이름 구하기
 				MultipartFile multipartFile = multipartReq.getFile(fileIter.next());
 				
-				try {
-					
-					HashMap<String, Object> fileMap = fileUtils.getFileName(multipartFile, dto.getFoodname());
-					listFileNames.add(fileMap.get("imgFileName").toString());
-					
-					// 음식 메뉴 파일 정보 복사
-					FoodimgfileRequestDto imgfiledto = new FoodimgfileRequestDto();
-					imgfiledto.setImgfilename(fileMap.get("imgFileName").toString());
-					imgfiledto.setOrgfilename(fileMap.get("orgFileName").toString());
-					imgfiledto.setFooditem(dto.toEntity());
-					
-					try 
+				try 
+				{
+					HashMap<String, Object> fileNameMap = fileUtils.getFileName(multipartFile, dto.getFoodname());
+					if (fileNameMap.isEmpty())
 					{
+						msg = "상품 등록 중 문제가 발생하였습니다.";
+					}
+					else
+					{
+						listFileNames.add(fileNameMap.get("imgFileName").toString());
+						
+						// 음식 메뉴 파일 정보 복사
+						FoodimgfileRequestDto imgfiledto = new FoodimgfileRequestDto();
+						imgfiledto.setImgfilename(fileNameMap.get("imgFileName").toString());
+						imgfiledto.setOrgfilename(fileNameMap.get("orgFileName").toString());
+						imgfiledto.setFooditem(dto.toEntity());
+						
 						// 자식 테이블 insert 수행
 						foodimgfileRepo.save(imgfiledto.toEntity());
 						
 						// 이미지 파일을 생성함
-						HashMap<String, Object> map = fileUtils.parseInsertFile(multipartFile, imgfiledto.getImgfilename());
+						HashMap<String, Object> fileCreateMap = fileUtils.parseInsertFile(multipartFile, imgfiledto.getImgfilename());
 						// fileException | -2: NullPointer, -1: IllegalState, 0: IO, 1: Success
-						int exception = Integer.valueOf(map.get("fileException").toString()); 
+						int fileException = Integer.valueOf(fileCreateMap.get("fileException").toString()); 
 						
 						// 에러가 발생한 경우
-						if (exception <= 0)
+						if (fileException <= 0)
 						{
-							msg = map.get("msg").toString();
+							msg = fileCreateMap.get("msg").toString();
 						}
 						else
 						{
 							msg = "상품이 등록되었습니다.";
 						}
-						
-					} 
-					catch (Exception e) 
-					{
-						msg = "상품 등록 중 문제가 발생하였습니다.";
 					}
 				} 
 				catch (Exception e) 
@@ -226,9 +229,100 @@ public class FooditemService {
 	 * msg				| 음식 메뉴 등록 처리 결과 정보
 	 * ------------------------------------
 	 */
-	public String modifyFooditem(FooditemRequestDto dto) throws Exception {
+	@Transactional
+	public String modifyFooditem(FooditemRequestDto fooditemDto, HttpServletRequest req) {
+		Long fid = fooditemDto.getFid();
+		String returnMsg = "수정할 항목이 존재하지 않습니다.";
 		
-		return "";
+		// 변경할 이미지 파일 정보 구하기
+		MultipartHttpServletRequest multipartReq = (MultipartHttpServletRequest)req;
+		Iterator<String> multipartIter = multipartReq.getFileNames();
+		MultipartFile multipartFile = null;
+		
+		String orgFileName = null;
+		String imgFileName = null;
+		String isNewFile = "N"; // 업데이트 할 파일 체크 판단 변수
+		
+		// 이미지 파일이 존재하는지 확인
+		while (multipartIter.hasNext())
+		{
+			multipartFile = multipartReq.getFile(multipartIter.next());
+		}
+		
+		try 
+		{
+			// 수정할 상품 데이터가 존재하는지 확인 - 부모 테이블 
+			if (fooditemRepo.existsById(fid))
+			{
+				// 기존 이미지 파일을 사용하는 경우
+				if (multipartFile == null || multipartFile.isEmpty())
+				{
+					orgFileName = "";
+					imgFileName = "";
+				}
+				else
+				{
+					// 새로운 이미지 파일로 변경하는 경우
+					HashMap<String, Object> fileNameMap = fileUtils.getFileName(multipartFile, fooditemDto.getFoodname());
+					if (fileNameMap.isEmpty() == false) 
+					{
+						orgFileName = fileNameMap.get("orgFileName").toString(); // 새로운 원본 파일 이름
+						imgFileName = fileNameMap.get("imgFileName").toString(); // 새로운 파일 이름
+						isNewFile = "Y";
+					}
+				}
+				
+				// 수정할 상품을 조회하여 불러옴 - 부모 테이블
+				Fooditem fooditemEntity = fooditemRepo.findById(fid).get();
+				
+				// 부모 테이블 객체
+				FooditemResponseDto fooditemResDto = new FooditemResponseDto();
+				BeanUtils.copyProperties(fooditemEntity, fooditemResDto);
+				
+				// 수정할 상품 데이터를 설정(setter)
+				fooditemResDto.setFoodname(fooditemDto.getFoodname());
+				fooditemResDto.setFoodprice(fooditemDto.getFoodprice());
+				fooditemResDto.setStock(fooditemDto.getStock());
+				
+				// 수정할 상품 이미지 정보를 조회하여 불러옴 - 자식 테이블 (자식의 id값을 set하기위해 조회를 함)
+				Foodimgfile foodImgFileEntity = foodimgfileRepo.findByFooditem_fid(fid);
+				String beforeImgFileName = foodImgFileEntity.getImgfilename(); // 기존 파일 이름
+				
+				// 파일을 교체하는 것이 아니라면 기존의 파일 정보를 저장함
+				orgFileName = orgFileName.equals("") ? foodImgFileEntity.getOrgfilename() : orgFileName;
+				imgFileName = imgFileName.equals("") ? foodImgFileEntity.getImgfilename() : imgFileName;
+				
+				// 자식 테이블 객체
+				FoodimgfileResponseDto foodImgFileResDto = new FoodimgfileResponseDto();
+				BeanUtils.copyProperties(foodImgFileEntity, foodImgFileResDto);
+				
+				// 수정할 상품 이미지 데이터를 설정(setter)
+				foodImgFileResDto.setImgfilename(imgFileName);
+				foodImgFileResDto.setOrgfilename(orgFileName);
+				foodImgFileResDto.setFooditem(fooditemEntity);
+				
+				// 부모 테이블 객체 정보에 자식 테이블 정보 객체를 설정(setter)
+				fooditemResDto.setFoodimgfile(foodImgFileResDto.toEntity());
+				
+				// 상품 정보 및 상품 이미지 정보 수정 <- cascade(ALL)로 인해 부모 테이블을 수정 시 자식 테이블도 함께 변경됨
+				Fooditem saveCheckEntity = fooditemRepo.save(fooditemResDto.toEntity());
+				
+				// 파일 업데이트
+				if (saveCheckEntity != null)
+				{
+					String fileProcExceptionMsg = fileUtils.parseUpdateFile(isNewFile, multipartFile, beforeImgFileName, imgFileName);
+					returnMsg = fileProcExceptionMsg.equals("") ? returnMsg : "상품 정보가 수정되었습니다.";
+				}
+			}
+		} 
+		catch (IllegalArgumentException e) 
+		{
+			e.printStackTrace();
+			// fid가 NULL인 경우
+			returnMsg = "수정할 항목이 존재하지 않습니다.";
+		}
+		
+		return returnMsg;
 	}
 	
 	/**

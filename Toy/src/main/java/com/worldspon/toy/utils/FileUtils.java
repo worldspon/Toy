@@ -4,15 +4,18 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+
 
 @Component("fileUtils")
 public class FileUtils {
 	// 파일 저장 위치
 	//private static final String filePath = "D:\\file storage\\project\\toy\\img\\fooditem\\";
 	private static final String filePath = "D:\\git_directory\\Toy\\Toy\\src\\main\\resources\\static\\img\\fooditem\\";
-	
+	private static Logger logger = LoggerFactory.getLogger(FileUtils.class);
 	
 	/**
 	 * 이미지 파일 이름 구하는 메소드
@@ -23,22 +26,21 @@ public class FileUtils {
 	 * map						| 이미지 파일의 원본, 변경 이름 정보
 	 * ------------------------------------
 	 */
-	public HashMap<String, Object> getFileName(MultipartFile multipartFile, String foodname) throws Exception {
+	public HashMap<String, Object> getFileName(MultipartFile multipartFile, String foodname) {
 		String originalFileName = null;
 		String originalFileExtension = null;
 		String storedFileName = null;
 		String randomUUID = null;
 		
-		HashMap<String, Object> map = null;
+		HashMap<String, Object> map = new HashMap<String, Object>();
 		
-		if (multipartFile.isEmpty() == false)
+		if (multipartFile != null && multipartFile.isEmpty() == false)
 		{
 			originalFileName = multipartFile.getOriginalFilename();	// 이미지 파일 이름 + 확장자 추출
 			originalFileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));	// 이미지 파일 확장자 정보 구하기
 			randomUUID = CommonUtils.getRandomString();
 			storedFileName = randomUUID + "-" + foodname + originalFileExtension;	// 저장할 파일 이름 지정 EX) 메뉴 이름 + 확장자
 			
-			map = new HashMap<String, Object>();
 			map.put("orgFileName", originalFileName);
 			map.put("imgFileName", storedFileName);
 		}
@@ -73,7 +75,13 @@ public class FileUtils {
 			
 		
 		try {
-			
+			/**
+			 * @Authur Johnny
+			 * @todo multipartFile.isEmpty()를 통해 null체크를 한다면 NullPointerException이 발생할 수 없음.
+			 * 		즉 절대로 fileException에 값이 -2가 할당될 수가 없음.
+			 * 		2019.01.16일 날 작성된 코드이기 때문에 수정은 하지않지만 이해한걸 반드시 기억하기!!
+			 * @date 2019.01.17
+			*/
 			if (multipartFile.isEmpty() == false)
 			{
 				// 저장될 경로에 파일 정보 생성
@@ -175,7 +183,84 @@ public class FileUtils {
 	}
 	
 	
+	/**
+	 * 이미지 파일 수정 메소드
+	 * args -------------------------------
+	 * isNewFile				| 파일 업데이트 판단 여부 값 [N: 기존 파일 리네임 처리, Y: 신규 파일 생성]
+	 * multipartReq				| multipart 요청 정보
+	 * beforeFileName			| 이전에 업로드 된 파일이름
+	 * afterFileName			| 신규로 만들 파일 이름 or 기존 파일 리네임할 이름
+	 * return data ------------------------
+	 * map						| 이미지 파일 처리 결과 및 오류코드 정보
+	 * ------------------------------------
+	 */
+	public String parseUpdateFile(String isNewFile, MultipartFile multipartFile, String beforeFileName, String afterFileName) {
+		String fileProcExceptionMsg = "";
+		
+		try 
+		{
+			// 기존 파일 이름의 객체를 생성
+			File beforeFile = new File(filePath + beforeFileName);
+			File afterFile = new File(filePath + afterFileName);
+			try 
+			{
+				if (beforeFile.exists())
+				{
+					if (isNewFile.equals("N"))
+					{
+						// 기존 파일 리네임
+						beforeFile.renameTo(afterFile);
+						fileProcExceptionMsg = "상품 정보가 수정되었습니다.";
+					}
+					else
+					{
+						// 기존 파일을 삭제함
+						if (beforeFile.delete())
+						{
+							// 새로 업데이트할 파일이름의 객체를 생성
+							try 
+							{
+								// 업데이트 할 파일을 생성함
+								multipartFile.transferTo(afterFile);
+								fileProcExceptionMsg = "상품 정보가 수정되었습니다.";
+							} 
+							catch (IOException e) 
+							{
+								e.printStackTrace();
+								// 파일을 생성 중 에러가 발생했을 경우
+								fileProcExceptionMsg = "파일을 생성하는 도중 문제가 발생했습니다. 다시 시도해주세요.";
+							}
+						}
+					}
+					
+				}
+			} 
+			catch (SecurityException e) 
+			{
+				e.printStackTrace();
+				// 보안 관리 프로그램으로 인해 메소드가 파일에 액세스를 거부당했을 경우
+				fileProcExceptionMsg = "문서 보안이나 기타 보안 프로그램으로 인하여 파일에 접근이 실패했습니다.";
+			}
+		} 
+		catch (NullPointerException e) 
+		{
+			e.printStackTrace();
+			// 기존 파일을 찾지 못했을 경우
+			fileProcExceptionMsg = "원본 파일이 존재하지 않거나 손상되었습니다.";
+		}
+		
+		return fileProcExceptionMsg;
+	}
 	
+	
+	/**
+	 * 이미지 파일 삭제 메소드
+	 * args -------------------------------
+	 * fileName					| 이미지 파일 이름 정보
+	 * return data ------------------------
+	 * fileProcException		| 이미지 파일 처리 결과 및 오류코드 정보
+	 * ------------------------------------
+	 */
 	public int deleteFile(String fileName) {
 		int fileProcException = 0;
 		try 
@@ -190,8 +275,8 @@ public class FileUtils {
 				catch (SecurityException e) 
 				{
 					e.printStackTrace();
-					fileProcException = -2;
 					// 보안 관리 프로그램으로 인해 메소드가 파일에 액세스를 거부당했을 경우
+					fileProcException = -2;
 				}
 			}
 		} 
