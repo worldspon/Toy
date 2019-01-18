@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
@@ -224,9 +225,10 @@ public class FooditemService {
 	/**
 	 * 음식 메뉴 수정 처리 서비스
 	 * args -------------------------------
-	 * dto				| 음식 메뉴 정보 객체
+	 * fooditemDto		| 음식 메뉴 정보 객체
+	 * req				| 요청 객체 정보 (Multipart로 캐스팅해서 사용해야함)
 	 * return data ------------------------
-	 * msg				| 음식 메뉴 등록 처리 결과 정보
+	 * returnMsg		| 음식 메뉴 등록 처리 결과 정보
 	 * ------------------------------------
 	 */
 	@Transactional
@@ -357,5 +359,60 @@ public class FooditemService {
 		}
 		
 		return delProcException;
+	}
+	
+	
+	
+	
+	/**
+	 * 상품 상태 수정 처리 서비스
+	 * args -------------------------------
+	 * map						| 상태 수정할 상품 고유 아이디, 변경할 상태 정보 {status : 0 or 1, fid : [1, 2, 3, 4, ...]}
+	 * ------------------------------------
+	 * return data ------------------------
+	 * procException			| 상태 수정 처리 결과 정보 [0: 수정 처리 성공, 1: 수정 처리 중 문제 발생]
+	 * ------------------------------------
+	 */
+	@Transactional
+	public int changeFooditemStatus(HashMap<String, Object> map) {
+		int procException = 0;
+		
+		int findStatus = Integer.valueOf(map.get("findStatus").toString());
+		int changeStatus = Integer.valueOf(map.get("status").toString());
+		String[] fidListStr = map.get("fid").toString().split(","); // [1, 2, 3, 4...]로 저장되는 fid의 값을 Long[]타입으로 가공
+		Long[] fidArr = new Long[fidListStr.length];
+		
+		// String 형의 fid를 Long형으로 변환
+		for (int i = 0; i < fidListStr.length; i += 1)
+		{
+			// [1] 이 문자열에서 substring으로 '[', ']' 문자를 제거
+			fidArr[i] = Long.valueOf(fidListStr[i].substring(1, 2)).longValue();
+		}
+		
+		try 
+		{
+			List<Fooditem> changedDtoList = new ArrayList<Fooditem>();
+			
+			for (int i = 0; i < fidArr.length; i += 1)
+			{
+				// 상태를 변경할 대상 항목을 검색
+				Fooditem fooditemEntity = fooditemRepo.findById(fidArr[i]).get();
+				FooditemResponseDto responseDto = new FooditemResponseDto();
+				BeanUtils.copyProperties(fooditemEntity, responseDto);
+				// 상품의 판매 상태값 변경
+				responseDto.setStatus(changeStatus);
+				
+				changedDtoList.add(responseDto.toEntity());
+			}
+			
+			// 일괄 Update
+			fooditemRepo.saveAll(changedDtoList);
+		} 
+		catch (IllegalArgumentException e) {
+			// findStatus가 NULL이거나 changedDtoList가 NULL인 경우
+			procException = 1;
+		}
+		
+		return  procException;
 	}
 }

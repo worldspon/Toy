@@ -86,7 +86,6 @@ public class ManagerController {
 	 */ 
 	@PostMapping("/manager/login")
 	public HashMap<String, Object> managerLogin(@RequestBody ManagerinfoRequestDto dto, HttpServletRequest req) throws Exception {
-		System.out.println(dto.getManagername() + " / " + dto.getManagerid() + " / " + dto.getManagerpwd());
 		HashMap<String, Object> map = managerService.loginProcess(dto, req);
 		return map;
 	}
@@ -234,15 +233,34 @@ public class ManagerController {
 	
 	
 	/**
-	 * 매니저 상품 판매 페이지 이동 메소드
+	 * 매니저 상품 판매 상태 수정 페이지 이동 메소드
 	 * return data ------------------------
 	 * mav						| 상품 판매 뷰 페이지 이동 정보
 	 * ------------------------------------
 	 */ 
 	@GetMapping("/manager/food_sell")
 	public ModelAndView openManagerSell() throws Exception {
-		ModelAndView mav = new ModelAndView("manager/manager_sell");
+		ArrayList<FooditemResponseDto> list = fooditemService.listAllFooditem();
 		
+		ModelAndView mav = new ModelAndView("manager/manager_sell");
+		mav.addObject("foodList", list);
 		return mav;
+	}
+	
+	
+	/**
+	 * 매니저 상품 판매 상태 수정 처리 메소드
+	 * args -------------------------------
+	 * map						| 상태 수정할 상품 고유 아이디, 변경할 상태 정보 {findStatus : 0 or 1, status : 0 or 1, fid : [1, 2, 3, 4, ...]}
+	 * ------------------------------------
+	 * return data ------------------------
+	 * procException			| 상태 수정 처리 결과 정보 [0: 수정 처리 성공, 1: 수정 처리 중 문제 발생]
+	 * ------------------------------------
+	 */
+	@PostMapping("/manager/food_sell")
+	public int managerSell(@RequestBody HashMap<String, Object> map) {
+		int procException = fooditemService.changeFooditemStatus(map);
+		
+		return procException;
 	}
 }

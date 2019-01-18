@@ -66,3 +66,33 @@ function fn_validation(arr) {
 
     return false;
 }
+
+
+
+/**
+ * @Author Johnny
+ * @role input 태그들의 숫자 데이터 유효성 검사
+ * @TODO 유효성 검사할 태그 데이터를 배열로써 인자에 전달해야함
+ * @return true: 데이터 요소 검증이 되지 않음 (데이터가 없음), false: 데이터 요소의 검증이 완료됨
+ * @date 2019.01.18
+*/
+function fn_numberValidation(arr) {
+    let reg = /^[0-9]*$/g; // 숫자 검증 정규식
+    
+    // 검증할 데이터가 존재하는지 판단
+    if (arr && arr.length > 0)
+    {
+        for (let i = 0; i < arr.length; i += 1)
+        {
+            if (!reg.test(arr[i]))
+            {
+                window.alert('숫자만 입력해주세요.');
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    return false;
+}

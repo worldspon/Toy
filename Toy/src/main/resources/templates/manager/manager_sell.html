@@ -21,14 +21,26 @@
         <div id="sell_area">
             <div id="sell_reg">
                 <h1>판매등록</h1>
-                <form action="javascript:reg_sell();" method="post" id="sell_reg_form">
-                    <button id="sell_reg_btn">등록</button>
+                <form action="" method="POST" id="sell_reg_form">
+                    <input type="button" id="sell_reg_btn" value="등록">
+                    <div th:each="food : ${foodList }" class="div_sell_box">
+                        <input th:if="${food.status } == 0" type="checkbox" name="sell_checkbox" class="sell_checkbox">
+                        <input th:value="${food.fid}" type="hidden" class="hid-sell_fid">
+                        <span th:if="${food.status } == 0" th:text="${food.foodname }"></span>
+                        <label th:if="${food.status } == 0" style="float: right;">미 판매</label>
+                    </div>
                 </form>
             </div>
             <div id="sell_del">
                 <h1>판매제거</h1>
-                <form action="javascript:del_sell();" method="post" id="sell_del_form">
-                    <button id="sell_del_btn">제거</button>
+                <form action="" method="POST" id="sell_del_form">
+                    <input type="button" id="sell_del_btn" value="제거">
+                    <div th:each="food : ${foodList }" class="div_hold_box">
+                        <input th:if="${food.status } == 1" type="checkbox" name="hold_checkbox" class="hold_checkbox">
+                        <input th:value="${food.fid}" type="hidden" class="hid-hold_fid">
+                        <span th:if="${food.status } == 1" th:text="${food.foodname }"></span>
+                        <label th:if="${food.status } == 1" style="float: right;">판매 중</label>
+                    </div>
                 </form>
             </div>
         </div>

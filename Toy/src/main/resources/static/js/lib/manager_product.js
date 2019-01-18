@@ -130,8 +130,6 @@ function fn_plus_reg_box() {
 }
 
 
-
-
 /**
  * @Authur Johnny
  * @role 상품 등록 처리 함수
@@ -156,7 +154,7 @@ function fn_add_product() {
 
 
     // 각 입력 항목들 데이터 검증
-    if (fn_validation(file_arr) && fn_validation(foodname_arr) && fn_validation(foodprice_arr) && fn_validation(foodstock_arr))
+    if (fn_validation(file_arr) && fn_validation(foodname_arr) && fn_numberValidation(foodprice_arr) && fn_validation(foodprice_arr) && fn_numberValidation(foodstock_arr) && fn_validation(foodstock_arr))
     {
         if (window.confirm('작성하신 상품을 등록하시겠습니까?'))
         {
