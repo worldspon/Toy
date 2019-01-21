@@ -20,7 +20,8 @@ spring:
       ddl-auto: create-drop # 애플리케이션 실행 시 마다 테이블을 drop 후 create함
   h2:
     console:
-      enabled: true
+      enabled: true      path: /h2-console # H2 DB 웹 콘솔 접속 URL ex) http://localhost:8080/h2-console
+      
   devtools: # spring-boot-starter-devtools library
     livereload: # 정적 파일 애플리케이션 실행 중 실시간 리로드      enabled: true
   thymeleaf:  # thmeleaf 템플릿 엔진 캐싱 비사용 !!!실 사용 서버에 운영 시 캐시를 false로하면 서버가 터질 우려가 있으니 반드시 캐시 설정을 true로 설정하고 운영 필요    cache: false

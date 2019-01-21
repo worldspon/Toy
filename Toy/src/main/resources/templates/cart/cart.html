@@ -28,7 +28,30 @@
             </div>
 
 <!---------------------------------------------------반복 시작----------------------------------------------------------->
-
+            <div th:if="${map.foodList.size() } > 0" th:each="food, index : ${map.foodList }">
+                <div class="row menu-list text-center">
+                    <input type="checkbox" class="list-checkbox align-self-center" checked="true" />
+                    <div class="col-sm-1"></div>
+                    <div class="col-sm-2 text-center">
+                        <img th:src="@{'/img/fooditem/' + ${food.foodimgfile.imgfilename } }" class="list-image" alt="burger image" >
+                    </div>
+                    <div class="col-sm-4" th:text="${food.foodname }"></div>
+                    <div class="col-sm-2 quantity-box">
+                        <span class="list-quantity" th:text="${map.stock[index.index] }"></span>
+                        <input type="button" value="+">
+                        <input type="button" value="-">
+                    </div>
+                    <div class="col-sm-2" id="div-menu-price">
+                        <span class="menu-price" th:text="${map.price[index.index] } + 원"></span>
+                    </div>
+                    <button type="button" class="o-d-btn menu-order">주문</button>
+                    <button type="button" class="o-d-btn menu-del">삭제</button>
+                </div>
+                <div class="row">
+                    <hr class="list-hr" />
+                </div>
+            </div>
+<!--
             <div class="row menu-list text-center">
                 <input type="checkbox" class="list-checkbox align-self-center" checked="true" />
                 <div class="col-sm-1"></div>
@@ -68,47 +91,28 @@
             <div class="row">
                 <hr class="list-hr" />
             </div>
-
-            <div class="row menu-list text-center">
-                <input type="checkbox" class="list-checkbox align-self-center" checked="true" />
-                <div class="col-sm-1"></div>
-                <div class="col-sm-2 text-center"><img src="beaf_buger.png" class="list-image" alt="burger image" ></div>
-                <div class="col-sm-4">트리플머쉬룸와퍼주니어 세트</div>
-                <div class="col-sm-2 quantity-box">
-                    <span class="list-quantity">1</span>
-                    <a href="">+</a>
-                    <a href="">-</a>
-                </div>
-                <div class="col-sm-2">
-                    <span class="menu-price">7,600원</span>
-                </div>
-                <button type="button" class="o-d-btn menu-order">주문</button>
-                <button type="button" class="o-d-btn menu-del">삭제</button>
-            </div>
-            <div class="row">
-                <hr class="list-hr" />
-            </div>
+-->
 <!---------------------------------------------------반복 끝----------------------------------------------------------->
             <div class="row total-box">
                 <div class="col-sm-6"></div>
                 <div class="col-sm-1"></div>
-                <div class="col-sm-2 total-quantity text-right">총수량 : <span>3개</span></div>
+                <div class="col-sm-2 total-quantity text-right">총 수량 : <span></span></div>
                 
-                <div class="col-sm-3 text-left total-price">총금액 : <span>7,600원</span></div>
+                <div class="col-sm-3 text-left total-price">총 금액 : <span></span></div>
             </div>
             <div class="row">
-                    <hr class="list-hr" />
+                    <hr class="list-hr" style="margin-bottom:250px;"/>
             </div>
         </div>
     </div>
 
     <footer class="container-fluid" id="ft">
         <div class="container footer-bar">
-            <button type="button" class="slide-btn">△</button>
+            <button type="button" class="slide-btn">▽</button>
             <div class="row">
                 <div class="col-sm-1"></div>
                 <div class="col-sm-3 text-center">
-                    <img src="logo.png" alt="" class="footer-logo">
+                    <img src="/img/site/logo.png" alt="" class="footer-logo">
                 </div>
                 <div class="col-sm-1">
                 </div>

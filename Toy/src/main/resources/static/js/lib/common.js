@@ -96,3 +96,17 @@ function fn_numberValidation(arr) {
 
     return false;
 }
+
+
+
+/**
+ * 
+ * @author Johnny
+ * @role 정규표현식을 이용한 Won화 콤마를 찍어 변환해주는 함수
+ * @TODO Won화를 표현할 데이터를 인자로 전달해야함
+ * @return 세자릿수마다 콤마를 찍은 값을 리턴
+ * @date 2019-01-21
+ */
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}

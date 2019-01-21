@@ -30,6 +30,16 @@ var ft = document.getElementById('ft'); // footer
 
 
 
+$(document).ready(function () {
+    // 모든 상품 가격에 콤마 설정
+    fn_setCommaFoodPrice();
+
+    // 총 수량 갯수 
+    fn_getTotalCount();
+
+    // 총 금액
+    fn_getTotalPrice();
+});
 
 
 
@@ -60,7 +70,7 @@ Array.from(menu_del).forEach(function(e_val,index,e){
 // main checkbox 클릭시 list checkbox 수정, 수량 및 가격 수정
 main_check[0].addEventListener('click',function(){
     isCheck();
-    all_price_setting();
+    //all_price_setting();
 });
 
 
@@ -131,9 +141,9 @@ function isCheck() {
 function list_chkb_update(e) {
     if(e.checked==false){
         main_check[0].checked=false;
-        all_price_setting();
+        //all_price_setting();
     } else {
-        all_price_setting();
+        //all_price_setting();
     }
     let flag_count = 0;
     for(let i=0; i<list_check.length; i++){
@@ -161,7 +171,7 @@ function list_chkb_update(e) {
 function plus_fnc(index){
     list_quantity[index].innerHTML++;
     list_price[index].innerHTML = 7600*list_quantity[index].innerHTML;
-    all_price_setting();
+    //all_price_setting();
 }
 
 
@@ -179,7 +189,7 @@ function minus_fnc(index){
     }else{
         list_quantity[index].innerHTML--;
         list_price[index].innerHTML = 7600*list_quantity[index].innerHTML;
-        all_price_setting();
+        //all_price_setting();
     }
 }
 
@@ -196,7 +206,7 @@ function minus_fnc(index){
 function del_confirm(index) {
     if(confirm('이 제품을 삭제하시겠습니까?')){
         menu_list[index].remove();
-        all_price_setting();
+        //all_price_setting();
     }
 }
 
@@ -207,6 +217,7 @@ function del_confirm(index) {
  * @brief 각 menu checkbox를 검사하여 checked 항목의 가격,수량을 계산하는 함수
  * @author JJH
  */
+/*
 function all_price_setting() {
     let total_qu=0;
     let total_pri=0;
@@ -234,7 +245,7 @@ function all_price_setting() {
         ft_total_quantity.innerHTML = total_qu;
     }
 }
-
+*/
 
 
 
@@ -247,7 +258,7 @@ function slideDown() {
     ft.style.transition = "all 1s ease-in-out";
     ft.style.bottom = '-200px';
     slide_btn[0].innerHTML = '△';
-};
+}
 
 /**
  * @brief slide up animation function
@@ -255,6 +266,76 @@ function slideDown() {
  */
 function slideUp() {
     ft.style.transition = "all 1s ease-in-out";
-    ft.style.bottom = '-10px';
+    ft.style.bottom = '0px';
     slide_btn[0].innerHTML = '▽';
-};
+}
+
+
+
+
+
+/**
+ * 
+ * @author Johnny
+ * @date 2019-01-21
+ * @role 모든 상품 가격에 콤마찍기
+ */
+function fn_setCommaFoodPrice() {
+    let selector = $('.menu-price');
+    let elFoodPrices = [];
+    // 35000원 -> 35000
+    elFoodPrices = selector.text().split('원');
+
+    let foodPrice = 0;
+
+
+    $(selector).each(function (index) {
+        // 35000 -> 35,000
+        foodPrice = numberWithCommas(elFoodPrices[index]);
+        $(this).text(foodPrice + '원');
+    });
+}
+
+/**
+ * 
+ * @author Johnny
+ * @date 2019-01-21
+ * @role 총 수량 설정하는 함수
+ */
+function fn_getTotalCount() {
+    let checkbox = [];
+    checkbox = $('.list-checkbox').prop('checked', true);
+
+    $('.total-quantity').find('span').text(checkbox.length + '개');
+}
+
+/**
+ * 
+ * @author Johnny
+ * @date 2019-01-21
+ * @role 총 금액 설정하는 함수
+ */
+function fn_getTotalPrice() {
+    let elFoodPrices = [],
+        checkbox = [];
+    // 30,000원 -> 30,000
+    elFoodPrices = $('.menu-price').text().split('원');
+    checkbox = $('.list-checkbox').prop('checked', true);
+    let foodPrice = 0;
+    let strPrice = "";
+
+    // 모든 가격을 합산함 추후 체크된 값만 합산하도록 수정되어야 함
+    $(elFoodPrices).each(function (index) {
+        if (checkbox)
+        {
+            // 30,000 -> 30000
+            strPrice = this.replace(',', '');
+            foodPrice += Number(strPrice);
+        }
+    });
+
+    // 모두 합산한 가격에 콤마를 찍음
+    foodPrice = numberWithCommas(foodPrice);
+
+    $('.total-price').find('span').text(foodPrice + '원');
+}

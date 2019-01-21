@@ -3,7 +3,11 @@ package com.worldspon.toy.restcontroller;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.worldspon.toy.dto.fooditem.FooditemRequestDto;
 import com.worldspon.toy.dto.fooditem.FooditemResponseDto;
+import com.worldspon.toy.service.CartService;
 import com.worldspon.toy.service.FooditemService;
 
 import lombok.AllArgsConstructor;
@@ -24,7 +29,8 @@ public class FooditemController {
 	 * lombok 라이브러리의 AllArgsConstructor 어노테이션으로 생성자 자동 처리
 	 */
 	private FooditemService fooditemService;
-
+	private CartService cartService;
+	private static Logger logger = LoggerFactory.getLogger(FooditemController.class);
 
 	
 	
@@ -45,39 +51,29 @@ public class FooditemController {
 		return mav;
 	}
 	
+	
+	
+	
+	
 	/**
-	 * 음식 메뉴 등록 처리 서비스
+	 * 장바구니 상품 추가 메소드
 	 * args -------------------------------
-	 * dto			| 등록할 음식 메뉴 정보
+	 * dto			| 장바구니에 등록할 음식 메뉴 정보 {fid:1.foodprice:5000.stock:50}
+	 * req			| 통신 요청 객체
+	 * res			| 통신 응답 객체
 	 * return data ------------------------
-	 * map			| 등록 처리 결과 메시지 정보
+	 * map			| 장바구니 처리 결과 메시지 정보
 	 * ------------------------------------
 	 */
-	@PostMapping("/test/addFooditem")
-	public HashMap<String, Object> addFooditem(@RequestBody FooditemRequestDto dto) throws Exception {
-		//String msg = fooditemService.addFooditem(dto);
+	@PostMapping("/saveCart")
+	public HashMap<String, Object> saveCart(@RequestBody FooditemRequestDto dto, 
+			HttpServletRequest req, HttpServletResponse res) {
+		String msg = cartService.saveCart(dto, req, res);
 		
 		HashMap<String, Object> map = new HashMap<String, Object>();
-		//map.put("msg", msg);
+		map.put("msg", msg);
 		
 		return map;
 	}
 	
-	/**
-	 * 음식 메뉴 수정 처리 서비스
-	 * args -------------------------------
-	 * dto			| 수정할 음식 메뉴 정보
-	 * return data ------------------------
-	 * map			| 수정 처리 결과 메시지 정보
-	 * ------------------------------------
-	 */
-	@PostMapping("/test/modifyFooditem")
-	public HashMap<String, Object> modifyFooditem(@RequestBody FooditemRequestDto dto) throws Exception {
-		// String msg = fooditemService.modifyFooditem(dto);
-		
-		HashMap<String, Object> map = new HashMap<String, Object>();
-		// map.put("msg", msg);
-		
-		return map;
-	}
 }

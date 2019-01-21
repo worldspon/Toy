@@ -7,10 +7,10 @@
 <body>
 
 <div th:fragment="footer (template)">
-	<!-- 공통 js -->
-	<script th:if="${tempalte} != header" src="/js/lib/jquery-3.3.1.min.js"></script>
+    <!-- 공통 js -->
+    <script th:if="${tempalte} != header" src="/js/lib/jquery-3.3.1.min.js"></script>
     <script src="/js/lib/common.js"></script>
-    
+
     <!-- main.html js -->
     <script th:if="${template} == 'main' " src="/js/lib/main.js"></script>
     
@@ -36,8 +36,8 @@
 	<script th:if="${template} == 'manager_sell' " src="/js/lib/manager_sell.js"></script>    
 
 	<!-- cart.html js -->
-	<script th:if="${template} == 'cart' " src="/js/lib/cart.js"></script>
-    
+    <script th:if="${template} == 'cart' " src="/js/lib/bootstrap.min.js"></script>
+    <script th:if="${template} == 'cart' " src="/js/lib/cart.js"></script>
 </div>
 	
 </body>

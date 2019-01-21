@@ -29,7 +29,7 @@ $(document).ready(function () {
     $(document).on('click', '.add_cart', function () {
         if (fn_isRun(false))
         {
-            fn_createCookie(this);
+            fn_saveCart(this);
         }
     });
 });
@@ -89,30 +89,31 @@ function fn_quantity_minus(this_) {
 /**
  * 
  * @author Johnny
- * @date 2019-01-18
- * @role 선택한 상품을 쿠키에 저장하는 함수
+ * @date 2019-01-19
+ * @role 선택한 상품을 쿠키에 저장하기 위해 서버로 요청보내는 함수
  */
-function fn_createCookie(this_) {
-    let expire = new Date();
-    let cookie;
-
-    let cookiedata = {};
+function fn_saveCart(this_) {
+    // 장바구니에 담을 아이템 정보
     let fid = Number($(this_).parent().find('.fid').val());
     let quantity = Number($(this_).parent().find('.quantity_box').text());
     let price =  $(this_).parent().parent().find('.foodprice').val() * Number(quantity);
 
-    console.log('fid: ' + fid);
-    console.log('quantity : ' + quantity);
-    console.log('price : ' + price);
+    let fooditem = {
+        fid : fid,
+        foodprice : price,
+        stock : quantity
+    };
 
-    cookiedata.fid = fid;
-    cookiedata.quantity = quantity;
-    cookiedata.price = price;
-
-    expire.setDate(expire.getDate() + 60); // 쿠키 유효 기간 오늘 일자 + 60일
-    cookie = 'cart' + cookie_index + ' = ' + JSON.stringify(cookiedata) + '; path=/ ; expires=' + expire.toGMTString() + ';';
-
-    document.cookie = cookie;
-
-    cookie_index += 1;
+    $.ajax({
+        url         : "/saveCart",
+        type        : "POST",
+        contentType : "application/json; charset=utf-8",
+        dataType    : "json",
+        data        : JSON.stringify(fooditem)
+    }).done(function (obj) {
+        window.alert(obj.msg);
+    }).fail(function (err) {
+        window.alert(JSON.stringify(err));
+        console.log(err);
+    });
 }
