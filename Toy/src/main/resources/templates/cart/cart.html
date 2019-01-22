@@ -26,72 +26,43 @@
                 <div class="col-sm-2 align-self-center">수량</div>
                 <div class="col-sm-2 align-self-center">상품가격</div>
             </div>
-
-<!---------------------------------------------------반복 시작----------------------------------------------------------->
-            <div th:if="${map.foodList.size() } > 0" th:each="food, index : ${map.foodList }">
-                <div class="row menu-list text-center">
-                    <input type="checkbox" class="list-checkbox align-self-center" checked="true" />
-                    <div class="col-sm-1"></div>
-                    <div class="col-sm-2 text-center">
-                        <img th:src="@{'/img/fooditem/' + ${food.foodimgfile.imgfilename } }" class="list-image" alt="burger image" >
-                    </div>
-                    <div class="col-sm-4" th:text="${food.foodname }"></div>
-                    <div class="col-sm-2 quantity-box">
-                        <span class="list-quantity" th:text="${map.stock[index.index] }"></span>
-                        <input type="button" value="+">
-                        <input type="button" value="-">
-                    </div>
-                    <div class="col-sm-2" id="div-menu-price">
-                        <span class="menu-price" th:text="${map.price[index.index] } + 원"></span>
-                    </div>
-                    <button type="button" class="o-d-btn menu-order">주문</button>
-                    <button type="button" class="o-d-btn menu-del">삭제</button>
+            <div th:if="${map == null or map.isEmpty() }">
+                <div>
+                    <span>장바구니에 상품이 없습니다.</span>
                 </div>
                 <div class="row">
                     <hr class="list-hr" />
                 </div>
             </div>
-<!--
-            <div class="row menu-list text-center">
-                <input type="checkbox" class="list-checkbox align-self-center" checked="true" />
-                <div class="col-sm-1"></div>
-                <div class="col-sm-2 text-center"><img src="beaf_buger.png" class="list-image" alt="burger image" ></div>
-                <div class="col-sm-4">트리플머쉬룸와퍼주니어 세트</div>
-                <div class="col-sm-2 quantity-box">
-                    <span class="list-quantity">1</span>
-                    <a href="">+</a>
-                    <a href="">-</a>
+<!---------------------------------------------------반복 시작----------------------------------------------------------->
+            <div th:if="${map != null and !(map.isEmpty()) and !(map.foodList.isEmpty()) }">
+                <div th:each="food, index : ${map.foodList }">
+                    <div class="row menu-list text-center">
+                        <input type="checkbox" class="list-checkbox align-self-center" checked="true" />
+                        <div class="col-sm-1"></div>
+                        <div class="col-sm-2 text-center">
+                            <img th:src="@{'/img/fooditem/' + ${food.foodimgfile.imgfilename } }" class="list-image" alt="burger image" >
+                        </div>
+                        <div class="col-sm-4 menu-foodname" th:text="${food.foodname }"></div>
+                        <div class="col-sm-2 quantity-box">
+                            <span class="list-quantity" th:text="${map.stock[index.index] }"></span>
+                            <input type="hidden" class="hid-max-stock" th:value="${food.stock }">
+                            <input class="quantity-plus" type="button" value="+">
+                            <input class="quantity-minus" type="button" value="-">
+                        </div>
+                        <div class="col-sm-2" id="div-menu-price">
+                            <span class="menu-price" th:text="${map.price[index.index] } + 원"></span>
+                            <input type="hidden" class="hid-one-food-price" th:value="${food.foodprice }">
+                        </div>
+                        <button type="button" class="o-d-btn menu-order">주문</button>
+                        <button type="button" class="o-d-btn menu-del">삭제</button>
+                    </div>
+                    <div class="row">
+                        <hr class="list-hr" />
+                    </div>
+                    <input type="hidden" class="hid-fid" th:value="${food.fid }">
                 </div>
-                <div class="col-sm-2">
-                    <span class="menu-price">7,600원</span>
-                </div>
-                <button type="button" class="o-d-btn menu-order">주문</button>
-                <button type="button" class="o-d-btn menu-del">삭제</button>
             </div>
-            <div class="row">
-                <hr class="list-hr" />
-            </div>
-
-            <div class="row menu-list text-center">
-                <input type="checkbox" class="list-checkbox align-self-center" checked="true" />
-                <div class="col-sm-1"></div>
-                <div class="col-sm-2 text-center"><img src="beaf_buger.png" class="list-image" alt="burger image" ></div>
-                <div class="col-sm-4">트리플머쉬룸와퍼주니어 세트</div>
-                <div class="col-sm-2 quantity-box">
-                    <span class="list-quantity">1</span>
-                    <a href="">+</a>
-                    <a href="">-</a>
-                </div>
-                <div class="col-sm-2">
-                    <span class="menu-price">7,600원</span>
-                </div>
-                <button type="button" class="o-d-btn menu-order">주문</button>
-                <button type="button" class="o-d-btn menu-del">삭제</button>
-            </div>
-            <div class="row">
-                <hr class="list-hr" />
-            </div>
--->
 <!---------------------------------------------------반복 끝----------------------------------------------------------->
             <div class="row total-box">
                 <div class="col-sm-6"></div>
@@ -126,10 +97,10 @@
                 </div>
                 <div class="col-sm-3">
                     <div class="row footer-top-row">
-                        <div class="col-sm-12"><button type="button" class="all-order">전체상품주문</button></div>
+                        <div class="col-sm-12"><input type="button" class="all-order" value="전체상품주문"></div>
                     </div>
                     <div class="row">
-                        <div class="col-sm-12"><button type="button" class="select-order">선택상품주문</button></div>
+                        <div class="col-sm-12"><input type="button" class="select-order" value="선택상품주문"></div>
                     </div>  
                 </div>
             </div>

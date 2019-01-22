@@ -37,7 +37,7 @@
 
 	<!-- cart.html js -->
     <script th:if="${template} == 'cart' " src="/js/lib/bootstrap.min.js"></script>
-    <script th:if="${template} == 'cart' " src="/js/lib/cart.js"></script>
+    <script th:if="${template} == 'cart' " th:inline="javascript" src="/js/lib/cart.js"></script>
 </div>
 	
 </body>

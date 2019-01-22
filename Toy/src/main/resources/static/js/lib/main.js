@@ -8,6 +8,8 @@ var cookie_index = 0;
  * @date 2019.01.18
 */
 $(document).ready(function () {
+    // 상품 가격 콤마 처리 함수
+    fn_setCommaFoodPrice();
 
     // 음식 메뉴 수량 증가 버튼 클릭 이벤트
     $(document).on('click', '.quantity_plus', function () {
@@ -36,6 +38,26 @@ $(document).ready(function () {
 
 
 
+
+
+
+/**
+ * 
+ * @author Johnny
+ * @date 2019-01-22
+ * @role 상품 가격 콤마 처리 함수
+ */
+function fn_setCommaFoodPrice() {
+    let el = $('.menu_price');
+    let elFoodPrice = $('.menu_price').text().split('원');
+    let foodPrice = 0;
+
+    $(elFoodPrice).each(function (index) {
+        // 5000 -> 5,000
+        foodPrice = numberWithCommas(this);
+        $(el[index]).text(foodPrice + '원');
+    });
+}
 
 
 

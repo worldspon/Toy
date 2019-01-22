@@ -1,14 +1,11 @@
 package com.worldspon.toy.service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -415,87 +412,5 @@ public class FooditemService {
 		}
 		
 		return  procException;
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	/**
-	 * 장바구니 상품 매칭 정보 조회 서비스
-	 * args -------------------------------
-	 * req						| 쿠키 객체를 핸들링하기 위한 통신 객체
-	 * ------------------------------------
-	 * return data ------------------------
-	 * procException			| 상태 수정 처리 결과 정보 [0: 수정 처리 성공, 1: 수정 처리 중 문제 발생]
-	 * ------------------------------------
-	 */
-	public HashMap<String, Object> matchFooditem(HttpServletRequest req) {
-		Cookie[] cookies = req.getCookies();
-
-		// 콜렉션 객체 생성
-		List<Fooditem> foodList = new ArrayList<Fooditem>();
-		HashMap<String, Object> map = new HashMap<String, Object>();
-		
-		if (cookies == null || cookies.length == 0)
-		{
-			// 쿠키가 없을 때
-		}
-		else
-		{
-			ArrayList<Long> fidList = new ArrayList<Long>();
-			int[] cookiePrice = new int[cookies.length];
-			int[] cookieStock = new int[cookies.length];
-			
-			for (int i = 0; i < cookies.length; i += 1)
-			{
-				// fid:1.foodpirce:1000.stock:50 를 자른다.
-				// Java의 split()에 인자는 정규표현식이므로 마침표를 문자 그대로 받아들이지 못한다.
-				String[] tempValue = cookies[i].getValue().split("\\.");
-				String[] cookieValue = tempValue[0].split(":");
-				
-				Long cookieFid = Long.parseLong(cookieValue[1]);
-				
-				fidList.add(cookieFid);
-			}
-
-			// 장바구니에 담긴 상품 조회
-			foodList = fooditemRepo.findAllById(fidList);
-			
-			// 쿠키 정보를 fid 오름차순으로 정렬
-			// JPA의 조회 쿼리의 Order By절은 기본적으로 ASC이므로 그에 맞는 정렬 처리를 해준다.
-			for (int i = 0; i < fidList.size(); i += 1)
-			{
-				Cookie tempCookie = null;
-				
-				for (int j = (i + 1); j < fidList.size(); j += 1)
-				{
-					if (fidList.get(i) > fidList.get(j))
-					{
-						tempCookie = cookies[i];
-						cookies[i] = cookies[j];
-						cookies[j] = tempCookie;
-					}
-				}
-			}
-			
-			// 상품 가격, 수량 가공 및 정렬
-			for (int i = 0; i < cookies.length; i += 1)
-			{
-				String[] tempValue = cookies[i].getValue().split("\\.");
-				cookiePrice[i] = Integer.parseInt((tempValue[1].split(":"))[1]);
-				cookieStock[i] = Integer.parseInt(tempValue[2].split(":")[1]);
-			}
-			// 수동 정렬처리를 해주지 않는 경우 장바구니 페이지에서 상품 수량, 상품 가격의 정보가 잘못된 순서로 출력된다.
-			
-			map.put("foodList", foodList);
-			map.put("price", cookiePrice);
-			map.put("stock", cookieStock);
-		}
-		
-		return map;
 	}
 }
