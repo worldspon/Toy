@@ -74,9 +74,16 @@ public class LoginService {
 			// BeanUtils 스프링 프레임워크 객체를 이용하여 Entity 객체의 속성들을 DTO 객체의 속성에 복사함.
 			UserinfoResponseDto userinfo = new UserinfoResponseDto();
 			BeanUtils.copyProperties(entity, userinfo);
-				
+			
 			req.getSession().setAttribute("loginInfo", userinfo);
-			req.getSession().setMaxInactiveInterval(60 * 30);	// 사용자 정보 세션 유효 기간 30분
+			req.getSession().setMaxInactiveInterval(30 * 60);	// 사용자 정보 세션 유효 기간 30분
+			
+			dto.setUsername(entity.getUsername());
+			dto.setUseremail(entity.getUseremail());
+			dto.setUid(entity.getUid());
+			dto.setSessionid(req.getSession().getId());
+			userinfoRepo.save(dto.toEntity());
+			
 			map.put("result", 1);
 		}
 		
@@ -101,7 +108,16 @@ public class LoginService {
 		}
 		else
 		{
+			// 세션ID 정보를 지울 사용자 정보를 조회
+			Userinfo entity = userinfoRepo.findBySessionid(req.getSession().getId());
+			UserinfoResponseDto userinfoResDto = new UserinfoResponseDto();
+			BeanUtils.copyProperties(entity, userinfoResDto);
+			userinfoResDto.setSessionid("");
+			// Update로 세션ID를 지움
+			userinfoRepo.save(userinfoResDto.toEntitiy());
+			
 			req.getSession().invalidate();
+			
 			msg = "로그아웃이 처리되었습니다.";
 		}
 		

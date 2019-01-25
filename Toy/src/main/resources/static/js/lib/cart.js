@@ -17,8 +17,8 @@ var slide_flag=0; // slide 제어를 위한 flag
 
 
 
-var total_quantity = document.getElementById('total-quantity-inner'); // 메뉴 하단의 총 수량
-var total_price = document.getElementById('total-price-inner'); // 메뉴 하단의 총 가격
+//var total_quantity = document.getElementById('total-quantity-inner'); // 메뉴 하단의 총 수량
+//var total_price = document.getElementById('total-price-inner'); // 메뉴 하단의 총 가격
 var ft_total_quantity = document.getElementById('ft-total-quantity'); // footer 내부 총 수량
 var ft_total_price = document.getElementById('ft-total-price'); // footer 내부 총 가격
 
@@ -66,7 +66,7 @@ $(document).ready(function () {
     $('.select-order').on('click', function () {
         if (fn_isRun)
         {
-            
+            fn_selectOrder();
         }
     });
 
@@ -472,40 +472,42 @@ function fn_setFoodPrice(this_, finalFoodPrice) {
 }
 
 
+
+
+
+
 /**
  * @author Johnny
  * @date 2019-01-22
  * @role 단일 상품 주문 요청 함수
  */
 function fn_individualOrder(this_) {
-    let foodname = $(this_).parent().find('.menu-foodname').text(); // .menu-order (input) > .menu-list (div) > .menu-foodname (div)
+    // orderlist entity data
     let status = 1; // 주문 상태값 0: 대기 중, 1: 처리 됨, 2: 거절 됨, 3: 취소 됨
+    let totalStock = $(ft_total_quantity).find('span').text().split('개')[0]; // 신청한 상품들의 총 합산 수량
+
+    // orderitem entity data
     let fid = $(this_).parent().parent().find('.hid-fid').val(); // .menu-order (input) > .menu-list (div) > div > .hid-fid (input)
-    let stock = $(this_).parent().find('.quantity-box > .list-quantity').text(); // .menu-order (input) > .menu-list (div) > .quantity-box (div) > .list-quantity (input)
-    let price = $(this_).parent().find('#div-menu-price > .menu-price').text();
+    let foodname = $(this_).parent().find('.menu-foodname').text(); // .menu-order (input) > .menu-list (div) > .menu-foodname (div)
+    let price = $(this_).parent().find('#div-menu-price > .menu-price').text().split('원')[0].replace(',', '');
+    let stock = $(this_).parent().find('.quantity-box > .list-quantity').text().split('개')[0]; // .menu-order (input) > .menu-list (div) > .quantity-box (div) > .list-quantity (input)
+
     let data = {};
+    data.status = status;
+    data.totalstock = totalStock;
 
-    // 세션정보 확인 후 로그인된 사용자인 경우 주문을 진행, 로그인되지 않은 사용자인 경우 로그인 페이지 이동 여부 묻기
-    /*<![CDATA[*/
-    console.log( /*[[ ${loginInfo } ]]*/);
-    /*]]>*/
-    if (window.confirm('\'' + foodname + '\' 상품을 주문하시겠습니까?'))
-    {
-        /*
-        $.ajax({
-            url         : '',
-            type        : 'POST',
-            contentType : 'application/json; charset=utf-8',
-            dataType    : 'json',
-            data        : ''
-        }).done(function () {
+    data.orderitem = [{
+        fid         : fid,
+        foodname    : foodname,
+        foodprice   : price,
+        stock       : stock
+    }];
 
-        }).fail(function (err) {
-            window.alert(JSON.stringify(err));
-            console.log(err);
-        });
-        */
-    }
+     // 세션정보 확인 후 로그인된 사용자인 경우 주문을 진행, 로그인되지 않은 사용자인 경우 로그인 페이지 이동 여부 묻기
+     if (window.confirm('\'' + foodname + '\' 상품을 주문하시겠습니까?'))
+     {
+        fn_sendAjax(data);
+     }
 }
 
 /**
@@ -514,6 +516,22 @@ function fn_individualOrder(this_) {
  * @role 선택 상품 주문 요청 함수
  */
 function fn_selectOrder() {
+    // orderlist entity data
+    let status = 1; // 주문 상태값 0: 대기 중, 1: 처리 됨, 2: 거절 됨, 3: 취소 됨
+    let totalStock = $(ft_total_quantity).find('span').text().split('개')[0]; // 신청한 상품들의 총 합산 수량
+
+    // orderitem entity data
+    let fid = $('.hid-fid');
+    let foodname = $('.menu-foodname');
+    let price = $('.menu-price');
+    let stock = $('.list-quantity');
+
+    let orderitem = [];
+
+    let data = {};
+    data.status = status;
+    data.totalstock = totalStock;
+
     let selected_checkbox = [],
         all_checkbox = [];
     all_checkbox = $(list_check);
@@ -522,9 +540,21 @@ function fn_selectOrder() {
         selected_checkbox.push(all_checkbox[index]);
     });
 
+    $(selected_checkbox).each(function (index) {
+        orderitem.push({
+            fid         : $(fid[index]).val(),
+            foodname    : $(foodname[index]).text(),
+            foodprice   : $(price[index]).text().split('원')[0].replace(',', ''),
+            stock       : $(stock[index]).text().split('개')[0]
+        });
+    });
+
+    data.orderitem = orderitem;
+
+
     if (window.confirm('선택한 상품을 주문하시겠습니까?'))
     {
-
+        fn_sendAjax(data);
     }
 }
 
@@ -538,5 +568,50 @@ function fn_allOrder() {
     if (window.confirm('전체 상품을 주문하시겠습니까?'))
     {
 
+    }
+}
+
+
+
+
+/**
+ * @author Johnny
+ * @date 2019-01-25
+ * @role 주문 통신 보내기 함수
+ */
+function fn_sendAjax(data) {
+
+    if (!(data) || data === null || data.length === 0)
+    {
+        window.alert('상품 주문에 문제가 발생했습니다.\n 페이지를 새로고침하신 후 다시 시도해주세요.');
+        window.location.reload();
+    }
+    else
+    {
+        console.log(JSON.stringify(data));
+        $.ajax({
+            url         : '/order',
+            type        : 'POST',
+            contentType : 'application/json; charset=utf-8',
+            dataType    : 'json',
+            data        : JSON.stringify(data)
+        }).done(function (obj) {
+            // 인터셉터를 통해 로그인 상태를 체크 -> UserInterceptor 클래스 확인
+            if (obj.loginChk && obj.loginChk === '-1')
+            {
+                if (window.confirm(obj.msg))
+                {
+                    window.location.href = '/login';
+                }
+            }
+            else
+            {
+                window.alert(obj.msg);
+                window.location.href = '/';
+            }
+        }).fail(function (err) {
+            window.alert(JSON.stringify(err));
+            console.log(err);
+        });
     }
 }

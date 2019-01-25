@@ -36,11 +36,15 @@ public class Managerinfo extends BaseTimeEntity {
 	private String managerid;
 	@Column(length = 200, nullable = false)
 	private String managerpwd;
+	@Column()
+	private String sessionid;
 	
 	@Builder
-	public Managerinfo(String managername, String managerid, String managerpwd) {
+	public Managerinfo(Long mid, String managername, String managerid, String managerpwd, String sessionid) {
+		this.mid = mid;
 		this.managername = managername;
 		this.managerid = managerid;
 		this.managerpwd = managerpwd;
+		this.sessionid = sessionid;
 	}
 }

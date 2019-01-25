@@ -22,15 +22,19 @@ public class ManagerinfoResponseDto {
 	 * -------------------------------------
 	 * */
 	
+	private Long mid;
 	private String managername;
 	private String managerid;
 	private String managerpwd;
+	private String sessionid;
 	
 	public Managerinfo toEntity() {
 		return Managerinfo.builder()
+				.mid(mid)
 				.managername(managername)
 				.managerid(managerid)
 				.managerpwd(managerpwd)
+				.sessionid(sessionid)
 				.build();
 	}
 }

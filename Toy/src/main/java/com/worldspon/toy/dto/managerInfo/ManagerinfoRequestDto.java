@@ -21,15 +21,19 @@ public class ManagerinfoRequestDto {
 	 * managerpwd		| 매니저 비밀번호 정보
 	 * -------------------------------------
 	 * */
+	private Long mid;
 	private String managername;
 	private String managerid;
 	private String managerpwd;
+	private String sessionid;
 	
 	public Managerinfo toEntity() {
 		return Managerinfo.builder()
+				.mid(mid)
 				.managername(managername)
 				.managerid(managerid)
 				.managerpwd(managerpwd)
+				.sessionid(sessionid)
 				.build();
 	}
 }

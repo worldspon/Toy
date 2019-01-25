@@ -5,13 +5,13 @@
 */
 $(document).ready(function () {
 
-   // 파일 버튼 클릭 이벤트
-   $(document).on('click', '#file-imgfile', function () {
-      if (fn_isRun(false))
-      {
+   // // 파일 버튼 클릭 이벤트
+   // $(document).on('click', '#file-imgfile', function () {
+   //    if (fn_isRun(false))
+   //    {
          
-      }
-   });
+   //    }
+   // });
 
    // 수정 버튼 클릭 이벤트
    $(document).on("click", "#mod_btn", function () {

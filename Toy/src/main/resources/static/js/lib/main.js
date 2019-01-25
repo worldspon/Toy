@@ -74,12 +74,19 @@ function fn_quantity_plus(this_) {
     let index = $('.quantity_plus').index(this_);    // 상품 인덱스
     let foodpirce = Number($(this_).parent().parent().find('#foodprice_' + index).val());    // 상품 가격값
     let max_stock = $('#foodstock_' + index).val(); // 상품 최대 수량값
+    let finalPrice = 0;
 
-    if(menu_quantity[index].innerHTML != max_stock){
-        menu_quantity[index].innerHTML++;
-        menu_price[index].innerHTML = foodpirce * menu_quantity[index].innerHTML + '원';
-    } else {
+    if (menu_quantity[index].innerHTML === max_stock)
+    {
+        window.alert('현재 신청할 수 있는 최대 수량입니다.');
         return 0;
+    } 
+    else 
+    {
+        menu_quantity[index].innerHTML++;
+        finalPrice = foodpirce * menu_quantity[index].innerHTML;
+        finalPrice = numberWithCommas(finalPrice);
+        menu_price[index].innerHTML = finalPrice + '원';
     }
 }
 
@@ -96,12 +103,19 @@ function fn_quantity_minus(this_) {
     let menu_price = document.getElementsByClassName('menu_price');
     let index=$(".quantity_minus").index(this_); // 상품 인덱스
     let foodpirce = Number($(this_).parent().parent().find('#foodprice_' + index).val());    // 상품 가격값
+    let finalPrice = 0;
 
-    if(menu_quantity[index].innerHTML!=1){
-        menu_quantity[index].innerHTML--;
-        menu_price[index].innerHTML = foodpirce * menu_quantity[index].innerHTML + '원';
-    } else {
+    if (menu_quantity[index].innerHTML === '1')
+    {
+        window.alert('수량은 1개 미만으로 선택하실 수 없습니다.\n상품제거는 삭제버튼을 눌러주세요.');
         return 0;
+    } 
+    else 
+    {
+        menu_quantity[index].innerHTML--;
+        finalPrice = foodpirce * menu_quantity[index].innerHTML;
+        finalPrice = numberWithCommas(finalPrice);
+        menu_price[index].innerHTML = finalPrice + '원';
     }
 }
 

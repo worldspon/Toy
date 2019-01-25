@@ -26,6 +26,7 @@ public class Userinfo extends BaseTimeEntity {
 	 * useremail	| 사용자 이메일 정보
 	 * userid		| 사용자 아이디 정보
 	 * userpwd		| 사용자 비밀번호 정보
+	 * sessionid	| 세션 아이디 정보
 	 * -------------------------------------
 	 * */
 	
@@ -40,12 +41,16 @@ public class Userinfo extends BaseTimeEntity {
 	private String userid;
 	@Column(length = 200, nullable = false)
 	private String userpwd;
+	@Column()
+	private String sessionid;
 	
 	@Builder
-	public Userinfo(String username, String useremail, String userid, String userpwd) {
+	public Userinfo(Long uid, String username, String useremail, String userid, String userpwd, String sessionid) {
+		this.uid = uid;
 		this.username = username;
 		this.useremail = useremail;
 		this.userid = userid;
 		this.userpwd = userpwd;
+		this.sessionid = sessionid;
 	}
 }

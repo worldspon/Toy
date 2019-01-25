@@ -26,7 +26,7 @@
                 <div class="col-sm-2 align-self-center">수량</div>
                 <div class="col-sm-2 align-self-center">상품가격</div>
             </div>
-            <div th:if="${map == null or map.isEmpty() }">
+            <div th:if="${map == null or map.isEmpty() or map.foodList.isEmpty() }">
                 <div>
                     <span>장바구니에 상품이 없습니다.</span>
                 </div>
@@ -67,9 +67,9 @@
             <div class="row total-box">
                 <div class="col-sm-6"></div>
                 <div class="col-sm-1"></div>
-                <div class="col-sm-2 total-quantity text-right">총 수량 : <span></span></div>
+                <div class="col-sm-2 total-quantity text-right" id="ft-total-quantity">총 수량 : <span></span></div>
                 
-                <div class="col-sm-3 text-left total-price">총 금액 : <span></span></div>
+                <div class="col-sm-3 text-left total-price" id="ft-total-price">총 금액 : <span></span></div>
             </div>
             <div class="row">
                     <hr class="list-hr" style="margin-bottom:250px;"/>

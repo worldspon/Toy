@@ -20,4 +20,6 @@ public interface ManagerinfoRepository extends JpaRepository<Managerinfo, Long> 
 	 * ------------------------------------
 	 * */
 	Managerinfo findByManageridAndManagerpwd(String managerid, String managerpwd);
+	
+	Managerinfo findBySessionid(String sessionid);
 }

@@ -38,8 +38,6 @@ public class ManagerService {
 		String managerid = dto.getManagerid();
 		String managerpwd = dto.getManagerpwd();
 		
-		System.out.println(managerid + " / " + managerpwd);
-		
 		Managerinfo entity = managerinfoRepo.findByManageridAndManagerpwd(managerid, managerpwd);
 		if (entity == null)
 		{
@@ -51,7 +49,13 @@ public class ManagerService {
 			BeanUtils.copyProperties(entity, managerinfo);
 			
 			req.getSession().setAttribute("managerInfo", managerinfo);
-			req.getSession().setMaxInactiveInterval(60 * 30);	// 매니저 정보 세션 유효 기간 30분
+			req.getSession().setMaxInactiveInterval(30 * 60);	// 매니저 정보 세션 유효 기간 30분
+
+			dto.setMid(entity.getMid());
+			dto.setManagername(entity.getManagername());
+			dto.setSessionid(req.getSession().getId());
+			managerinfoRepo.save(dto.toEntity());
+			
 			map.put("result", 1);
 		}
 		
@@ -76,7 +80,15 @@ public class ManagerService {
 		}
 		else
 		{
+			Managerinfo entity = managerinfoRepo.findBySessionid(req.getSession().getId());
+			ManagerinfoResponseDto managerinfoResDto = new ManagerinfoResponseDto();
+			BeanUtils.copyProperties(entity, managerinfoResDto);
+			managerinfoResDto.setSessionid("");
+			// Update로 세션ID를 지움
+			managerinfoRepo.save(managerinfoResDto.toEntity());
+			
 			req.getSession().invalidate();
+			
 			msg = "로그아웃이 처리되었습니다.";
 		}
 		

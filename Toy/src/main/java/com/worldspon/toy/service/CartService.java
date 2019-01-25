@@ -40,11 +40,12 @@ public class CartService {
 	public String saveCart(FooditemRequestDto dto,	HttpServletRequest req, HttpServletResponse res) {
 
 		Cookie[] cookies = req.getCookies();
-		Cookie cookie = null;
 		String cookieName = "cart";
+		Cookie cookie = new Cookie(cookieName + 0, "");
 		String msg = "장바구니에 상품이 추가되었습니다.";
 		
 		
+		// Session 쿠키 정보도 존해하지 않는 경우
 		if (cookies == null || cookies.length == 0)
 		{
 			// 쿠키를 생성한 적이 없다면 쿠키를 생성함
@@ -55,23 +56,26 @@ public class CartService {
 			// 기존 장바구니에 담겨있는 상품을 재 선택한 것인지 판단
 			for (int i = 0; i < cookies.length; i += 1)
 			{
-				String getCookieName = cookies[i].getName();
-				String[] tempValue = cookies[i].getValue().split("\\.");
-				String[] cookiesValue = tempValue[0].split(":");
-				Long cookiesFid = Long.parseLong(cookiesValue[1]);
-				
-				if (cookiesFid == dto.getFid())
+				if (!(cookies[i].getName().equals("JSESSIONID")))
 				{
-					// 기존 장바구니에 담겨있는 상품인 경우 쿠키를 수정함
-					cookie = new Cookie(getCookieName, "");
-					msg = "장바구니에 담긴 상품 정보가 수정되었습니다.";
-					break;	// break로 반복문을 빠져나오지 않을 경우 문제 발생
-				}
-				else
-				{
-					// 새로 담을 상품인 경우 새로운 쿠키를 생성함
-					cookieName = "cart" + cookies.length;
-					cookie = new Cookie(cookieName, "");
+					String getCookieName = cookies[i].getName();
+					String[] tempValue = cookies[i].getValue().split("\\.");
+					String[] cookiesValue = tempValue[0].split(":");
+					Long cookiesFid = Long.parseLong(cookiesValue[1]);
+					
+					if (cookiesFid == dto.getFid())
+					{
+						// 기존 장바구니에 담겨있는 상품인 경우 쿠키를 수정함
+						cookie = new Cookie(getCookieName, "");
+						msg = "장바구니에 담긴 상품 정보가 수정되었습니다.";
+						break;	// break로 반복문을 빠져나오지 않을 경우 문제 발생
+					}
+					else
+					{
+						// 새로 담을 상품인 경우 새로운 쿠키를 생성함
+						cookieName = "cart" + cookies.length;
+						cookie = new Cookie(cookieName, "");
+					}
 				}
 			}
 		}
@@ -117,20 +121,30 @@ public class CartService {
 		}
 		else
 		{
+			ArrayList<Integer> cookiePrice = new ArrayList<Integer>();
+			ArrayList<Integer> cookieStock = new ArrayList<Integer>();
+			//int[] cookiePrice = new int[cookies.length];
+			//int[] cookieStock = new int[cookies.length];
 			ArrayList<Long> fidList = new ArrayList<Long>();
-			int[] cookiePrice = new int[cookies.length];
-			int[] cookieStock = new int[cookies.length];
-			
+
 			for (int i = 0; i < cookies.length; i += 1)
 			{
-				// fid:1.foodpirce:1000.stock:50 를 자른다.
-				// Java의 split()에 인자는 정규표현식이므로 마침표를 문자 그대로 받아들이지 못한다.
-				String[] tempValue = cookies[i].getValue().split("\\.");
-				String[] cookieValue = tempValue[0].split(":");
-				
-				Long cookieFid = Long.parseLong(cookieValue[1]);
-				
-				fidList.add(cookieFid);
+				// 쿠키 객체 중 로그인 정보를 담는 JSESSIONID는 처리를 건너뜀
+				if (!(cookies[i].getName().equals("JSESSIONID")))
+				{
+					// fid:1.foodpirce:1000.stock:50 를 자른다.
+					// Java의 split()에 인자는 정규표현식이므로 마침표를 문자 그대로 받아들이지 못한다.
+					String[] tempValue = cookies[i].getValue().split("\\.");
+					String[] cookieValue = tempValue[0].split(":");
+
+					Long cookieFid = Long.parseLong(cookieValue[1]);
+					
+					fidList.add(cookieFid);
+					
+					// 상품 가격, 수량 가공 및 정렬
+					cookiePrice.add(Integer.parseInt(tempValue[1].split(":")[1]));
+					cookieStock.add(Integer.parseInt(tempValue[2].split(":")[1]));
+				}
 			}
 
 			// 장바구니에 담긴 상품 조회
@@ -141,26 +155,32 @@ public class CartService {
 			for (int i = 0; i < fidList.size(); i += 1)
 			{
 				Cookie tempCookie = null;
+				int tempCookiePrice = 0;
+				int tempCookieStock = 0;
 				
 				for (int j = (i + 1); j < fidList.size(); j += 1)
 				{
-					if (fidList.get(i) > fidList.get(j))
+					if (!(cookies[i].getName().equals("JSESSIONID")))
 					{
-						tempCookie = cookies[i];
-						cookies[i] = cookies[j];
-						cookies[j] = tempCookie;
+						if (fidList.get(i) > fidList.get(j))
+						{
+							tempCookie = cookies[i];
+							cookies[i] = cookies[j];
+							cookies[j] = tempCookie;
+							
+							tempCookiePrice = cookiePrice.get(i);
+							cookiePrice.set(i, cookiePrice.get(j));
+							cookiePrice.set(j, tempCookiePrice);
+							
+							tempCookieStock = cookieStock.get(i);
+							cookieStock.set(i, cookieStock.get(j));
+							cookieStock.set(j, tempCookieStock);
+							// 수동 정렬처리를 해주지 않는 경우 
+							// 장바구니 페이지에서 상품 수량, 상품 가격의 정보가 잘못된 순서로 출력된다.
+						}
 					}
 				}
 			}
-			
-			// 상품 가격, 수량 가공 및 정렬
-			for (int i = 0; i < cookies.length; i += 1)
-			{
-				String[] tempValue = cookies[i].getValue().split("\\.");
-				cookiePrice[i] = Integer.parseInt((tempValue[1].split(":"))[1]);
-				cookieStock[i] = Integer.parseInt(tempValue[2].split(":")[1]);
-			}
-			// 수동 정렬처리를 해주지 않는 경우 장바구니 페이지에서 상품 수량, 상품 가격의 정보가 잘못된 순서로 출력된다.
 			
 			map.put("foodList", foodList);
 			map.put("price", cookiePrice);

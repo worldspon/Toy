@@ -20,20 +20,25 @@ public class UserinfoRequestDto {
 	 * useremail	| 사용자 이메일 정보
 	 * userid		| 사용자 아이디 정보
 	 * userpwd		| 사용자 비밀번호 정보
+	 * sessionid	| 세션 아이디 정보
 	 * -------------------------------------
 	 * */
 	
+	private Long uid;
 	private String username;
 	private String useremail;
 	private String userid;
 	private String userpwd;
+	private String sessionid;
 	
 	public Userinfo toEntity() {
 		return Userinfo.builder()
+				.uid(uid)
 				.username(username)
 				.useremail(useremail)
 				.userid(userid)
 				.userpwd(userpwd)
+				.sessionid(sessionid)
 				.build();
 	}
 }

@@ -54,4 +54,6 @@ public interface UserinfoRepository extends JpaRepository<Userinfo, Long> {
 	*/
 	// 객체지향적 Method Style
 	Userinfo findByUseridAndUserpwd(String userid, String userpwd);
+	
+	Userinfo findBySessionid(String sessionid);
 }

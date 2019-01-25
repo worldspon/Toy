@@ -19,19 +19,24 @@ public class UserinfoResponseDto {
 	 * username		| 사용자 이름 정보
 	 * useremail	| 사용자 이메일 정보
 	 * userid		| 사용자 아이디 정보
+	 * sessionid	| 세션 아이디 정보
 	 * -------------------------------------
 	 * */
-	
+	private Long uid;
 	private String username;
 	private String useremail;
 	private String userid;
-	
+	private String userpwd;
+	private String sessionid;
 	
 	public Userinfo toEntitiy() {
 		return Userinfo.builder()
+				.uid(uid)
 				.username(username)
 				.useremail(useremail)
 				.userid(userid)
+				.userpwd(userpwd)
+				.sessionid(sessionid)
 				.build();
 	}
 }
