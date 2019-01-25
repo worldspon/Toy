@@ -21,7 +21,6 @@ import com.worldspon.toy.entity.Fooditem;
 import com.worldspon.toy.entity.Orderitem;
 import com.worldspon.toy.entity.Userinfo;
 import com.worldspon.toy.repository.FooditemRepository;
-import com.worldspon.toy.repository.OrderitemRepository;
 import com.worldspon.toy.repository.OrderlistRepository;
 import com.worldspon.toy.repository.UserinfoRepository;
 
@@ -35,7 +34,6 @@ public class OrderService {
 	private UserinfoRepository userinfoRepo;
 	private FooditemRepository fooditemRepo;
 	private OrderlistRepository orderRepo;
-	private OrderitemRepository orderItemRepo;
 	
 	/**
 	 * 주문 처리 서비스
@@ -53,7 +51,6 @@ public class OrderService {
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		
 		Object loginInfo = req.getSession().getAttribute("loginInfo");
-		logger.info("loginInfo : " + loginInfo);
 		
 		if (loginInfo == null)
 		{
@@ -63,6 +60,7 @@ public class OrderService {
 		}
 		else
 		{
+			// 주문자 식별 id, 주문자 이름 설정 (setter)
 			Userinfo userinfoEntity = userinfoRepo.findBySessionid(req.getSession().getId());
 			orderListReqDto.setUid(userinfoEntity.getUid());
 			orderListReqDto.setUsername(userinfoEntity.getUsername());
@@ -77,6 +75,7 @@ public class OrderService {
 				for (int i = 0; i < reqOrderItemEntity.size(); i += 1)
 				{
 					// 상품 정보를 조회하기 위해 fid를 ArrayList collection에 담는다
+					logger.info("===============reqOrderItemEntity FID : " + reqOrderItemEntity.get(i).getFid());
 					reqFidList.add(reqOrderItemEntity.get(i).getFid());
 					
 					// 주문 신청한 상품의 수량 정보
@@ -119,8 +118,6 @@ public class OrderService {
 						
 						// 잔여 수량
 						int remainsStock = validStock - reqStockList[i];
-						logger.info("============================= validStock : " + validStock + " / reqStockList[i] : " + reqStockList[i]);
-						logger.info("============================= remainsStock : " + remainsStock);
 						fooditemResDto.setStock(remainsStock);
 						
 						fooditemEntityList.add(fooditemResDto.toEntity());
@@ -167,10 +164,43 @@ public class OrderService {
 						{
 							if (!(cookies[i].getName().equals("JSESSIONID")))
 							{
-								cookies[i].setValue("");
-								cookies[i].setMaxAge(0);
+								// 장바구니에 저장되어있는 상품의 fid값 구하기
+								Long fid = Long.parseLong((cookies[i].getValue().split("\\.")[0]).split(":")[1]);
 								
-								res.addCookie(cookies[i]);
+								// 주문 신청한 상품은 장바구니에서 쿠키를 삭제함
+								for (Long targetFid : reqFidList) 
+								{
+									if (fid == targetFid)
+									{
+										cookies[i].setValue("");
+										cookies[i].setMaxAge(0);
+										
+										res.addCookie(cookies[i]);
+										
+										// 쿠키 이름 재 설정 [cart, cart1, cart3] -> [cart, cart1, cart2]
+										for (int j = (i + 1); j < cookies.length; j += 1)
+										{
+											// cart3 -> 3 
+											String cartNameIndex = cookies[j].getName().substring(4);
+											// cart3 -> cart2
+											String newCookieName = "cart" + (Integer.parseInt(cartNameIndex) - 1) ;
+											
+											// 삭제된 쿠키 이후에 존재하는 쿠키 값을 땡겨옴
+											Cookie cookie = new Cookie(newCookieName, cookies[j].getValue());
+											cookie.setMaxAge(60 * 60 * 24 * 30); // 쿠키 유효 기간은 30일 (60초 * 60분 * 24시간 * 30일)
+											
+											// [여러 개의 쿠키를 핸들링하는 방식으로 짜는 로직의 문제점]
+											// 1. 특정 쿠키에 변화가 발생하면 쿠키를 정렬해줘야 하는 귀찮음이 발생 (Query의 Order by절과 연관된 경우)
+											// 2. 특정 쿠키를 삭제하고 새로운 쿠키를 생성하는 패턴으로 기존의 쿠키를 정렬해야하는 경우 
+											// MaxAge의 값을 수정해야하는데 기존 쿠키에 설정된 MaxAge값을 가져와서 핸들링할 수가 없음
+											// 이는 브라우저가 서버에게 쿠키 이름과 값만 제공해주기 때문
+											// 결론: 추후에 여러 개의 항목을 컨트롤할 때에는 하나의 쿠키에 객체 형식으로 데이터를 핸들링하는 것이 좋을 것 같음
+											
+											res.addCookie(cookie);
+										}
+										break;
+									}
+								}
 							}
 						}
 					}
@@ -204,14 +234,12 @@ public class OrderService {
 			// 주문 신청한 모 상품의 총 수량이 100개보다 적은 경우 
 			if ((reqTotalStock % 100) < 0)
 			{
-				logger.info("============================================1=======================================");
 				fooditemRepo.saveAll(fooditemEntityList);
 			}
 			else
 			{
 				List<Fooditem> pieceList = new ArrayList<Fooditem>();
 
-				logger.info("============= fooditemEntityList.size() : " + fooditemEntityList.size());
 				// ex) 2010개의 업데이트 해야 할 데이터가 있는 경우
 				for (int i = 0; i < fooditemEntityList.size(); i += 1)
 				{
@@ -221,16 +249,12 @@ public class OrderService {
 					// 100개씩 나눠서 업데이트
 					if ( i > 0 && (i % 100) == 0)
 					{
-						logger.info("============================================2=======================================");
 						fooditemRepo.saveAll(fooditemEntityList);
 						
 						// 100개씩 쌓인 데이터를 지우고 다시 100개 쌓기
 						pieceList.clear();
 					}
-					
-					logger.info("===================== stock : " + fooditemEntityList.get(i).getStock());
 				}
-				logger.info("============================================3=======================================");
 				// 2000개의 데이터 처리 후 나머지 10개 처리
 				fooditemRepo.saveAll(fooditemEntityList);
 			}

@@ -74,7 +74,7 @@ $(document).ready(function () {
     $(".all-order").on('click', function () {
         if (fn_isRun)
         {
-
+            fn_allOrder();
         }
     });
 
@@ -520,12 +520,6 @@ function fn_selectOrder() {
     let status = 1; // 주문 상태값 0: 대기 중, 1: 처리 됨, 2: 거절 됨, 3: 취소 됨
     let totalStock = $(ft_total_quantity).find('span').text().split('개')[0]; // 신청한 상품들의 총 합산 수량
 
-    // orderitem entity data
-    let fid = $('.hid-fid');
-    let foodname = $('.menu-foodname');
-    let price = $('.menu-price');
-    let stock = $('.list-quantity');
-
     let orderitem = [];
 
     let data = {};
@@ -537,15 +531,18 @@ function fn_selectOrder() {
     all_checkbox = $(list_check);
 
     $(all_checkbox).each(function (index) {
-        selected_checkbox.push(all_checkbox[index]);
+        if ($(all_checkbox[index]).prop("checked"))
+        {
+            selected_checkbox.push(all_checkbox[index]);
+        }
     });
 
     $(selected_checkbox).each(function (index) {
         orderitem.push({
-            fid         : $(fid[index]).val(),
-            foodname    : $(foodname[index]).text(),
-            foodprice   : $(price[index]).text().split('원')[0].replace(',', ''),
-            stock       : $(stock[index]).text().split('개')[0]
+            fid         : $(this).parent().parent().find('.hid-fid').val(),
+            foodname    : $(this).parent().find('.menu-foodname').text(),
+            foodprice   : $(this).parent().find('#div-menu-price > .menu-price').text().split('원')[0].replace(',', ''),
+            stock       : $(this).parent().find('.quantity-box > .list-quantity').text().split('개')[0]
         });
     });
 
@@ -564,10 +561,36 @@ function fn_selectOrder() {
  * @role 전체 상품 주문 요청 함수
  */
 function fn_allOrder() {
+    // orderlist entity data
+    let status = 1; // 주문 상태값 0: 대기 중, 1: 처리 됨, 2: 거절 됨, 3: 취소 됨
+    let totalStock = $(ft_total_quantity).find('span').text().split('개')[0]; // 신청한 상품들의 총 합산 수량
+
+    // orderitem entity data
+    let fid = $('.hid-fid');
+    let foodname = $('.menu-foodname');
+    let price = $('.menu-price');
+    let stock = $('.list-quantity');
+
+    let orderitem = [];
+
+    let data = {};
+    data.status = status;
+    data.totalstock = totalStock;
+
+    $(fid).each(function (index) {
+        orderitem.push({
+            fid         : $(fid[index]).val(),
+            foodname    : $(foodname[index]).text(),
+            foodprice   : $(price[index]).text().split('원')[0].replace(',', ''),
+            stock       : $(stock[index]).text().split('개')[0]
+        });
+    });
+
+    data.orderitem = orderitem;
 
     if (window.confirm('전체 상품을 주문하시겠습니까?'))
     {
-
+        fn_sendAjax(data);
     }
 }
 
