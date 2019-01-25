@@ -19,7 +19,6 @@ import com.worldspon.toy.dto.orderitem.OrderitemResponseDto;
 import com.worldspon.toy.dto.orderlist.OrderlistRequestDto;
 import com.worldspon.toy.entity.Fooditem;
 import com.worldspon.toy.entity.Orderitem;
-import com.worldspon.toy.entity.Orderlist;
 import com.worldspon.toy.entity.Userinfo;
 import com.worldspon.toy.repository.FooditemRepository;
 import com.worldspon.toy.repository.OrderitemRepository;
@@ -81,7 +80,10 @@ public class OrderService {
 					reqFidList.add(reqOrderItemEntity.get(i).getFid());
 					
 					// 주문 신청한 상품의 수량 정보
-					reqStockList = new int[reqOrderItemEntity.size()];
+					if (i == 0)
+					{
+						reqStockList = new int[reqOrderItemEntity.size()];
+					}
 					reqStockList[i] = reqOrderItemEntity.get(i).getStock();
 					
 					OrderitemResponseDto tempDto = new OrderitemResponseDto();
@@ -116,7 +118,9 @@ public class OrderService {
 						BeanUtils.copyProperties(fooditemEntity, fooditemResDto);
 						
 						// 잔여 수량
-						int remainsStock = validStock - reqStockList[i]; 
+						int remainsStock = validStock - reqStockList[i];
+						logger.info("============================= validStock : " + validStock + " / reqStockList[i] : " + reqStockList[i]);
+						logger.info("============================= remainsStock : " + remainsStock);
 						fooditemResDto.setStock(remainsStock);
 						
 						fooditemEntityList.add(fooditemResDto.toEntity());
@@ -200,12 +204,14 @@ public class OrderService {
 			// 주문 신청한 모 상품의 총 수량이 100개보다 적은 경우 
 			if ((reqTotalStock % 100) < 0)
 			{
+				logger.info("============================================1=======================================");
 				fooditemRepo.saveAll(fooditemEntityList);
 			}
 			else
 			{
 				List<Fooditem> pieceList = new ArrayList<Fooditem>();
 
+				logger.info("============= fooditemEntityList.size() : " + fooditemEntityList.size());
 				// ex) 2010개의 업데이트 해야 할 데이터가 있는 경우
 				for (int i = 0; i < fooditemEntityList.size(); i += 1)
 				{
@@ -213,14 +219,18 @@ public class OrderService {
 					pieceList.add(fooditemEntityList.get(i));
 					
 					// 100개씩 나눠서 업데이트
-					if ((i % 100) == 0)
+					if ( i > 0 && (i % 100) == 0)
 					{
+						logger.info("============================================2=======================================");
 						fooditemRepo.saveAll(fooditemEntityList);
 						
 						// 100개씩 쌓인 데이터를 지우고 다시 100개 쌓기
 						pieceList.clear();
 					}
+					
+					logger.info("===================== stock : " + fooditemEntityList.get(i).getStock());
 				}
+				logger.info("============================================3=======================================");
 				// 2000개의 데이터 처리 후 나머지 10개 처리
 				fooditemRepo.saveAll(fooditemEntityList);
 			}

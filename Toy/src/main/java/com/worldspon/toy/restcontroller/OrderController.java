@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.worldspon.toy.dto.orderlist.OrderlistRequestDto;
-import com.worldspon.toy.entity.Orderlist;
 import com.worldspon.toy.service.OrderService;
 
 import lombok.AllArgsConstructor;

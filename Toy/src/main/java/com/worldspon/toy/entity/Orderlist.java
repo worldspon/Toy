@@ -5,7 +5,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -57,8 +56,7 @@ public class Orderlist extends BaseTimeEntity {
 	 * mappedBy			| 양방향 관계 설정 시 관계의 주체가 되는 쪽에서 정의  (단방향 시 기술하지 않음)
 	 * orphanRemoval	| 관계 Entity에서 변경이 일어난 경우 DB 변경을 같이 함 (이 옵션은 DB Layer 레벨, cascade는 JPA Layer 레벨)
 	 */
-	@OneToMany(targetEntity = Orderitem.class, cascade = CascadeType.ALL)
-	@JoinColumn(name = "orderitemid")
+	@OneToMany(targetEntity = Orderitem.class, cascade = CascadeType.ALL, mappedBy = "orderlist")
 	private List<Orderitem> orderitem;
 	
 	

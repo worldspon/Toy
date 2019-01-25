@@ -46,24 +46,20 @@ public class Orderitem extends BaseTimeEntity {
 	/*
 	 * optional		| 객체에 null을 허용하는 옵션. [true(Default), false]
 	 */
-	/*
 	@ManyToOne(targetEntity = Orderlist.class)
-	@JoinColumn(name = "orderitemid_oid")
+	@JoinColumn(name = "Orderlist_oid")
 	private Orderlist orderlist;
-	*/
 	
 	@Builder
-	public Orderitem(Long orderitemid, Long fid, String foodname, int stock, int foodprice) {
+	public Orderitem(Long orderitemid, Long fid, String foodname, int stock, int foodprice, Orderlist orderlist) {
 		this.orderitemid = orderitemid;
 		this.fid = fid;
 		this.foodname = foodname;
 		this.stock = stock;
 		this.foodprice = foodprice;
-		/*
 		if (orderlist != null)
 		{
 			this.orderlist = orderlist;
 		}
-		*/
 	}
 }
