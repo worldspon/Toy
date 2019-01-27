@@ -88,8 +88,6 @@ public class OrderService {
 					OrderitemResponseDto tempDto = new OrderitemResponseDto();
 					BeanUtils.copyProperties(reqOrderItemEntity.get(i), tempDto);
 				}
-				
-				
 				// 사용자가 주문 신청한 상품들의 수량을 체크하기 위해 정보를 조회함
 				List<Fooditem> fooditemList = fooditemRepo.findAllById(reqFidList);
 				List<Fooditem> fooditemEntityList = new ArrayList<Fooditem>();
@@ -123,6 +121,7 @@ public class OrderService {
 						fooditemEntityList.add(fooditemResDto.toEntity());
 					}
 				}
+				
 				// fooditem 테이블 update
 				// 테이블에서 상품 수량을 주문된 요청 수량 만큼 감소 시키기
 				int updateProcVal = updateFoodStock(reqTotalStock, fooditemEntityList);
@@ -133,28 +132,8 @@ public class OrderService {
 				}
 				else
 				{
-					
 					// orderList, orderitem 테이블 insert
 					orderRepo.save(orderListReqDto.toEntity());
-					
-					//orderItemRepo.saveAll(reqOrderItemEntity);
-					//Long newOid = orderRepo.save(orderListReqDto.toEntity()).getOid();
-					
-//					List<Orderitem> orderitemEntity = orderListReqDto.getOrderitem();
-//					List<Orderlist> changeDtoList = new ArrayList<Orderlist>();
-//					
-//					for (int i = 0; i < orderitemEntity.size(); i += 1)
-//					{
-//						Orderlist orderEntity = orderitemEntity.get(i).getOrderlist();
-//						OrderlistRequestDto orderlistDto = new OrderlistRequestDto();
-//						BeanUtils.copyProperties(orderEntity, orderlistDto);
-//						orderlistDto.setOid(newOid);
-//						changeDtoList.add(orderlistDto.toEntity());
-//						
-//					}
-					
-					// 일괄 insert
-					//orderItemRepo.saveAll(changeDtoList);
 					
 					// 사용자 쿠키 데이터 삭제 (장바구니 상품 정보)
 					Cookie[] cookies = req.getCookies();
@@ -176,32 +155,41 @@ public class OrderService {
 										cookies[i].setMaxAge(0);
 										
 										res.addCookie(cookies[i]);
-										
-										// 쿠키 이름 재 설정 [cart, cart1, cart3] -> [cart, cart1, cart2]
-										for (int j = (i + 1); j < cookies.length; j += 1)
-										{
-											// cart3 -> 3 
-											String cartNameIndex = cookies[j].getName().substring(4);
-											// cart3 -> cart2
-											String newCookieName = "cart" + (Integer.parseInt(cartNameIndex) - 1) ;
-											
-											// 삭제된 쿠키 이후에 존재하는 쿠키 값을 땡겨옴
-											Cookie cookie = new Cookie(newCookieName, cookies[j].getValue());
-											cookie.setMaxAge(60 * 60 * 24 * 30); // 쿠키 유효 기간은 30일 (60초 * 60분 * 24시간 * 30일)
-											
-											// [여러 개의 쿠키를 핸들링하는 방식으로 짜는 로직의 문제점]
-											// 1. 특정 쿠키에 변화가 발생하면 쿠키를 정렬해줘야 하는 귀찮음이 발생 (Query의 Order by절과 연관된 경우)
-											// 2. 특정 쿠키를 삭제하고 새로운 쿠키를 생성하는 패턴으로 기존의 쿠키를 정렬해야하는 경우 
-											// MaxAge의 값을 수정해야하는데 기존 쿠키에 설정된 MaxAge값을 가져와서 핸들링할 수가 없음
-											// 이는 브라우저가 서버에게 쿠키 이름과 값만 제공해주기 때문
-											// 결론: 추후에 여러 개의 항목을 컨트롤할 때에는 하나의 쿠키에 객체 형식으로 데이터를 핸들링하는 것이 좋을 것 같음
-											
-											res.addCookie(cookie);
-										}
 										break;
 									}
 								}
 							}
+						}
+						
+						// 주문 요청하지 않은 장바구니 상품 정보(쿠키) 정렬
+						ArrayList<Cookie> arrCookie = new ArrayList<Cookie>();
+						int cookieNameIndex = 0;
+						for (int i = 0; i < cookies.length; i += 1)
+						{
+							// [cart2, cart 5] -> [cart0, cart1]
+							if (!(cookies[i].getName().equals("JSESSIONID")) && !(cookies[i].getValue().equals("")))
+							{
+								String newCookieName = "cart" + cookieNameIndex;
+								
+								// 삭제된 쿠키 이후에 존재하는 쿠키 값을 땡겨옴
+								Cookie newCookie = new Cookie(newCookieName, cookies[i].getValue());
+								newCookie.setMaxAge(60 * 60 * 24 * 30); // 쿠키 유효 기간은 30일 (60초 * 60분 * 24시간 * 30일)
+								
+								arrCookie.add(newCookie);
+								
+								// 기존 쿠키들을 지움
+								cookies[i].setValue("");
+								cookies[i].setMaxAge(0);
+								res.addCookie(cookies[i]);
+								
+								cookieNameIndex += 1;
+							}
+						}
+						
+						// 정렬된 상품 정보(쿠키) 생성
+						for (int i = 0; i < arrCookie.size(); i += 1)
+						{
+							res.addCookie(arrCookie.get(i));
 						}
 					}
 					

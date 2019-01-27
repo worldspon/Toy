@@ -160,23 +160,26 @@ public class CartService {
 				
 				for (int j = (i + 1); j < fidList.size(); j += 1)
 				{
-					if (!(cookies[i].getName().equals("JSESSIONID")))
+					for (int k = 0; k < cookies.length; k += 1)
 					{
-						if (fidList.get(i) > fidList.get(j))
+						if (!(cookies[k].getName().equals("JSESSIONID")))
 						{
-							tempCookie = cookies[i];
-							cookies[i] = cookies[j];
-							cookies[j] = tempCookie;
-							
-							tempCookiePrice = cookiePrice.get(i);
-							cookiePrice.set(i, cookiePrice.get(j));
-							cookiePrice.set(j, tempCookiePrice);
-							
-							tempCookieStock = cookieStock.get(i);
-							cookieStock.set(i, cookieStock.get(j));
-							cookieStock.set(j, tempCookieStock);
-							// 수동 정렬처리를 해주지 않는 경우 
-							// 장바구니 페이지에서 상품 수량, 상품 가격의 정보가 잘못된 순서로 출력된다.
+							if (fidList.get(i) > fidList.get(j))
+							{
+								tempCookie = cookies[j];
+								cookies[j] = cookies[k];
+								cookies[k] = tempCookie;
+								
+								tempCookiePrice = cookiePrice.get(i);
+								cookiePrice.set(i, cookiePrice.get(j));
+								cookiePrice.set(j, tempCookiePrice);
+								
+								tempCookieStock = cookieStock.get(i);
+								cookieStock.set(i, cookieStock.get(j));
+								cookieStock.set(j, tempCookieStock);
+								// 수동 정렬처리를 해주지 않는 경우 
+								// 장바구니 페이지에서 상품 수량, 상품 가격의 정보가 잘못된 순서로 출력된다.
+							}
 						}
 					}
 				}
@@ -240,23 +243,26 @@ public class CartService {
 						// 쿠키 이름 재 설정 [cart, cart1, cart3] -> [cart, cart1, cart2]
 						for (int j = (i + 1); j < cookies.length; j += 1)
 						{
-							// cart3 -> 3 
-							String cartNameIndex = cookies[j].getName().substring(4);
-							// cart3 -> cart2
-							String newCookieName = "cart" + (Integer.parseInt(cartNameIndex) - 1) ;
-							
-							// 삭제된 쿠키 이후에 존재하는 쿠키 값을 땡겨옴
-							Cookie cookie = new Cookie(newCookieName, cookies[j].getValue());
-							cookie.setMaxAge(60 * 60 * 24 * 30); // 쿠키 유효 기간은 30일 (60초 * 60분 * 24시간 * 30일)
-							
-							// [여러 개의 쿠키를 핸들링하는 방식으로 짜는 로직의 문제점]
-							// 1. 특정 쿠키에 변화가 발생하면 쿠키를 정렬해줘야 하는 귀찮음이 발생 (Query의 Order by절과 연관된 경우)
-							// 2. 특정 쿠키를 삭제하고 새로운 쿠키를 생성하는 패턴으로 기존의 쿠키를 정렬해야하는 경우 
-							// MaxAge의 값을 수정해야하는데 기존 쿠키에 설정된 MaxAge값을 가져와서 핸들링할 수가 없음
-							// 이는 브라우저가 서버에게 쿠키 이름과 값만 제공해주기 때문
-							// 결론: 추후에 여러 개의 항목을 컨트롤할 때에는 하나의 쿠키에 객체 형식으로 데이터를 핸들링하는 것이 좋을 것 같음
-							
-							res.addCookie(cookie);
+							if (!(cookies[j].getName().equals("JSESSIONID")))
+							{
+								// cart3 -> 3 
+								String cartNameIndex = cookies[j].getName().substring(4);
+								// cart3 -> cart2
+								String newCookieName = "cart" + (Integer.parseInt(cartNameIndex) - 1) ;
+								
+								// 삭제된 쿠키 이후에 존재하는 쿠키 값을 땡겨옴
+								Cookie cookie = new Cookie(newCookieName, cookies[j].getValue());
+								cookie.setMaxAge(60 * 60 * 24 * 30); // 쿠키 유효 기간은 30일 (60초 * 60분 * 24시간 * 30일)
+								
+								// [여러 개의 쿠키를 핸들링하는 방식으로 짜는 로직의 문제점]
+								// 1. 특정 쿠키에 변화가 발생하면 쿠키를 정렬해줘야 하는 귀찮음이 발생 (Query의 Order by절과 연관된 경우)
+								// 2. 특정 쿠키를 삭제하고 새로운 쿠키를 생성하는 패턴으로 기존의 쿠키를 정렬해야하는 경우 
+								// MaxAge의 값을 수정해야하는데 기존 쿠키에 설정된 MaxAge값을 가져와서 핸들링할 수가 없음
+								// 이는 브라우저가 서버에게 쿠키 이름과 값만 제공해주기 때문
+								// 결론: 추후에 여러 개의 항목을 컨트롤할 때에는 하나의 쿠키에 객체 형식으로 데이터를 핸들링하는 것이 좋을 것 같음
+								
+								res.addCookie(cookie);
+							}
 						}
 						
 						map.put("process", 1);

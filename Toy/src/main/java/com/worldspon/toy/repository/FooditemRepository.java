@@ -21,5 +21,5 @@ public interface FooditemRepository extends JpaRepository<Fooditem, Long> {
 	 * List<Fooditem>		| 조회한 모든 데이터 목록을 리턴함
 	 * ------------------------------------
 	 * */
-	public List<Fooditem> findByStatus(int status);
+	public List<Fooditem> findByStatusAndStockGreaterThanEqual(int status, int stock);
 }

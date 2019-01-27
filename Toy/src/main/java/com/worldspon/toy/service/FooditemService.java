@@ -54,7 +54,7 @@ public class FooditemService {
 	@Transactional(readOnly = true)
 	public ArrayList<FooditemResponseDto> listFooditem() throws Exception {
 		// 판매 중인 음식 메뉴를 엔티티 클래스로 받아옴
-		List<Fooditem> entityList = fooditemRepo.findByStatus(1);
+		List<Fooditem> entityList = fooditemRepo.findByStatusAndStockGreaterThanEqual(1, 1);
 		
 		ArrayList<FooditemResponseDto> foodList = new ArrayList<FooditemResponseDto>();
 
