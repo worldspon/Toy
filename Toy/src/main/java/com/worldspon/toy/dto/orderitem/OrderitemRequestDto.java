@@ -11,7 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class OrderitemResponseDto {
+public class OrderitemRequestDto {
 
 	private Long orderitemid;
 	private Long fid;

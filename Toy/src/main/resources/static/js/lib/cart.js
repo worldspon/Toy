@@ -582,7 +582,8 @@ function fn_allOrder() {
             fid         : $(fid[index]).val(),
             foodname    : $(foodname[index]).text(),
             foodprice   : $(price[index]).text().split('원')[0].replace(',', ''),
-            stock       : $(stock[index]).text().split('개')[0]
+            stock       : $(stock[index]).text().split('개')[0],
+            orderlist   : { status: status, totalstock: totalStock }
         });
     });
 
@@ -593,7 +594,6 @@ function fn_allOrder() {
         fn_sendAjax(data);
     }
 }
-
 
 
 

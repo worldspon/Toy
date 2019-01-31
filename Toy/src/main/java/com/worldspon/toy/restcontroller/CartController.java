@@ -36,9 +36,9 @@ public class CartController {
 	 * ------------------------------------
 	 */
 	@GetMapping("/cart")
-	public ModelAndView openCart(HttpServletRequest req) {
+	public ModelAndView openCart(HttpServletRequest req, HttpServletResponse res) {
+		cartService.sortCookies(req, res);
 		HashMap<String, Object> map = cartService.matchFooditem(req);
-		
 		ModelAndView mav = new ModelAndView("cart/cart");
 		mav.addObject("map", map);
 		

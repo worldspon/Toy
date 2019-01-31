@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.worldspon.toy.dto.fooditem.FooditemRequestDto;
 import com.worldspon.toy.entity.Fooditem;
@@ -105,9 +106,10 @@ public class CartService {
 	 * req						| 쿠키 객체를 핸들링하기 위한 통신 객체
 	 * ------------------------------------
 	 * return data ------------------------
-	 * procException			| 상태 수정 처리 결과 정보 [0: 수정 처리 성공, 1: 수정 처리 중 문제 발생]
+	 * map						| 상품 목록, 상품 가격, 상품 수량 정보
 	 * ------------------------------------
 	 */
+	@Transactional(readOnly = true)
 	public HashMap<String, Object> matchFooditem(HttpServletRequest req) {
 		Cookie[] cookies = req.getCookies();
 
@@ -123,8 +125,6 @@ public class CartService {
 		{
 			ArrayList<Integer> cookiePrice = new ArrayList<Integer>();
 			ArrayList<Integer> cookieStock = new ArrayList<Integer>();
-			//int[] cookiePrice = new int[cookies.length];
-			//int[] cookieStock = new int[cookies.length];
 			ArrayList<Long> fidList = new ArrayList<Long>();
 
 			for (int i = 0; i < cookies.length; i += 1)
@@ -154,7 +154,6 @@ public class CartService {
 			// JPA의 조회 쿼리의 Order By절은 기본적으로 ASC이므로 그에 맞는 정렬 처리를 해준다.
 			for (int i = 0; i < fidList.size(); i += 1)
 			{
-				Cookie tempCookie = null;
 				int tempCookiePrice = 0;
 				int tempCookieStock = 0;
 				
@@ -166,10 +165,6 @@ public class CartService {
 						{
 							if (fidList.get(i) > fidList.get(j))
 							{
-								tempCookie = cookies[j];
-								cookies[j] = cookies[k];
-								cookies[k] = tempCookie;
-								
 								tempCookiePrice = cookiePrice.get(i);
 								cookiePrice.set(i, cookiePrice.get(j));
 								cookiePrice.set(j, tempCookiePrice);
@@ -241,6 +236,7 @@ public class CartService {
 						res.addCookie(cookies[i]);
 
 						// 쿠키 이름 재 설정 [cart, cart1, cart3] -> [cart, cart1, cart2]
+						/*
 						for (int j = (i + 1); j < cookies.length; j += 1)
 						{
 							if (!(cookies[j].getName().equals("JSESSIONID")))
@@ -264,6 +260,7 @@ public class CartService {
 								res.addCookie(cookie);
 							}
 						}
+						*/
 						
 						map.put("process", 1);
 						map.put("msg", "상품이 삭제되었습니다.");
@@ -272,13 +269,125 @@ public class CartService {
 
 			}
 			// 모든 쿠키 이름을 재 설정한 후 찌꺼기 쿠키 제거
+			/*
 			int lastCookieIndex = cookies.length - 1; 
 			cookies[lastCookieIndex].setValue("");
 			cookies[lastCookieIndex].setMaxAge(0);
 			
 			res.addCookie(cookies[lastCookieIndex]);
+			*/
 		}
 		
 		return map;
 	}
+	
+	
+	
+	/**
+	 * 쿠키 정렬 서비스
+	 * args -------------------------------
+	 * req				| 쿠키 객체를 핸들링하기 위한 통신 객체
+	 * res				| 쿠키 처리에 대한 응답 객체
+	 * ------------------------------------
+	 */
+	public void sortCookies(HttpServletRequest req, HttpServletResponse res) {
+		Cookie[] cookies = req.getCookies();
+		
+		if (cookies == null || cookies.length == 0)
+		{
+			return;
+		}
+		else
+		{
+			Cookie tempCookie = new Cookie("tempCookie", "");
+			// 버블 정렬 알고리즘
+			for (int j = 0; j < cookies.length; j += 1)
+			{
+				if (!(cookies[j].getName().equals("JSESSIONID")))
+				{
+					// 버블 정렬 시 비교할 첫번째 fid 대상을 구함
+					Long fid = Long.parseLong( (cookies[j].getValue().split("\\.")[0]).split(":")[1] );
+					logger.info("fid : " + fid);
+					for (int k = (j + 1); k < cookies.length; k += 1)
+					{
+						if (!(cookies[k].getName().equals("JSESSIONID")))
+						{
+							// 비교할 두번째 fid 대상을 구함
+							Long compareFid = Long.parseLong( (cookies[k].getValue().split("\\.")[0]).split(":")[1] );
+							
+							logger.info("fid : " + fid + " / compareFid : " + compareFid);
+							
+							// 오름차순으로 쿠키 값을 변경함
+							if (fid > compareFid)
+							{
+								tempCookie.setValue(cookies[j].getValue());
+								cookies[j].setValue(cookies[k].getValue());
+								cookies[k].setValue(tempCookie.getValue());
+							}
+						}
+					}
+				}
+			}
+
+			logger.info("================== COOKIES VALUE ================");
+			// 정렬한 쿠키 설정 반영하기
+			for (int i = 0; i < cookies.length; i += 1)
+			{
+				logger.info("cookies[" + i + "].getName()" + cookies[i].getName());
+				logger.info("cookies[" + i + "].getValue()" + cookies[i].getValue());
+				res.addCookie(cookies[i]);
+			}
+		}
+	}
+	
+	
+	/**
+	 * 퀵 정렬 서비스
+	 * args -------------------------------
+	 * fid				| 상품 번호
+	 * l				| 비교 대상 인덱스 (pivot 보다 작은 수)
+	 * r				| 비교 대상 인덱스 (pivot 보다 큰 수)
+	 * ------------------------------------
+	 * 참고 : https://hahahoho5915.tistory.com/9
+	 */
+	/*
+	public void quickSort(ArrayList<Long> fids, int l, int r) {
+		int left = l;
+		int right = r;
+		Long pivot = fids.get((left + right) / 2);
+		
+		// 정렬
+		do 
+		{
+			while (fids.get(left) < pivot)
+			{
+				left += 1;
+			}
+			while (fids.get(right) > pivot)
+			{
+				right -= 1;
+			}
+			
+			if (left <= right)
+			{
+				Long temp = fids.get(left);
+				fids.set(left, fids.get(right));
+				fids.set(right, temp);
+				
+				left += 1;
+				right -= 1;
+			}
+		} while (left <= right);
+		
+		// 재귀 호출
+		if (l < right)
+		{
+			quickSort(fids, l, right);
+		}
+		if (r > left)
+		{
+			quickSort(fids, left, r);
+		}
+	}
+	*/
 }

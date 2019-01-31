@@ -46,4 +46,12 @@ public class OrderlistRequestDto {
 				.orderitem(orderitem)
 				.build();
 	}
+	/*
+	public void addOrderItem(List<Orderitem> orderItem) {
+		this.orderitem = orderItem;
+		OrderitemRequestDto oird = new OrderitemRequestDto();
+		BeanUtils.copyProperties(orderItem, oird);
+		oird.setOrderlist(this.toEntity());
+	}
+	*/
 }

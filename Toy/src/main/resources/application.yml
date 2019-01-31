@@ -10,14 +10,16 @@ spring:
   datasource:
     platform: h2
     data: classpath:defaultData-h2.sql  # 애플리케이션 실행 시 default로 insert할 쿼리 데이터 파일
-    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy  # log4j 드라이버
-    url: jdbc:log4jdbc:h2:mem:testdb  # H2 DB에 log4j 드라이버 인젝션 // JDBCURL : jdbc:h2:mem:testdb 로 H2-Console에서 접속하면 된다
+    #driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy  # log4j 드라이버
+    url: jdbc:h2:mem:testdb #jdbc:log4jdbc:h2:mem:testdb  # H2 DB에 log4j 드라이버 인젝션 // JDBCURL : jdbc:h2:mem:testdb 로 H2-Console에서 접속하면 된다
     username: sa  # H2 DB에 log4j 드라이버를 인젝션하면 db 접속 계정이 날아감!! // sa로 재설정하여 사용
     password: 
   jpa:
     show-sql: true  # sql 쿼리 디버깅 로그 표현
     hibernate:
-      ddl-auto: create-drop # 애플리케이션 실행 시 마다 테이블을 drop 후 create함
+      ddl-auto: create-drop # 애플리케이션 실행 시 마다 테이블을 drop 후 create함    properties:
+      hibernate:
+        format_sql: true # hibernate 쿼리 log의 포맷 형태를 예쁘게 정렬시켜주는 옵션
   h2:
     console:
       enabled: true      path: /h2-console # H2 DB 웹 콘솔 접속 URL ex) http://localhost:8080/h2-console
@@ -25,7 +27,13 @@ spring:
   devtools: # spring-boot-starter-devtools library
     livereload: # 정적 파일 애플리케이션 실행 중 실시간 리로드      enabled: true
   thymeleaf:  # thmeleaf 템플릿 엔진 캐싱 비사용 !!!실 사용 서버에 운영 시 캐시를 false로하면 서버가 터질 우려가 있으니 반드시 캐시 설정을 true로 설정하고 운영 필요    cache: false
-      servlet:    multipart:      max-file-size: 10MB # 업로드 파일 사이즈 제한
+      servlet:    multipart:      max-file-size: 10MB # 업로드 파일 사이즈 제한  output:    ansi:      enabled: always # Console Log output for colorful - ANSI Escape in Console 플러그인 설치 시 적용 됨
       
+logging:
+  level:
+    org.hibernate: 
+      type:
+        descriptor:
+          sql: trace # hibernate의 바인드 파라미터 정보 표현 설정
       
 server:  error:    whitelabel:      enabled: true  # 에러 페이지 비활성화    #path: /error

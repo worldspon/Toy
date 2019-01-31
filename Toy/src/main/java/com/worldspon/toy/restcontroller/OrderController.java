@@ -38,7 +38,18 @@ public class OrderController {
 	 */
 	@PostMapping("/order")
 	public HashMap<String, Object> order(@RequestBody OrderlistRequestDto orderListReqDto, HttpServletRequest req, HttpServletResponse res) {
-		HashMap<String, Object> map = orderService.sendOrder(orderListReqDto, req, res);
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		
+		boolean stockCheck = orderService.stockCheck(orderListReqDto);
+		
+		if (stockCheck == true)
+		{
+			map = orderService.sendOrder(orderListReqDto, req, res);
+		}
+		else
+		{
+			map.put("msg", "상품이 모두 매진되었습니다. 더 이상 구매하실 수 없습니다.");
+		}
 		
 		return map;
 	}

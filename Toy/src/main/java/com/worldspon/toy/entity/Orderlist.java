@@ -8,7 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
 import lombok.AccessLevel;
@@ -47,8 +46,6 @@ public class Orderlist extends BaseTimeEntity {
 	private int status;
 	@Column(nullable = false)
 	private int totalstock;
-	// 다대다, 다대일, 일대일, 일대다 등등 형상을 지정하는 어노테이션을 쓸 때 
-	// mappedBy를 쓸 경우 JoinColumn 어노테이션과 충돌 나므로 둘 중 하나만 선언해야함
 	/*
 	 * targetEntity		| 관계를 맺을 Entity class 정의
 	 * cascade			| 현 Entity의 변경에 대해 관계된 Entity도 변경 전략을 결정 (ALL, PERSIST, MERGE, REMOVE, REFRESH, DETACH)
@@ -56,7 +53,7 @@ public class Orderlist extends BaseTimeEntity {
 	 * mappedBy			| 양방향 관계 설정 시 관계의 주체가 되는 쪽에서 정의  (단방향 시 기술하지 않음)
 	 * orphanRemoval	| 관계 Entity에서 변경이 일어난 경우 DB 변경을 같이 함 (이 옵션은 DB Layer 레벨, cascade는 JPA Layer 레벨)
 	 */
-	@OneToMany(targetEntity = Orderitem.class, cascade = CascadeType.ALL, mappedBy = "orderlist")
+	@OneToMany(targetEntity = Orderitem.class, mappedBy = "orderlist")
 	private List<Orderitem> orderitem;
 	
 	

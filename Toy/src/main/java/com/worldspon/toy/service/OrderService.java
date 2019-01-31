@@ -15,12 +15,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.worldspon.toy.dto.fooditem.FooditemResponseDto;
+import com.worldspon.toy.dto.orderitem.OrderitemRequestDto;
 import com.worldspon.toy.dto.orderitem.OrderitemResponseDto;
 import com.worldspon.toy.dto.orderlist.OrderlistRequestDto;
 import com.worldspon.toy.entity.Fooditem;
 import com.worldspon.toy.entity.Orderitem;
+import com.worldspon.toy.entity.Orderlist;
 import com.worldspon.toy.entity.Userinfo;
 import com.worldspon.toy.repository.FooditemRepository;
+import com.worldspon.toy.repository.OrderitemRepository;
 import com.worldspon.toy.repository.OrderlistRepository;
 import com.worldspon.toy.repository.UserinfoRepository;
 
@@ -34,6 +37,57 @@ public class OrderService {
 	private UserinfoRepository userinfoRepo;
 	private FooditemRepository fooditemRepo;
 	private OrderlistRepository orderRepo;
+	private OrderitemRepository orderitemRepo;
+	
+	
+	/**
+	 * 주문 가능한 상품 수량 체크
+	 * args -------------------------------
+	 * orderListReqDto		| 주문할 상품 아이템 정보
+	 * ------------------------------------
+	 * return data ------------------------
+	 * check				| 상품 주문 수량 체크 결과 정보
+	 * ------------------------------------
+	 */
+	@Transactional(readOnly = true)
+	public boolean stockCheck(OrderlistRequestDto orderListReqDto) {
+		boolean check = false;
+		
+		List<Orderitem> orderitemList = orderListReqDto.getOrderitem();
+		List<Long> fids = new ArrayList<Long>();
+		List<Integer> reqStock = new ArrayList<Integer>();
+		
+		// 주문한 상품들의 fid 얻어오기
+		for (int i = 0; i < orderitemList.size(); i += 1)
+		{
+			fids.add(orderitemList.get(i).getFid());
+			reqStock.add(orderitemList.get(i).getStock());
+		}
+		
+		// 주문한 상품들 모두 조회
+		List<Fooditem> fooditemEntity = fooditemRepo.findAllById(fids);
+		
+		for (int i = 0; i < fooditemEntity.size(); i += 1)
+		{
+			int maxStock = fooditemEntity.get(i).getStock();
+			
+			// 주문 신청한 상품 수량이 재고 수량보다 크면
+			if (reqStock.get(i) > maxStock)
+			{
+				check = false;
+				break;	// 하나의 상품이라도 재고 수량을 초과하면 주문 자체를 차단한다.
+			}
+			else
+			{
+				check = true;
+			}
+		}
+		
+		return check;
+	}
+	
+	
+	
 	
 	/**
 	 * 주문 처리 서비스
@@ -64,6 +118,27 @@ public class OrderService {
 			Userinfo userinfoEntity = userinfoRepo.findBySessionid(req.getSession().getId());
 			orderListReqDto.setUid(userinfoEntity.getUid());
 			orderListReqDto.setUsername(userinfoEntity.getUsername());
+			List<Orderitem> orderitemList = new ArrayList<Orderitem>();
+			for (int i = 0; i < orderListReqDto.getOrderitem().size(); i += 1)
+			{
+				logger.info("orderListReqDto.getOrderitem().get(i).getFoodname() : " + orderListReqDto.getOrderitem().get(i).getFoodname());
+				logger.info("orderListReqDto.getOrderitem().get(i).getFoodprice() : " + orderListReqDto.getOrderitem().get(i).getFoodprice());
+				logger.info("orderListReqDto.getOrderitem().get(i).getStock() : " + orderListReqDto.getOrderitem().get(i).getStock());
+				logger.info("orderListReqDto.getOrderitem().get(i).getFid() : " + orderListReqDto.getOrderitem().get(i).getFid());
+				OrderitemRequestDto orderitemReqDto = new OrderitemRequestDto();
+				BeanUtils.copyProperties(orderListReqDto.getOrderitem().get(i), orderitemReqDto);
+				orderitemReqDto.setOrderlist(orderListReqDto.toEntity());
+				logger.info("orderitemReqDto.getFoodname() : " + orderitemReqDto.getFoodname());
+				logger.info("orderitemReqDto.getFoodprice() : " + orderitemReqDto.getFoodprice());
+				logger.info("orderitemReqDto.getStock() : " + orderitemReqDto.getStock());
+				logger.info("orderitemReqDto.getFid() : " + orderitemReqDto.getFid());
+				
+				orderitemList.add(orderitemReqDto.toEntity());
+				
+			}
+			
+			orderListReqDto.setOrderitem(orderitemList);
+			
 
 			if (!(orderListReqDto.getOrderitem().isEmpty()))
 			{
@@ -75,7 +150,6 @@ public class OrderService {
 				for (int i = 0; i < reqOrderItemEntity.size(); i += 1)
 				{
 					// 상품 정보를 조회하기 위해 fid를 ArrayList collection에 담는다
-					logger.info("===============reqOrderItemEntity FID : " + reqOrderItemEntity.get(i).getFid());
 					reqFidList.add(reqOrderItemEntity.get(i).getFid());
 					
 					// 주문 신청한 상품의 수량 정보
@@ -132,8 +206,40 @@ public class OrderService {
 				}
 				else
 				{
+					/*
+					List<Orderitem> orderitemList = new ArrayList<Orderitem>();
+					for (Orderitem orderitemEntity : orderListReqDto.getOrderitem())
+					{
+						OrderitemResponseDto orderitemDto = new OrderitemResponseDto();
+						BeanUtils.copyProperties(orderitemEntity, orderitemDto);
+						
+						// setOwner
+						orderitemDto.setOrderlist(orderListReqDto.toEntity());
+						
+						// addStudies
+						orderitemList.add(orderitemDto.toEntity());
+					}
+					*/
+					//orderListReqDto.setOrderitem(orderitemList);
+					
+					for (int i = 0; i < orderListReqDto.getOrderitem().size(); i += 1)
+					{
+						logger.info("=======================================  START  =======================================");
+						logger.info("" + orderListReqDto.getOrderitem().get(i).getFid());
+						logger.info("" + orderListReqDto.getOrderitem().get(i).getFoodname());
+						logger.info("" + orderListReqDto.getOrderitem().get(i).getFoodprice());
+						logger.info("" + orderListReqDto.getOrderitem().get(i).getStock());
+						logger.info("" + orderListReqDto.getOrderitem().get(i).getOrderlist().getStatus());
+						logger.info("" + orderListReqDto.getOrderitem().get(i).getOrderlist().getTotalstock());
+						logger.info("" + orderListReqDto.getOrderitem().get(i).getOrderlist().getUsername());
+						logger.info("" + orderListReqDto.getOrderitem().get(i).getOrderlist().getStatus());
+						logger.info("=======================================  END  =======================================");
+						
+					}
+					
 					// orderList, orderitem 테이블 insert
 					orderRepo.save(orderListReqDto.toEntity());
+					orderitemRepo.saveAll(orderitemList);
 					
 					// 사용자 쿠키 데이터 삭제 (장바구니 상품 정보)
 					Cookie[] cookies = req.getCookies();
