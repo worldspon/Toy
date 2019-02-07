@@ -69,7 +69,7 @@ public class FooditemController {
 	public HashMap<String, Object> saveCart(@RequestBody FooditemRequestDto dto, 
 			HttpServletRequest req, HttpServletResponse res) {
 		String msg = cartService.saveCart(dto, req, res);
-		cartService.sortCookies(req, res);
+		
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put("msg", msg);
 		

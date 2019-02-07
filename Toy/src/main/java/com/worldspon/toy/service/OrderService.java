@@ -128,28 +128,22 @@ public class OrderService {
 				Userinfo userinfoEntity = userinfoRepo.findBySessionid(req.getSession().getId());
 				orderListReqDto.setUid(userinfoEntity.getUid());
 				orderListReqDto.setUsername(userinfoEntity.getUsername());
+				
 				List<Orderitem> orderitemList = new ArrayList<Orderitem>();
+				
 				for (int i = 0; i < orderListReqDto.getOrderitem().size(); i += 1)
 				{
-					logger.info("orderListReqDto.getOrderitem().get(i).getFoodname() : " + orderListReqDto.getOrderitem().get(i).getFoodname());
-					logger.info("orderListReqDto.getOrderitem().get(i).getFoodprice() : " + orderListReqDto.getOrderitem().get(i).getFoodprice());
-					logger.info("orderListReqDto.getOrderitem().get(i).getStock() : " + orderListReqDto.getOrderitem().get(i).getStock());
-					logger.info("orderListReqDto.getOrderitem().get(i).getFid() : " + orderListReqDto.getOrderitem().get(i).getFid());
 					OrderitemRequestDto orderitemReqDto = new OrderitemRequestDto();
 					BeanUtils.copyProperties(orderListReqDto.getOrderitem().get(i), orderitemReqDto);
 					orderitemReqDto.setOrderlist(orderListReqDto.toEntity());
-					logger.info("orderitemReqDto.getFoodname() : " + orderitemReqDto.getFoodname());
-					logger.info("orderitemReqDto.getFoodprice() : " + orderitemReqDto.getFoodprice());
-					logger.info("orderitemReqDto.getStock() : " + orderitemReqDto.getStock());
-					logger.info("orderitemReqDto.getFid() : " + orderitemReqDto.getFid());
 					
 					orderitemList.add(orderitemReqDto.toEntity());
 					
 				}
 				
 				orderListReqDto.setOrderitem(orderitemList);
-				
 
+				
 				if (!(orderListReqDto.getOrderitem().isEmpty()))
 				{
 					List<Orderitem> reqOrderItemEntity = orderListReqDto.getOrderitem();
@@ -230,22 +224,7 @@ public class OrderService {
 							orderitemList.add(orderitemDto.toEntity());
 						}
 						*/
-						//orderListReqDto.setOrderitem(orderitemList);
-						
-						for (int i = 0; i < orderListReqDto.getOrderitem().size(); i += 1)
-						{
-							logger.info("======================================= Log START  =======================================");
-							logger.info("" + orderListReqDto.getOrderitem().get(i).getFid());
-							logger.info("" + orderListReqDto.getOrderitem().get(i).getFoodname());
-							logger.info("" + orderListReqDto.getOrderitem().get(i).getFoodprice());
-							logger.info("" + orderListReqDto.getOrderitem().get(i).getStock());
-							logger.info("" + orderListReqDto.getOrderitem().get(i).getOrderlist().getStatus());
-							logger.info("" + orderListReqDto.getOrderitem().get(i).getOrderlist().getTotalstock());
-							logger.info("" + orderListReqDto.getOrderitem().get(i).getOrderlist().getUsername());
-							logger.info("" + orderListReqDto.getOrderitem().get(i).getOrderlist().getStatus());
-							logger.info("======================================= Log END  =======================================");
-							
-						}
+						// orderListReqDto.setOrderitem(orderitemList);
 						
 						// orderList, orderitem 테이블 insert
 						orderRepo.save(orderListReqDto.toEntity());

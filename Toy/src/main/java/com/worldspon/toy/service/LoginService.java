@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.worldspon.toy.dto.userinfo.UserinfoRequestDto;
 import com.worldspon.toy.dto.userinfo.UserinfoResponseDto;
@@ -59,6 +60,7 @@ public class LoginService {
 	 * map					| 회원정보 조회에 따른 처리 결과 값 [0: 로그인 실패, 1: 로그인 성공]
 	 * ------------------------------------
 	 */
+	@Transactional
 	public HashMap<String, Object> loginProcess(UserinfoRequestDto dto, HttpServletRequest req) throws Exception {
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		String userid = dto.getUserid();
@@ -107,6 +109,7 @@ public class LoginService {
 	 * msg					| 로그아웃 처리 결과 메시지 정보
 	 * ------------------------------------
 	 */
+	@Transactional
 	public String logoutProcess(HttpServletRequest req) throws Exception {
 		
 		String msg = "";

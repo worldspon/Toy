@@ -11,10 +11,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.worldspon.toy.dto.fooditem.FooditemRequestDto;
+import com.worldspon.toy.dto.fooditem.FooditemResponseDto;
 import com.worldspon.toy.entity.Fooditem;
 import com.worldspon.toy.repository.FooditemRepository;
 
@@ -133,8 +135,7 @@ public class CartService {
 				// 쿠키 객체 중 로그인 정보를 담는 JSESSIONID는 처리를 건너뜀
 				if (!(cookies[i].getName().equals("JSESSIONID")))
 				{
-					// fid:1.foodpirce:1000.stock:50 를 자른다.
-					// Java의 split()에 인자는 정규표현식이므로 마침표를 문자 그대로 받아들이지 못한다.
+					// {fid:1.foodpirce:1000.stock:50}
 					String[] tempValue = cookies[i].getValue().split("\\.");
 					String[] cookieValue = tempValue[0].split(":");
 
@@ -234,48 +235,13 @@ public class CartService {
 						cookies[i].setMaxAge(0);
 						
 						res.addCookie(cookies[i]);
-
-						// 쿠키 이름 재 설정 [cart, cart1, cart3] -> [cart, cart1, cart2]
-						/*
-						for (int j = (i + 1); j < cookies.length; j += 1)
-						{
-							if (!(cookies[j].getName().equals("JSESSIONID")))
-							{
-								// cart3 -> 3 
-								String cartNameIndex = cookies[j].getName().substring(4);
-								// cart3 -> cart2
-								String newCookieName = "cart" + (Integer.parseInt(cartNameIndex) - 1) ;
-								
-								// 삭제된 쿠키 이후에 존재하는 쿠키 값을 땡겨옴
-								Cookie cookie = new Cookie(newCookieName, cookies[j].getValue());
-								cookie.setMaxAge(60 * 60 * 24 * 30); // 쿠키 유효 기간은 30일 (60초 * 60분 * 24시간 * 30일)
-								
-								// [여러 개의 쿠키를 핸들링하는 방식으로 짜는 로직의 문제점]
-								// 1. 특정 쿠키에 변화가 발생하면 쿠키를 정렬해줘야 하는 귀찮음이 발생 (Query의 Order by절과 연관된 경우)
-								// 2. 특정 쿠키를 삭제하고 새로운 쿠키를 생성하는 패턴으로 기존의 쿠키를 정렬해야하는 경우 
-								// MaxAge의 값을 수정해야하는데 기존 쿠키에 설정된 MaxAge값을 가져와서 핸들링할 수가 없음
-								// 이는 브라우저가 서버에게 쿠키 이름과 값만 제공해주기 때문
-								// 결론: 추후에 여러 개의 항목을 컨트롤할 때에는 하나의 쿠키에 객체 형식으로 데이터를 핸들링하는 것이 좋을 것 같음
-								
-								res.addCookie(cookie);
-							}
-						}
-						*/
-						
-						map.put("process", 1);
-						map.put("msg", "상품이 삭제되었습니다.");
 					}
 				}
 
 			}
-			// 모든 쿠키 이름을 재 설정한 후 찌꺼기 쿠키 제거
-			/*
-			int lastCookieIndex = cookies.length - 1; 
-			cookies[lastCookieIndex].setValue("");
-			cookies[lastCookieIndex].setMaxAge(0);
 			
-			res.addCookie(cookies[lastCookieIndex]);
-			*/
+			map.put("process", 1);
+			map.put("msg", "상품이 삭제되었습니다.");
 		}
 		
 		return map;
@@ -339,55 +305,4 @@ public class CartService {
 			}
 		}
 	}
-	
-	
-	/**
-	 * 퀵 정렬 서비스
-	 * args -------------------------------
-	 * fid				| 상품 번호
-	 * l				| 비교 대상 인덱스 (pivot 보다 작은 수)
-	 * r				| 비교 대상 인덱스 (pivot 보다 큰 수)
-	 * ------------------------------------
-	 * 참고 : https://hahahoho5915.tistory.com/9
-	 */
-	/*
-	public void quickSort(ArrayList<Long> fids, int l, int r) {
-		int left = l;
-		int right = r;
-		Long pivot = fids.get((left + right) / 2);
-		
-		// 정렬
-		do 
-		{
-			while (fids.get(left) < pivot)
-			{
-				left += 1;
-			}
-			while (fids.get(right) > pivot)
-			{
-				right -= 1;
-			}
-			
-			if (left <= right)
-			{
-				Long temp = fids.get(left);
-				fids.set(left, fids.get(right));
-				fids.set(right, temp);
-				
-				left += 1;
-				right -= 1;
-			}
-		} while (left <= right);
-		
-		// 재귀 호출
-		if (l < right)
-		{
-			quickSort(fids, l, right);
-		}
-		if (r > left)
-		{
-			quickSort(fids, left, r);
-		}
-	}
-	*/
 }

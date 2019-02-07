@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.worldspon.toy.dto.managerInfo.ManagerinfoRequestDto;
 import com.worldspon.toy.dto.managerInfo.ManagerinfoResponseDto;
@@ -33,6 +34,7 @@ public class ManagerService {
 	 * map						| 매니저 정보 조회에 따른 처리 결과 값 [0: 로그인 실패, 1: 로그인 성공]
 	 * ------------------------------------
 	 */
+	@Transactional
 	public HashMap<String, Object> loginProcess(ManagerinfoRequestDto dto, HttpServletRequest req) throws Exception {
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		String managerid = dto.getManagerid();
@@ -80,6 +82,7 @@ public class ManagerService {
 	 * msg					| 로그아웃 처리 결과 메시지 정보
 	 * ------------------------------------
 	 */
+	@Transactional
 	public String logoutProcess(HttpServletRequest req) throws Exception {
 		String msg = "";
 		Object managerInfo = req.getSession().getAttribute("managerInfo");
