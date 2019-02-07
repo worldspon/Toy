@@ -125,10 +125,14 @@ public class OrderService {
 			try
 			{
 				// 주문자 식별 id, 주문자 이름 설정 (setter)
+				// ====== START =====
 				Userinfo userinfoEntity = userinfoRepo.findBySessionid(req.getSession().getId());
 				orderListReqDto.setUid(userinfoEntity.getUid());
 				orderListReqDto.setUsername(userinfoEntity.getUsername());
-				
+				// ====== END =====
+
+				// 자식 객체에 부모 정보 저장
+				// ====== START =====
 				List<Orderitem> orderitemList = new ArrayList<Orderitem>();
 				
 				for (int i = 0; i < orderListReqDto.getOrderitem().size(); i += 1)
@@ -136,13 +140,13 @@ public class OrderService {
 					OrderitemRequestDto orderitemReqDto = new OrderitemRequestDto();
 					BeanUtils.copyProperties(orderListReqDto.getOrderitem().get(i), orderitemReqDto);
 					orderitemReqDto.setOrderlist(orderListReqDto.toEntity());
-					
 					orderitemList.add(orderitemReqDto.toEntity());
 					
 				}
+				// ====== END =====
 				
-				orderListReqDto.setOrderitem(orderitemList);
-
+				// 부모 객체에 자식 정보 저장
+				// orderListReqDto.setOrderitem(orderitemList);
 				
 				if (!(orderListReqDto.getOrderitem().isEmpty()))
 				{
@@ -151,33 +155,34 @@ public class OrderService {
 					int[] reqStockList = null; // 신청받은 수량 정보들
 					int reqTotalStock = orderListReqDto.getTotalstock(); // 모든 상품의 수량을 합산한 정보
 					
+					// 신청 상품들의 수량 구하기
+					// ====== START =====
 					for (int i = 0; i < reqOrderItemEntity.size(); i += 1)
 					{
-						// 상품 정보를 조회하기 위해 fid를 ArrayList collection에 담는다
+						// 상품 정보를 조회하기 위해 fid를 ArrayList에 담는다
 						reqFidList.add(reqOrderItemEntity.get(i).getFid());
 						
-						// 주문 신청한 상품의 수량 정보
 						if (i == 0)
 						{
 							reqStockList = new int[reqOrderItemEntity.size()];
 						}
 						reqStockList[i] = reqOrderItemEntity.get(i).getStock();
-						
-						OrderitemResponseDto tempDto = new OrderitemResponseDto();
-						BeanUtils.copyProperties(reqOrderItemEntity.get(i), tempDto);
 					}
-					// 사용자가 주문 신청한 상품들의 수량을 체크하기 위해 정보를 조회함
+					// ====== END =====
+					
+					// 사용자가 주문한 상품들의 수량을 체크하기 위해 정보를 조회함
 					List<Fooditem> fooditemList = fooditemRepo.findAllById(reqFidList);
 					List<Fooditem> fooditemEntityList = new ArrayList<Fooditem>();
 					
+					
+					// 주문 신청한 수량만큼 차감시키기
+					// ====== START =====
 					for (int i = 0; i < fooditemList.size(); i += 1)
 					{
-						// 구매 가능 수량
+						// 현재 구매 가능한 최대 수량
 						int validStock = fooditemList.get(i).getStock();
 						
 						// 주문 신청한 수량이 구매 가능 수량을 초과한 경우
-						// 일반적으로 JavaScript 단에서 최대 구매 수량을 검증하지만 
-						// 트랜잭션 진행 중 또 주문 신청이 들어온 경우를 대비 
 						if (reqStockList[i] > validStock)
 						{
 							String foodName = fooditemList.get(i).getFoodname();
@@ -187,7 +192,7 @@ public class OrderService {
 						}
 						else
 						{
-							// DB의 수량을 주문 신청된 만큼 차감하기 위해(setter) DTO객체로 값을 카피
+							// DB에 저장된 상품 수량을 주문 신청된 수량만큼 차감하기
 							Fooditem fooditemEntity = fooditemList.get(i);
 							FooditemResponseDto fooditemResDto = new FooditemResponseDto();
 							BeanUtils.copyProperties(fooditemEntity, fooditemResDto);
@@ -203,6 +208,7 @@ public class OrderService {
 					// fooditem 테이블 update
 					// 테이블에서 상품 수량을 주문된 요청 수량 만큼 감소 시키기
 					int updateProcVal = updateFoodStock(reqTotalStock, fooditemEntityList);
+					// ====== END =====
 					
 					if (updateProcVal < 0)
 					{
@@ -210,27 +216,13 @@ public class OrderService {
 					}
 					else
 					{
-						/*
-						List<Orderitem> orderitemList = new ArrayList<Orderitem>();
-						for (Orderitem orderitemEntity : orderListReqDto.getOrderitem())
-						{
-							OrderitemResponseDto orderitemDto = new OrderitemResponseDto();
-							BeanUtils.copyProperties(orderitemEntity, orderitemDto);
-							
-							// setOwner
-							orderitemDto.setOrderlist(orderListReqDto.toEntity());
-							
-							// addStudies
-							orderitemList.add(orderitemDto.toEntity());
-						}
-						*/
-						// orderListReqDto.setOrderitem(orderitemList);
-						
 						// orderList, orderitem 테이블 insert
-						orderRepo.save(orderListReqDto.toEntity());
+						//orderRepo.save(orderListReqDto.toEntity());
 						orderitemRepo.saveAll(orderitemList);
 						
+						
 						// 사용자 쿠키 데이터 삭제 (장바구니 상품 정보)
+						// ====== START =====
 						Cookie[] cookies = req.getCookies();
 						if (cookies != null && cookies.length > 0)
 						{
@@ -287,6 +279,7 @@ public class OrderService {
 								res.addCookie(arrCookie.get(i));
 							}
 						}
+						// ====== END =====
 						
 						map.put("msg", "주문이 접수되었습니다. \n 배송이 준비됩니다.");
 					}
@@ -315,6 +308,7 @@ public class OrderService {
 	 * ------------------------------------
 	 */
 	@Transactional // fooditem 테이블 업데이트 처리 중 문제 발생 시 rollback
+	// 만약 이 기능을 호출하는 메소드에 @Transactional이 선언된 경우 이 옵션은 무시되고 그 옵션 설정을 따라감
 	public int updateFoodStock(int reqTotalStock, List<Fooditem> fooditemEntityList) {
 		int updateProcVal = 0;
 		
