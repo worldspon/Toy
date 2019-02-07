@@ -110,3 +110,17 @@ function fn_numberValidation(arr) {
 function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
+
+
+/**
+ * @Authur Johnny
+ * @role 숫자 외 입력 차단 함수
+ * @TODO 사용자로부터 입력받은 데이터를 인자로 전달해야함
+ * @return 입력된 내용이 숫자 외 값이면 빈문자열로 치환 후 리턴
+ * @date 2019.02.07
+*/
+function fn_onlyNumber(data) {
+    var regex = /[^0-9]/g;
+
+    return data.replace(regex, '');
+}

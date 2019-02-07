@@ -74,51 +74,41 @@ public class FileUtils {
 		}
 			
 		
-		try {
-			/**
-			 * @Authur Johnny
-			 * @todo multipartFile.isEmpty()를 통해 null체크를 한다면 NullPointerException이 발생할 수 없음.
-			 * 		즉 절대로 fileException에 값이 -2가 할당될 수가 없음.
-			 * 		2019.01.16일 날 작성된 코드이기 때문에 수정은 하지않지만 이해한걸 반드시 기억하기!!
-			 * @date 2019.01.17
-			*/
-			if (multipartFile.isEmpty() == false)
+		if (multipartFile.isEmpty() == false)
+		{
+			try
 			{
 				// 저장될 경로에 파일 정보 생성
 				file = new File(filePath + fileName);
 				
-				try 
-				{
-					// 파일을 생성
-					multipartFile.transferTo(file);
-					map.put("fileException", 1);
-				} 
-				catch (IOException e) 
-				{
-					
-					map.put("fileException", 0);
-					map.put("msg", "파일 처리 중 문제가 발생하였습니다.");
-				} 
-				catch (IllegalStateException e2) 
-				{
-	
-					map.put("fileException", -1);
-					map.put("msg", "더 이상 파일을 처리할 수 없습니다.");
-				}
+				// 파일을 생성
+				multipartFile.transferTo(file);
+				map.put("fileException", 1);
+				
 			}
-			
-		} 
-		catch (NullPointerException e) 
-		{
-			
-			map.put("fileException", -2);
-			map.put("msg", "처리할 파일이 존재하지 않습니다.");
+			catch (NullPointerException e)
+			{
+				e.printStackTrace();
+				// filePath와 fileName이 NULL인 경우
+				map.put("fileException", -2);
+			}
+			catch (IOException e1)
+			{
+				e1.printStackTrace();
+				// 파일을 읽거나 쓰기 중 에러가 발생하는 경우
+				map.put("fileException", 0);
+				map.put("msg", "파일 처리 중 문제가 발생하였습니다.");
+			}
+			catch (IllegalStateException e2)
+			{
+				e2.printStackTrace();
+				// 파일이 이미 이동되어 다른 파일을 전송 처리할 수 없는 경우
+				map.put("fileException", -1);
+				map.put("msg", "더 이상 파일을 처리할 수 없습니다.");
+			}
 		}
 		
 		return map;
-		
-		
-		
 		
 		/*
 		 * 여러 파일 삭제 처리
@@ -202,44 +192,25 @@ public class FileUtils {
 			// 기존 파일 이름의 객체를 생성
 			File beforeFile = new File(filePath + beforeFileName);
 			File afterFile = new File(filePath + afterFileName);
-			try 
+			
+			if (beforeFile.exists())
 			{
-				if (beforeFile.exists())
+				if (isNewFile.equals("N"))
 				{
-					if (isNewFile.equals("N"))
+					// 기존 파일 리네임
+					beforeFile.renameTo(afterFile);
+					fileProcExceptionMsg = "상품 정보가 수정되었습니다.";
+				}
+				else
+				{
+					// 기존 파일을 삭제함
+					if (beforeFile.delete())
 					{
-						// 기존 파일 리네임
-						beforeFile.renameTo(afterFile);
+						// 업데이트 할 파일을 생성함
+						multipartFile.transferTo(afterFile);
 						fileProcExceptionMsg = "상품 정보가 수정되었습니다.";
 					}
-					else
-					{
-						// 기존 파일을 삭제함
-						if (beforeFile.delete())
-						{
-							// 새로 업데이트할 파일이름의 객체를 생성
-							try 
-							{
-								// 업데이트 할 파일을 생성함
-								multipartFile.transferTo(afterFile);
-								fileProcExceptionMsg = "상품 정보가 수정되었습니다.";
-							} 
-							catch (IOException e) 
-							{
-								e.printStackTrace();
-								// 파일을 생성 중 에러가 발생했을 경우
-								fileProcExceptionMsg = "파일을 생성하는 도중 문제가 발생했습니다. 다시 시도해주세요.";
-							}
-						}
-					}
-					
 				}
-			} 
-			catch (SecurityException e) 
-			{
-				e.printStackTrace();
-				// 보안 관리 프로그램으로 인해 메소드가 파일에 액세스를 거부당했을 경우
-				fileProcExceptionMsg = "문서 보안이나 기타 보안 프로그램으로 인하여 파일에 접근이 실패했습니다.";
 			}
 		} 
 		catch (NullPointerException e) 
@@ -247,6 +218,18 @@ public class FileUtils {
 			e.printStackTrace();
 			// 기존 파일을 찾지 못했을 경우
 			fileProcExceptionMsg = "원본 파일이 존재하지 않거나 손상되었습니다.";
+		}
+		catch (SecurityException e1)
+		{
+			e1.printStackTrace();
+			// 보안 관리 프로그램으로 인해 메소드가 파일에 액세스를 거부당했을 경우
+			fileProcExceptionMsg = "문서 보안이나 기타 보안 프로그램으로 인하여 파일에 접근이 실패했습니다.";
+		}
+		catch (IOException e2)
+		{
+			e2.printStackTrace();
+			// 파일을 읽거나 쓰기 중 에러가 발생하는 경우
+			fileProcExceptionMsg = "파일을 생성하는 도중 문제가 발생했습니다. 다시 시도해주세요.";
 		}
 		
 		return fileProcExceptionMsg;
@@ -263,28 +246,27 @@ public class FileUtils {
 	 */
 	public int deleteFile(String fileName) {
 		int fileProcException = 0;
+		
 		try 
 		{
 			File file = new File(filePath + fileName);
+			
 			if (file.exists())
 			{
-				try 
-				{
-					file.delete();
-				} 
-				catch (SecurityException e) 
-				{
-					e.printStackTrace();
-					// 보안 관리 프로그램으로 인해 메소드가 파일에 액세스를 거부당했을 경우
-					fileProcException = -2;
-				}
+				file.delete();
 			}
 		} 
 		catch (NullPointerException e) 
 		{
 			e.printStackTrace();
-			// 파일을 업로드 할 폴더 경로가 존재하지 않는 경우
+			// filePath와 fileName이 NULL인 경우
 			fileProcException = -1;
+		}
+		catch (SecurityException e1)
+		{
+			e1.printStackTrace();
+			// 보안 관리 프로그램으로 인해 메소드가 파일에 액세스를 거부당했을 경우
+			fileProcException = -2;
 		}
 		
 		return fileProcException;

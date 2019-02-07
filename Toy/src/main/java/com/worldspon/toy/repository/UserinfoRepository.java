@@ -55,5 +55,16 @@ public interface UserinfoRepository extends JpaRepository<Userinfo, Long> {
 	// 객체지향적 Method Style
 	Userinfo findByUseridAndUserpwd(String userid, String userpwd);
 	
+	
+	
+	/**
+	 * 로그인 회원정보 체크 쿼리 (로그아웃)
+	 * args -------------------------------
+	 * sessionid		| 로그아웃 하려는 사용자 계정의 세션 아이디 정보
+	 * ------------------------------------
+	 * return data ------------------------
+	 * Userinfo			| 사용자정보를 엔티티 클래스 객체로 반환함
+	 * ------------------------------------
+	 * */
 	Userinfo findBySessionid(String sessionid);
 }

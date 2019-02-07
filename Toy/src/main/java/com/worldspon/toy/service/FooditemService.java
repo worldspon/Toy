@@ -98,7 +98,7 @@ public class FooditemService {
 	/**
 	 * 특정 음식 메뉴 조회 처리 서비스
 	 * return data ------------------------
-	 * foodlist				| 모든 음식 메뉴 리스트 정보
+	 * dtoMap				| 특정 음식 메뉴 정보
 	 * ------------------------------------
 	 */
 	@Transactional(readOnly = true)
@@ -108,28 +108,26 @@ public class FooditemService {
 		try 
 		{
 			Fooditem foodItemEntity = fooditemRepo.getOne(fid); // 음식 정보 조회 - 부모 테이블
-			try
-			{
-				Foodimgfile foodImgFileEntity = foodimgfileRepo.findByFooditem_fid(fid); // 음식 이미지 파일 정보 조회 - 자식 테이블
-				
-				FooditemResponseDto foodItemDto = new FooditemResponseDto();
-				BeanUtils.copyProperties(foodItemEntity, foodItemDto);
-				foodItemDto.setFoodimgfile(foodImgFileEntity);
-				
-				dtoMap.put("fooditem", foodItemDto);
-			}
-			catch (IllegalArgumentException e) 
-			{
-				e.printStackTrace();
-				// 주어진 ID 값이 NULL인 경우
-				dtoMap.put("msg", "존재하지 않는 상품입니다.");
-			}
+			
+			Foodimgfile foodImgFileEntity = foodimgfileRepo.findByFooditem_fid(fid); // 음식 이미지 파일 정보 조회 - 자식 테이블
+			
+			FooditemResponseDto foodItemDto = new FooditemResponseDto();
+			BeanUtils.copyProperties(foodItemEntity, foodItemDto);
+			foodItemDto.setFoodimgfile(foodImgFileEntity);
+			
+			dtoMap.put("fooditem", foodItemDto);
 		} 
 		catch (EntityNotFoundException e) 
 		{
 			e.printStackTrace();
 			// 주어진 ID값에 엔티티가 없을 경우
 			dtoMap.put("msg", "존재하지 않는 테이블의 정보입니다.");
+		}
+		catch (IllegalArgumentException e1)
+		{
+			e1.printStackTrace();
+			// 주어진 ID 값이 NULL인 경우
+			dtoMap.put("msg", "존재하지 않는 상품입니다.");
 		}
 		
 		return dtoMap;
@@ -171,49 +169,44 @@ public class FooditemService {
 				// 이미지 파일들 이름 구하기
 				MultipartFile multipartFile = multipartReq.getFile(fileIter.next());
 				
-				try 
+				HashMap<String, Object> fileNameMap = fileUtils.getFileName(multipartFile, dto.getFoodname());
+				if (fileNameMap.isEmpty())
 				{
-					HashMap<String, Object> fileNameMap = fileUtils.getFileName(multipartFile, dto.getFoodname());
-					if (fileNameMap.isEmpty())
+					msg = "상품 등록 중 문제가 발생하였습니다.";
+				}
+				else
+				{
+					listFileNames.add(fileNameMap.get("imgFileName").toString());
+					
+					// 음식 메뉴 파일 정보 복사
+					FoodimgfileRequestDto imgfiledto = new FoodimgfileRequestDto();
+					imgfiledto.setImgfilename(fileNameMap.get("imgFileName").toString());
+					imgfiledto.setOrgfilename(fileNameMap.get("orgFileName").toString());
+					imgfiledto.setFooditem(dto.toEntity());
+					
+					// 자식 테이블 insert 수행
+					foodimgfileRepo.save(imgfiledto.toEntity());
+					
+					// 이미지 파일을 생성함
+					HashMap<String, Object> fileCreateMap = fileUtils.parseInsertFile(multipartFile, imgfiledto.getImgfilename());
+					// fileException | -2: NullPointer, -1: IllegalState, 0: IO, 1: Success
+					int fileException = Integer.valueOf(fileCreateMap.get("fileException").toString()); 
+					
+					// 에러가 발생한 경우
+					if (fileException <= 0)
 					{
-						msg = "상품 등록 중 문제가 발생하였습니다.";
+						msg = fileCreateMap.get("msg").toString();
 					}
 					else
 					{
-						listFileNames.add(fileNameMap.get("imgFileName").toString());
-						
-						// 음식 메뉴 파일 정보 복사
-						FoodimgfileRequestDto imgfiledto = new FoodimgfileRequestDto();
-						imgfiledto.setImgfilename(fileNameMap.get("imgFileName").toString());
-						imgfiledto.setOrgfilename(fileNameMap.get("orgFileName").toString());
-						imgfiledto.setFooditem(dto.toEntity());
-						
-						// 자식 테이블 insert 수행
-						foodimgfileRepo.save(imgfiledto.toEntity());
-						
-						// 이미지 파일을 생성함
-						HashMap<String, Object> fileCreateMap = fileUtils.parseInsertFile(multipartFile, imgfiledto.getImgfilename());
-						// fileException | -2: NullPointer, -1: IllegalState, 0: IO, 1: Success
-						int fileException = Integer.valueOf(fileCreateMap.get("fileException").toString()); 
-						
-						// 에러가 발생한 경우
-						if (fileException <= 0)
-						{
-							msg = fileCreateMap.get("msg").toString();
-						}
-						else
-						{
-							msg = "상품이 등록되었습니다.";
-						}
+						msg = "상품이 등록되었습니다.";
 					}
-				} 
-				catch (Exception e) 
-				{
-					msg = "상품 등록 중 문제가 발생하였습니다.";
 				}
 			} 
 			catch (NumberFormatException e) 
 			{
+				e.printStackTrace();
+				// fileException의 데이터 타입을 Integer로 파싱하는 중 문제가 발생하는 경우
 				msg = "잘못된 데이터 형식이 등록되었습니다.";
 			}
 		}
@@ -376,19 +369,19 @@ public class FooditemService {
 	public int changeFooditemStatus(HashMap<String, Object> map) {
 		int procException = 0;
 		
-		int changeStatus = Integer.valueOf(map.get("status").toString());
-		String[] fidListStr = map.get("fid").toString().split(","); // [1, 2, 3, 4...]로 저장되는 fid의 값을 Long[]타입으로 가공
-		Long[] fidArr = new Long[fidListStr.length];
-		
-		// String 형의 fid를 Long형으로 변환
-		for (int i = 0; i < fidListStr.length; i += 1)
+		try
 		{
-			// [1] 이 문자열에서 substring으로 '[', ']' 문자를 제거
-			fidArr[i] = Long.valueOf(fidListStr[i].substring(1, 2)).longValue();
-		}
-		
-		try 
-		{
+			int changeStatus = Integer.valueOf(map.get("status").toString());
+			String[] fidListStr = map.get("fid").toString().split(","); // [1, 2, 3, 4...]로 저장되는 fid의 값을 Long[]타입으로 가공
+			Long[] fidArr = new Long[fidListStr.length];
+			
+			// String 형의 fid를 Long형으로 변환
+			for (int i = 0; i < fidListStr.length; i += 1)
+			{
+				// [1] 이 문자열에서 substring으로 '[', ']' 문자를 제거
+				fidArr[i] = Long.valueOf(fidListStr[i].substring(1, 2)).longValue();
+			}
+			
 			List<Fooditem> changedDtoList = new ArrayList<Fooditem>();
 			
 			for (int i = 0; i < fidArr.length; i += 1)
@@ -405,8 +398,16 @@ public class FooditemService {
 			
 			// 일괄 Update
 			fooditemRepo.saveAll(changedDtoList);
-		} 
-		catch (IllegalArgumentException e) {
+		}
+		catch (NumberFormatException e1)
+		{
+			e1.printStackTrace();
+			// status의 데이터 타입을 Integer로 파싱하는 중 문제가 발생하는 경우
+			procException = 1;
+		}
+		catch (IllegalArgumentException e) 
+		{
+			e.printStackTrace();
 			// findStatus가 NULL이거나 changedDtoList가 NULL인 경우
 			procException = 1;
 		}

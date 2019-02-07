@@ -60,6 +60,7 @@ public class CartService {
 				if (!(cookies[i].getName().equals("JSESSIONID")))
 				{
 					String getCookieName = cookies[i].getName();
+					// {fid:1.foodpirce:1000.stock:50}
 					String[] tempValue = cookies[i].getValue().split("\\.");
 					String[] cookiesValue = tempValue[0].split(":");
 					Long cookiesFid = Long.parseLong(cookiesValue[1]);
@@ -69,7 +70,7 @@ public class CartService {
 						// 기존 장바구니에 담겨있는 상품인 경우 쿠키를 수정함
 						cookie = new Cookie(getCookieName, "");
 						msg = "장바구니에 담긴 상품 정보가 수정되었습니다.";
-						break;	// break로 반복문을 빠져나오지 않을 경우 문제 발생
+						break;
 					}
 					else
 					{
@@ -219,8 +220,7 @@ public class CartService {
 			{
 				if (!(cookies[i].getName().equals("JSESSIONID")))
 				{
-					// fid:1.foodpirce:1000.stock:50 를 자른다.
-					// Java의 split()에 인자는 정규표현식이므로 마침표를 문자 그대로 받아들이지 못한다.
+					// {를fid:1.foodpirce:1000.stock:50}
 					String[] tempValue = cookies[i].getValue().split("\\.");
 					String[] cookieValue = tempValue[0].split(":");
 					

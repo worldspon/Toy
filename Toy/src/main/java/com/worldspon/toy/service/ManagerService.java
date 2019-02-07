@@ -38,25 +38,35 @@ public class ManagerService {
 		String managerid = dto.getManagerid();
 		String managerpwd = dto.getManagerpwd();
 		
-		Managerinfo entity = managerinfoRepo.findByManageridAndManagerpwd(managerid, managerpwd);
-		if (entity == null)
+		try
 		{
-			map.put("result", 0);
-		}
-		else
-		{
-			ManagerinfoResponseDto managerinfo = new ManagerinfoResponseDto();
-			BeanUtils.copyProperties(entity, managerinfo);
+			Managerinfo entity = managerinfoRepo.findByManageridAndManagerpwd(managerid, managerpwd);
 			
-			req.getSession().setAttribute("managerInfo", managerinfo);
-			req.getSession().setMaxInactiveInterval(30 * 60);	// 매니저 정보 세션 유효 기간 30분
+			if (entity == null)
+			{
+				map.put("result", 0);
+			}
+			else
+			{
+				ManagerinfoResponseDto managerinfo = new ManagerinfoResponseDto();
+				BeanUtils.copyProperties(entity, managerinfo);
+				
+				req.getSession().setAttribute("managerInfo", managerinfo);
+				req.getSession().setMaxInactiveInterval(30 * 60);	// 매니저 정보 세션 유효 기간 30분
 
-			dto.setMid(entity.getMid());
-			dto.setManagername(entity.getManagername());
-			dto.setSessionid(req.getSession().getId());
-			managerinfoRepo.save(dto.toEntity());
-			
-			map.put("result", 1);
+				dto.setMid(entity.getMid());
+				dto.setManagername(entity.getManagername());
+				dto.setSessionid(req.getSession().getId());
+				managerinfoRepo.save(dto.toEntity());
+				
+				map.put("result", 1);
+			}
+		}
+		catch (IllegalArgumentException e) 
+		{
+			e.printStackTrace();
+			// managerid, managerpwd가 NULL인 경우
+			map.put("result", 0);
 		}
 		
 		return map;
@@ -80,16 +90,25 @@ public class ManagerService {
 		}
 		else
 		{
-			Managerinfo entity = managerinfoRepo.findBySessionid(req.getSession().getId());
-			ManagerinfoResponseDto managerinfoResDto = new ManagerinfoResponseDto();
-			BeanUtils.copyProperties(entity, managerinfoResDto);
-			managerinfoResDto.setSessionid("");
-			// Update로 세션ID를 지움
-			managerinfoRepo.save(managerinfoResDto.toEntity());
-			
-			req.getSession().invalidate();
-			
-			msg = "로그아웃이 처리되었습니다.";
+			try
+			{
+				Managerinfo entity = managerinfoRepo.findBySessionid(req.getSession().getId());
+				ManagerinfoResponseDto managerinfoResDto = new ManagerinfoResponseDto();
+				BeanUtils.copyProperties(entity, managerinfoResDto);
+				managerinfoResDto.setSessionid("");
+				// Update로 세션ID를 지움
+				managerinfoRepo.save(managerinfoResDto.toEntity());
+				
+				req.getSession().invalidate();
+				
+				msg = "로그아웃이 처리되었습니다.";
+			}
+			catch (IllegalArgumentException e) 
+			{
+				e.printStackTrace();
+				// 조회할 조건절의 SessionId가 NULL인 경우\
+				msg = "로그아웃 처리 중 에러가 발생하였습니다.";
+			}
 		}
 		
 		return msg;

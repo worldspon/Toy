@@ -37,7 +37,9 @@ public class OrderController {
 	 * ------------------------------------
 	 */
 	@PostMapping("/order")
-	public HashMap<String, Object> order(@RequestBody OrderlistRequestDto orderListReqDto, HttpServletRequest req, HttpServletResponse res) {
+	public HashMap<String, Object> order(@RequestBody OrderlistRequestDto orderListReqDto, 
+			HttpServletRequest req, HttpServletResponse res) {
+		
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		
 		boolean stockCheck = orderService.stockCheck(orderListReqDto);

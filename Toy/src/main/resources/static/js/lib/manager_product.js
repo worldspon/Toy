@@ -18,6 +18,16 @@ $(document).ready(function () {
         }
     });
 
+    // 상품 가격 입력 이벤트
+    $(document).on('keyup', '.product_price', function () {
+        fn_checkNumber(this);
+    });
+
+    // 상품 수량 입력 이벤트
+    $(document).on('keyup', '.product_quantity', function () {
+        fn_checkNumber(this);
+    });
+
     // 음식 항목 등록 클릭 이벤트
     $(document).on('click', '#reg_btn', function () {
         if (fn_isRun(false))
@@ -128,6 +138,24 @@ function fn_plus_reg_box() {
         reg_form.appendChild(form_div);
     }
 }
+
+
+
+
+/**
+ * @Authur Johnny
+ * @role 숫자 외 입력 차단 검증 함수
+ * @date 2019.02.07
+*/
+function fn_checkNumber(this_) {
+    var data = $(this_).val();
+    var numberData = fn_onlyNumber(data);
+
+    $(this_).val(numberData);
+}
+
+
+
 
 
 /**

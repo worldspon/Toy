@@ -29,7 +29,7 @@ public class JoinService {
 	 */
 	@Transactional
 	public String save (UserinfoRequestDto dto) throws Exception{
-		String msg = (userinfoRepo.save(dto.toEntity()).getUid() > 0) ? "회원가입이 처리되었습니다." : "회원가입에 실패했습니다.";
+		String msg = (userinfoRepo.save(dto.toEntity()).getUid()) > 0 ? "회원가입이 처리되었습니다." : "회원가입에 실패했습니다.";
 		return msg;
 	}
 	

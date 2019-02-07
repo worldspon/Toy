@@ -20,7 +20,6 @@ import com.worldspon.toy.dto.orderitem.OrderitemResponseDto;
 import com.worldspon.toy.dto.orderlist.OrderlistRequestDto;
 import com.worldspon.toy.entity.Fooditem;
 import com.worldspon.toy.entity.Orderitem;
-import com.worldspon.toy.entity.Orderlist;
 import com.worldspon.toy.entity.Userinfo;
 import com.worldspon.toy.repository.FooditemRepository;
 import com.worldspon.toy.repository.OrderitemRepository;
@@ -64,23 +63,32 @@ public class OrderService {
 			reqStock.add(orderitemList.get(i).getStock());
 		}
 		
-		// 주문한 상품들 모두 조회
-		List<Fooditem> fooditemEntity = fooditemRepo.findAllById(fids);
-		
-		for (int i = 0; i < fooditemEntity.size(); i += 1)
+		try
 		{
-			int maxStock = fooditemEntity.get(i).getStock();
+			// 주문한 상품들 모두 조회
+			List<Fooditem> fooditemEntity = fooditemRepo.findAllById(fids);
 			
-			// 주문 신청한 상품 수량이 재고 수량보다 크면
-			if (reqStock.get(i) > maxStock)
+			for (int i = 0; i < fooditemEntity.size(); i += 1)
 			{
-				check = false;
-				break;	// 하나의 상품이라도 재고 수량을 초과하면 주문 자체를 차단한다.
+				int maxStock = fooditemEntity.get(i).getStock();
+				
+				// 주문 신청한 상품 수량이 재고 수량보다 크면
+				if (reqStock.get(i) > maxStock)
+				{
+					check = false;
+					break;	// 하나의 상품이라도 재고 수량을 초과하면 주문 자체를 차단한다.
+				}
+				else
+				{
+					check = true;
+				}
 			}
-			else
-			{
-				check = true;
-			}
+		}
+		catch (IllegalArgumentException e) 
+		{
+			e.printStackTrace();
+			// fids가 NULL인 경우
+			check = false;
 		}
 		
 		return check;
@@ -109,198 +117,207 @@ public class OrderService {
 		if (loginInfo == null)
 		{
 			// UserInterceptor에서 기본적으로 모든 비로그인 상태의 접속 시도를 차단함
-			// 그러나 혹여나 생각하지 못한 예외 탈출구가 있을 경우를 생각하여 세션 정보 null처리를 함
+			// 그러나 혹여나 생각하지 못한 예외 탈출구가 있을 경우를 생각하여 세션 정보 null 체크 처리를 함
 			map.put("msg", "주문 서비스는 로그인 후 이용해주시기 바랍니다.");
 		}
 		else
 		{
-			// 주문자 식별 id, 주문자 이름 설정 (setter)
-			Userinfo userinfoEntity = userinfoRepo.findBySessionid(req.getSession().getId());
-			orderListReqDto.setUid(userinfoEntity.getUid());
-			orderListReqDto.setUsername(userinfoEntity.getUsername());
-			List<Orderitem> orderitemList = new ArrayList<Orderitem>();
-			for (int i = 0; i < orderListReqDto.getOrderitem().size(); i += 1)
+			try
 			{
-				logger.info("orderListReqDto.getOrderitem().get(i).getFoodname() : " + orderListReqDto.getOrderitem().get(i).getFoodname());
-				logger.info("orderListReqDto.getOrderitem().get(i).getFoodprice() : " + orderListReqDto.getOrderitem().get(i).getFoodprice());
-				logger.info("orderListReqDto.getOrderitem().get(i).getStock() : " + orderListReqDto.getOrderitem().get(i).getStock());
-				logger.info("orderListReqDto.getOrderitem().get(i).getFid() : " + orderListReqDto.getOrderitem().get(i).getFid());
-				OrderitemRequestDto orderitemReqDto = new OrderitemRequestDto();
-				BeanUtils.copyProperties(orderListReqDto.getOrderitem().get(i), orderitemReqDto);
-				orderitemReqDto.setOrderlist(orderListReqDto.toEntity());
-				logger.info("orderitemReqDto.getFoodname() : " + orderitemReqDto.getFoodname());
-				logger.info("orderitemReqDto.getFoodprice() : " + orderitemReqDto.getFoodprice());
-				logger.info("orderitemReqDto.getStock() : " + orderitemReqDto.getStock());
-				logger.info("orderitemReqDto.getFid() : " + orderitemReqDto.getFid());
-				
-				orderitemList.add(orderitemReqDto.toEntity());
-				
-			}
-			
-			orderListReqDto.setOrderitem(orderitemList);
-			
-
-			if (!(orderListReqDto.getOrderitem().isEmpty()))
-			{
-				List<Orderitem> reqOrderItemEntity = orderListReqDto.getOrderitem();
-				ArrayList<Long> reqFidList = new ArrayList<Long>();
-				int[] reqStockList = null; // 신청받은 수량 정보들
-				int reqTotalStock = orderListReqDto.getTotalstock(); // 모든 상품의 수량을 합산한 정보
-				
-				for (int i = 0; i < reqOrderItemEntity.size(); i += 1)
+				// 주문자 식별 id, 주문자 이름 설정 (setter)
+				Userinfo userinfoEntity = userinfoRepo.findBySessionid(req.getSession().getId());
+				orderListReqDto.setUid(userinfoEntity.getUid());
+				orderListReqDto.setUsername(userinfoEntity.getUsername());
+				List<Orderitem> orderitemList = new ArrayList<Orderitem>();
+				for (int i = 0; i < orderListReqDto.getOrderitem().size(); i += 1)
 				{
-					// 상품 정보를 조회하기 위해 fid를 ArrayList collection에 담는다
-					reqFidList.add(reqOrderItemEntity.get(i).getFid());
+					logger.info("orderListReqDto.getOrderitem().get(i).getFoodname() : " + orderListReqDto.getOrderitem().get(i).getFoodname());
+					logger.info("orderListReqDto.getOrderitem().get(i).getFoodprice() : " + orderListReqDto.getOrderitem().get(i).getFoodprice());
+					logger.info("orderListReqDto.getOrderitem().get(i).getStock() : " + orderListReqDto.getOrderitem().get(i).getStock());
+					logger.info("orderListReqDto.getOrderitem().get(i).getFid() : " + orderListReqDto.getOrderitem().get(i).getFid());
+					OrderitemRequestDto orderitemReqDto = new OrderitemRequestDto();
+					BeanUtils.copyProperties(orderListReqDto.getOrderitem().get(i), orderitemReqDto);
+					orderitemReqDto.setOrderlist(orderListReqDto.toEntity());
+					logger.info("orderitemReqDto.getFoodname() : " + orderitemReqDto.getFoodname());
+					logger.info("orderitemReqDto.getFoodprice() : " + orderitemReqDto.getFoodprice());
+					logger.info("orderitemReqDto.getStock() : " + orderitemReqDto.getStock());
+					logger.info("orderitemReqDto.getFid() : " + orderitemReqDto.getFid());
 					
-					// 주문 신청한 상품의 수량 정보
-					if (i == 0)
-					{
-						reqStockList = new int[reqOrderItemEntity.size()];
-					}
-					reqStockList[i] = reqOrderItemEntity.get(i).getStock();
+					orderitemList.add(orderitemReqDto.toEntity());
 					
-					OrderitemResponseDto tempDto = new OrderitemResponseDto();
-					BeanUtils.copyProperties(reqOrderItemEntity.get(i), tempDto);
 				}
-				// 사용자가 주문 신청한 상품들의 수량을 체크하기 위해 정보를 조회함
-				List<Fooditem> fooditemList = fooditemRepo.findAllById(reqFidList);
-				List<Fooditem> fooditemEntityList = new ArrayList<Fooditem>();
 				
-				for (int i = 0; i < fooditemList.size(); i += 1)
+				orderListReqDto.setOrderitem(orderitemList);
+				
+
+				if (!(orderListReqDto.getOrderitem().isEmpty()))
 				{
-					// 구매 가능 수량
-					int validStock = fooditemList.get(i).getStock();
+					List<Orderitem> reqOrderItemEntity = orderListReqDto.getOrderitem();
+					ArrayList<Long> reqFidList = new ArrayList<Long>();
+					int[] reqStockList = null; // 신청받은 수량 정보들
+					int reqTotalStock = orderListReqDto.getTotalstock(); // 모든 상품의 수량을 합산한 정보
 					
-					// 주문 신청한 수량이 구매 가능 수량을 초과한 경우
-					// 일반적으로 JavaScript 단에서 최대 구매 수량을 검증하지만 
-					// 트랜잭션 진행 중 또 주문 신청이 들어온 경우를 대비 
-					if (reqStockList[i] > validStock)
+					for (int i = 0; i < reqOrderItemEntity.size(); i += 1)
 					{
-						String foodName = fooditemList.get(i).getFoodname();
-						map.put("msg", "\'" + foodName + "\' 상품이 매진되어 더 이상 구매하실 수 없습니다.");
+						// 상품 정보를 조회하기 위해 fid를 ArrayList collection에 담는다
+						reqFidList.add(reqOrderItemEntity.get(i).getFid());
 						
-						break;
+						// 주문 신청한 상품의 수량 정보
+						if (i == 0)
+						{
+							reqStockList = new int[reqOrderItemEntity.size()];
+						}
+						reqStockList[i] = reqOrderItemEntity.get(i).getStock();
+						
+						OrderitemResponseDto tempDto = new OrderitemResponseDto();
+						BeanUtils.copyProperties(reqOrderItemEntity.get(i), tempDto);
+					}
+					// 사용자가 주문 신청한 상품들의 수량을 체크하기 위해 정보를 조회함
+					List<Fooditem> fooditemList = fooditemRepo.findAllById(reqFidList);
+					List<Fooditem> fooditemEntityList = new ArrayList<Fooditem>();
+					
+					for (int i = 0; i < fooditemList.size(); i += 1)
+					{
+						// 구매 가능 수량
+						int validStock = fooditemList.get(i).getStock();
+						
+						// 주문 신청한 수량이 구매 가능 수량을 초과한 경우
+						// 일반적으로 JavaScript 단에서 최대 구매 수량을 검증하지만 
+						// 트랜잭션 진행 중 또 주문 신청이 들어온 경우를 대비 
+						if (reqStockList[i] > validStock)
+						{
+							String foodName = fooditemList.get(i).getFoodname();
+							map.put("msg", "\'" + foodName + "\' 상품이 매진되어 더 이상 구매하실 수 없습니다.");
+							
+							break;
+						}
+						else
+						{
+							// DB의 수량을 주문 신청된 만큼 차감하기 위해(setter) DTO객체로 값을 카피
+							Fooditem fooditemEntity = fooditemList.get(i);
+							FooditemResponseDto fooditemResDto = new FooditemResponseDto();
+							BeanUtils.copyProperties(fooditemEntity, fooditemResDto);
+							
+							// 잔여 수량
+							int remainsStock = validStock - reqStockList[i];
+							fooditemResDto.setStock(remainsStock);
+							
+							fooditemEntityList.add(fooditemResDto.toEntity());
+						}
+					}
+					
+					// fooditem 테이블 update
+					// 테이블에서 상품 수량을 주문된 요청 수량 만큼 감소 시키기
+					int updateProcVal = updateFoodStock(reqTotalStock, fooditemEntityList);
+					
+					if (updateProcVal < 0)
+					{
+						map.put("msg", "주문 요청을 처리 중 문제가 발생했습니다.");
 					}
 					else
 					{
-						// DB의 수량을 주문 신청된 만큼 차감하기 위해(setter) DTO객체로 값을 카피
-						Fooditem fooditemEntity = fooditemList.get(i);
-						FooditemResponseDto fooditemResDto = new FooditemResponseDto();
-						BeanUtils.copyProperties(fooditemEntity, fooditemResDto);
-						
-						// 잔여 수량
-						int remainsStock = validStock - reqStockList[i];
-						fooditemResDto.setStock(remainsStock);
-						
-						fooditemEntityList.add(fooditemResDto.toEntity());
-					}
-				}
-				
-				// fooditem 테이블 update
-				// 테이블에서 상품 수량을 주문된 요청 수량 만큼 감소 시키기
-				int updateProcVal = updateFoodStock(reqTotalStock, fooditemEntityList);
-				
-				if (updateProcVal < 0)
-				{
-					map.put("msg", "주문 요청을 처리 중 문제가 발생했습니다.");
-				}
-				else
-				{
-					/*
-					List<Orderitem> orderitemList = new ArrayList<Orderitem>();
-					for (Orderitem orderitemEntity : orderListReqDto.getOrderitem())
-					{
-						OrderitemResponseDto orderitemDto = new OrderitemResponseDto();
-						BeanUtils.copyProperties(orderitemEntity, orderitemDto);
-						
-						// setOwner
-						orderitemDto.setOrderlist(orderListReqDto.toEntity());
-						
-						// addStudies
-						orderitemList.add(orderitemDto.toEntity());
-					}
-					*/
-					//orderListReqDto.setOrderitem(orderitemList);
-					
-					for (int i = 0; i < orderListReqDto.getOrderitem().size(); i += 1)
-					{
-						logger.info("=======================================  START  =======================================");
-						logger.info("" + orderListReqDto.getOrderitem().get(i).getFid());
-						logger.info("" + orderListReqDto.getOrderitem().get(i).getFoodname());
-						logger.info("" + orderListReqDto.getOrderitem().get(i).getFoodprice());
-						logger.info("" + orderListReqDto.getOrderitem().get(i).getStock());
-						logger.info("" + orderListReqDto.getOrderitem().get(i).getOrderlist().getStatus());
-						logger.info("" + orderListReqDto.getOrderitem().get(i).getOrderlist().getTotalstock());
-						logger.info("" + orderListReqDto.getOrderitem().get(i).getOrderlist().getUsername());
-						logger.info("" + orderListReqDto.getOrderitem().get(i).getOrderlist().getStatus());
-						logger.info("=======================================  END  =======================================");
-						
-					}
-					
-					// orderList, orderitem 테이블 insert
-					orderRepo.save(orderListReqDto.toEntity());
-					orderitemRepo.saveAll(orderitemList);
-					
-					// 사용자 쿠키 데이터 삭제 (장바구니 상품 정보)
-					Cookie[] cookies = req.getCookies();
-					if (cookies != null && cookies.length > 0)
-					{
-						for (int i = 0; i < cookies.length; i += 1)
+						/*
+						List<Orderitem> orderitemList = new ArrayList<Orderitem>();
+						for (Orderitem orderitemEntity : orderListReqDto.getOrderitem())
 						{
-							if (!(cookies[i].getName().equals("JSESSIONID")))
+							OrderitemResponseDto orderitemDto = new OrderitemResponseDto();
+							BeanUtils.copyProperties(orderitemEntity, orderitemDto);
+							
+							// setOwner
+							orderitemDto.setOrderlist(orderListReqDto.toEntity());
+							
+							// addStudies
+							orderitemList.add(orderitemDto.toEntity());
+						}
+						*/
+						//orderListReqDto.setOrderitem(orderitemList);
+						
+						for (int i = 0; i < orderListReqDto.getOrderitem().size(); i += 1)
+						{
+							logger.info("======================================= Log START  =======================================");
+							logger.info("" + orderListReqDto.getOrderitem().get(i).getFid());
+							logger.info("" + orderListReqDto.getOrderitem().get(i).getFoodname());
+							logger.info("" + orderListReqDto.getOrderitem().get(i).getFoodprice());
+							logger.info("" + orderListReqDto.getOrderitem().get(i).getStock());
+							logger.info("" + orderListReqDto.getOrderitem().get(i).getOrderlist().getStatus());
+							logger.info("" + orderListReqDto.getOrderitem().get(i).getOrderlist().getTotalstock());
+							logger.info("" + orderListReqDto.getOrderitem().get(i).getOrderlist().getUsername());
+							logger.info("" + orderListReqDto.getOrderitem().get(i).getOrderlist().getStatus());
+							logger.info("======================================= Log END  =======================================");
+							
+						}
+						
+						// orderList, orderitem 테이블 insert
+						orderRepo.save(orderListReqDto.toEntity());
+						orderitemRepo.saveAll(orderitemList);
+						
+						// 사용자 쿠키 데이터 삭제 (장바구니 상품 정보)
+						Cookie[] cookies = req.getCookies();
+						if (cookies != null && cookies.length > 0)
+						{
+							for (int i = 0; i < cookies.length; i += 1)
 							{
-								// 장바구니에 저장되어있는 상품의 fid값 구하기
-								Long fid = Long.parseLong((cookies[i].getValue().split("\\.")[0]).split(":")[1]);
-								
-								// 주문 신청한 상품은 장바구니에서 쿠키를 삭제함
-								for (Long targetFid : reqFidList) 
+								if (!(cookies[i].getName().equals("JSESSIONID")))
 								{
-									if (fid == targetFid)
+									// 장바구니에 저장되어있는 상품의 fid값 구하기
+									Long fid = Long.parseLong((cookies[i].getValue().split("\\.")[0]).split(":")[1]);
+									
+									// 주문 신청한 상품은 장바구니에서 쿠키를 삭제함
+									for (Long targetFid : reqFidList) 
 									{
-										cookies[i].setValue("");
-										cookies[i].setMaxAge(0);
-										
-										res.addCookie(cookies[i]);
-										break;
+										if (fid == targetFid)
+										{
+											cookies[i].setValue("");
+											cookies[i].setMaxAge(0);
+											
+											res.addCookie(cookies[i]);
+											break;
+										}
 									}
 								}
 							}
-						}
-						
-						// 주문 요청하지 않은 장바구니 상품 정보(쿠키) 정렬
-						ArrayList<Cookie> arrCookie = new ArrayList<Cookie>();
-						int cookieNameIndex = 0;
-						for (int i = 0; i < cookies.length; i += 1)
-						{
-							// [cart2, cart 5] -> [cart0, cart1]
-							if (!(cookies[i].getName().equals("JSESSIONID")) && !(cookies[i].getValue().equals("")))
+							
+							// 주문 요청하지 않은 장바구니 상품 정보(쿠키) 정렬
+							ArrayList<Cookie> arrCookie = new ArrayList<Cookie>();
+							int cookieNameIndex = 0;
+							for (int i = 0; i < cookies.length; i += 1)
 							{
-								String newCookieName = "cart" + cookieNameIndex;
-								
-								// 삭제된 쿠키 이후에 존재하는 쿠키 값을 땡겨옴
-								Cookie newCookie = new Cookie(newCookieName, cookies[i].getValue());
-								newCookie.setMaxAge(60 * 60 * 24 * 30); // 쿠키 유효 기간은 30일 (60초 * 60분 * 24시간 * 30일)
-								
-								arrCookie.add(newCookie);
-								
-								// 기존 쿠키들을 지움
-								cookies[i].setValue("");
-								cookies[i].setMaxAge(0);
-								res.addCookie(cookies[i]);
-								
-								cookieNameIndex += 1;
+								// [cart2, cart 5] -> [cart0, cart1]
+								if (!(cookies[i].getName().equals("JSESSIONID")) && !(cookies[i].getValue().equals("")))
+								{
+									String newCookieName = "cart" + cookieNameIndex;
+									
+									// 삭제된 쿠키 이후에 존재하는 쿠키 값을 땡겨옴
+									Cookie newCookie = new Cookie(newCookieName, cookies[i].getValue());
+									newCookie.setMaxAge(60 * 60 * 24 * 30); // 쿠키 유효 기간은 30일 (60초 * 60분 * 24시간 * 30일)
+									
+									arrCookie.add(newCookie);
+									
+									// 기존 쿠키들을 지움
+									cookies[i].setValue("");
+									cookies[i].setMaxAge(0);
+									res.addCookie(cookies[i]);
+									
+									cookieNameIndex += 1;
+								}
+							}
+							
+							// 정렬된 상품 정보(쿠키) 생성
+							for (int i = 0; i < arrCookie.size(); i += 1)
+							{
+								res.addCookie(arrCookie.get(i));
 							}
 						}
 						
-						// 정렬된 상품 정보(쿠키) 생성
-						for (int i = 0; i < arrCookie.size(); i += 1)
-						{
-							res.addCookie(arrCookie.get(i));
-						}
+						map.put("msg", "주문이 접수되었습니다. \n 배송이 준비됩니다.");
 					}
-					
-					map.put("msg", "주문이 접수되었습니다. \n 배송이 준비됩니다.");
 				}
+			}
+			catch (IllegalArgumentException e)
+			{
+				e.printStackTrace();
+				// SessionId, reqFidLis, orderitemList가 NULL 인 경우
+				map.put("msg", "주문 요청을 처리 중 문제가 발생했습니다.");
 			}
 		}
 		
