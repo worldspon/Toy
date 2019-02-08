@@ -117,11 +117,7 @@ public class CartService {
 		List<Fooditem> foodList = new ArrayList<Fooditem>();
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		
-		if (cookies == null || cookies.length == 0)
-		{
-			// 쿠키가 없을 때
-		}
-		else
+		if (cookies != null)
 		{
 			ArrayList<Integer> cookiePrice = new ArrayList<Integer>();
 			ArrayList<Integer> cookieStock = new ArrayList<Integer>();
@@ -148,36 +144,6 @@ public class CartService {
 
 			// 장바구니에 담긴 상품 조회
 			foodList = fooditemRepo.findAllById(fidList);
-			
-			// 쿠키 정보를 fid 오름차순으로 정렬
-			// JPA의 조회 쿼리의 Order By절은 기본적으로 ASC이므로 그에 맞는 정렬 처리를 해준다.
-			for (int i = 0; i < fidList.size(); i += 1)
-			{
-				int tempCookiePrice = 0;
-				int tempCookieStock = 0;
-				
-				for (int j = (i + 1); j < fidList.size(); j += 1)
-				{
-					for (int k = 0; k < cookies.length; k += 1)
-					{
-						if (!(cookies[k].getName().equals("JSESSIONID")))
-						{
-							if (fidList.get(i) > fidList.get(j))
-							{
-								tempCookiePrice = cookiePrice.get(i);
-								cookiePrice.set(i, cookiePrice.get(j));
-								cookiePrice.set(j, tempCookiePrice);
-								
-								tempCookieStock = cookieStock.get(i);
-								cookieStock.set(i, cookieStock.get(j));
-								cookieStock.set(j, tempCookieStock);
-								// 수동 정렬처리를 해주지 않는 경우 
-								// 장바구니 페이지에서 상품 수량, 상품 가격의 정보가 잘못된 순서로 출력된다.
-							}
-						}
-					}
-				}
-			}
 			
 			map.put("foodList", foodList);
 			map.put("price", cookiePrice);
@@ -270,15 +236,13 @@ public class CartService {
 				{
 					// 버블 정렬 시 비교할 첫번째 fid 대상을 구함
 					Long fid = Long.parseLong( (cookies[j].getValue().split("\\.")[0]).split(":")[1] );
-					logger.info("fid : " + fid);
+					
 					for (int k = (j + 1); k < cookies.length; k += 1)
 					{
 						if (!(cookies[k].getName().equals("JSESSIONID")))
 						{
 							// 비교할 두번째 fid 대상을 구함
 							Long compareFid = Long.parseLong( (cookies[k].getValue().split("\\.")[0]).split(":")[1] );
-							
-							logger.info("fid : " + fid + " / compareFid : " + compareFid);
 							
 							// 오름차순으로 쿠키 값을 변경함
 							if (fid > compareFid)
@@ -292,12 +256,9 @@ public class CartService {
 				}
 			}
 
-			logger.info("================== COOKIES VALUE ================");
 			// 정렬한 쿠키 설정 반영하기
 			for (int i = 0; i < cookies.length; i += 1)
 			{
-				logger.info("cookies[" + i + "].getName()" + cookies[i].getName());
-				logger.info("cookies[" + i + "].getValue()" + cookies[i].getValue());
 				res.addCookie(cookies[i]);
 			}
 		}
