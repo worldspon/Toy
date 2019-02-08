@@ -18,7 +18,7 @@ public class OrderitemResponseDto {
 	private String foodname;
 	private int stock;
 	private int foodprice;
-	private Orderlist orderlist;
+	//private Orderlist orderlist;
 	
 	
 	@Builder
@@ -29,7 +29,7 @@ public class OrderitemResponseDto {
 				.foodname(foodname)
 				.stock(stock)
 				.foodprice(foodprice)
-				.orderlist(orderlist)
+				//.orderlist(orderlist)
 				.build();
 	}
 }

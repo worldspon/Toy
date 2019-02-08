@@ -20,6 +20,7 @@ import com.worldspon.toy.dto.orderitem.OrderitemResponseDto;
 import com.worldspon.toy.dto.orderlist.OrderlistRequestDto;
 import com.worldspon.toy.entity.Fooditem;
 import com.worldspon.toy.entity.Orderitem;
+import com.worldspon.toy.entity.Orderlist;
 import com.worldspon.toy.entity.Userinfo;
 import com.worldspon.toy.repository.FooditemRepository;
 import com.worldspon.toy.repository.OrderitemRepository;
@@ -131,6 +132,9 @@ public class OrderService {
 				orderListReqDto.setUsername(userinfoEntity.getUsername());
 				// ====== END =====
 
+				/*
+				 * OrderList Entity와 OrderItem Entity가 서로
+				 * One to Many - Many to One 관계형일 때 활성화
 				// 자식 객체에 부모 정보 저장
 				// ====== START =====
 				List<Orderitem> orderitemList = new ArrayList<Orderitem>();
@@ -144,9 +148,11 @@ public class OrderService {
 					
 				}
 				// ====== END =====
-				
+				*/
 				// 부모 객체에 자식 정보 저장
+				// 227번 줄 orderitemRepo.saveAll(orderitemList) 코드를 통해 자식 테이블을 저장하지 않음 (양방향 관계 설정 일 때 사용)
 				// orderListReqDto.setOrderitem(orderitemList);
+				 
 				
 				if (!(orderListReqDto.getOrderitem().isEmpty()))
 				{
@@ -217,8 +223,8 @@ public class OrderService {
 					else
 					{
 						// orderList, orderitem 테이블 insert
-						//orderRepo.save(orderListReqDto.toEntity());
-						orderitemRepo.saveAll(orderitemList);
+						orderRepo.save(orderListReqDto.toEntity());	// OrderList 테이블과 OrderItem 테이블이 단방향 관계로 설정된 경우 사용 (only One to Many)
+						// orderitemRepo.saveAll(orderitemList); // OrderList 테이블과 OrderItem 테이블이 양방향 관계로 설정된 경우 사용 (One to Many - Many to One)
 						
 						
 						// 사용자 쿠키 데이터 삭제 (장바구니 상품 정보)

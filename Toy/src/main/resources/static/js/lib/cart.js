@@ -582,8 +582,8 @@ function fn_allOrder() {
             fid         : $(fid[index]).val(),
             foodname    : $(foodname[index]).text(),
             foodprice   : $(price[index]).text().split('원')[0].replace(',', ''),
-            stock       : $(stock[index]).text().split('개')[0],
-            orderlist   : { status: status, totalstock: totalStock }
+            stock       : $(stock[index]).text().split('개')[0]
+            //orderlist   : { status: status, totalstock: totalStock }
         });
     });
 
@@ -611,7 +611,6 @@ function fn_sendAjax(data) {
     }
     else
     {
-        console.log(JSON.stringify(data));
         $.ajax({
             url         : '/order',
             type        : 'POST',
@@ -630,7 +629,7 @@ function fn_sendAjax(data) {
             else
             {
                 window.alert(obj.msg);
-                window.location.href = '/';
+                window.location.reload();
             }
         }).fail(function (err) {
             window.alert(JSON.stringify(err));
