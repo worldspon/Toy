@@ -87,6 +87,7 @@ public class LoginService {
 				dto.setUseremail(entity.getUseremail());
 				dto.setUid(entity.getUid());
 				dto.setSessionid(req.getSession().getId());
+				
 				userinfoRepo.save(dto.toEntity());
 				
 				map.put("result", 1);
@@ -111,7 +112,6 @@ public class LoginService {
 	 */
 	@Transactional
 	public String logoutProcess(HttpServletRequest req) throws Exception {
-		
 		String msg = "";
 		Object loginInfo = req.getSession().getAttribute("loginInfo");
 		
@@ -125,9 +125,11 @@ public class LoginService {
 			{
 				// 세션ID 정보를 지울 사용자 정보를 조회
 				Userinfo entity = userinfoRepo.findBySessionid(req.getSession().getId());
+				
 				UserinfoResponseDto userinfoResDto = new UserinfoResponseDto();
 				BeanUtils.copyProperties(entity, userinfoResDto);
 				userinfoResDto.setSessionid("");
+				
 				// Update로 세션ID를 지움
 				userinfoRepo.save(userinfoResDto.toEntitiy());
 				

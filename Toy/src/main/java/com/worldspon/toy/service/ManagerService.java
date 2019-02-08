@@ -59,6 +59,7 @@ public class ManagerService {
 				dto.setMid(entity.getMid());
 				dto.setManagername(entity.getManagername());
 				dto.setSessionid(req.getSession().getId());
+				
 				managerinfoRepo.save(dto.toEntity());
 				
 				map.put("result", 1);
@@ -96,9 +97,11 @@ public class ManagerService {
 			try
 			{
 				Managerinfo entity = managerinfoRepo.findBySessionid(req.getSession().getId());
+				
 				ManagerinfoResponseDto managerinfoResDto = new ManagerinfoResponseDto();
 				BeanUtils.copyProperties(entity, managerinfoResDto);
 				managerinfoResDto.setSessionid("");
+				
 				// Update로 세션ID를 지움
 				managerinfoRepo.save(managerinfoResDto.toEntity());
 				

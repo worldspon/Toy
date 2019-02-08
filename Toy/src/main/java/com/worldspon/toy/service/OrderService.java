@@ -8,8 +8,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +31,6 @@ import lombok.AllArgsConstructor;
 @Service
 public class OrderService {
 
-	private static Logger logger = LoggerFactory.getLogger(OrderService.class);
 	private UserinfoRepository userinfoRepo;
 	private FooditemRepository fooditemRepo;
 	private OrderlistRepository orderRepo;
@@ -149,8 +146,8 @@ public class OrderService {
 				}
 				// ====== END =====
 				*/
+				// 226번 줄 orderitemRepo.saveAll(orderitemList) 코드를 통해 자식 테이블을 저장하지 않음 (양방향 관계 설정 일 때 사용)
 				// 부모 객체에 자식 정보 저장
-				// 227번 줄 orderitemRepo.saveAll(orderitemList) 코드를 통해 자식 테이블을 저장하지 않음 (양방향 관계 설정 일 때 사용)
 				// orderListReqDto.setOrderitem(orderitemList);
 				 
 				
@@ -198,11 +195,11 @@ public class OrderService {
 						}
 						else
 						{
-							// DB에 저장된 상품 수량을 주문 신청된 수량만큼 차감하기
 							Fooditem fooditemEntity = fooditemList.get(i);
 							FooditemResponseDto fooditemResDto = new FooditemResponseDto();
 							BeanUtils.copyProperties(fooditemEntity, fooditemResDto);
 							
+							// DB에 저장된 상품 수량을 주문 신청된 수량만큼 차감하기
 							// 잔여 수량
 							int remainsStock = validStock - reqStockList[i];
 							fooditemResDto.setStock(remainsStock);
@@ -211,8 +208,7 @@ public class OrderService {
 						}
 					}
 					
-					// fooditem 테이블 update
-					// 테이블에서 상품 수량을 주문된 요청 수량 만큼 감소 시키기
+					// fooditem 테이블 update - 테이블에서 상품 수량을 주문된 요청 수량 만큼 감소 시키기
 					int updateProcVal = updateFoodStock(reqTotalStock, fooditemEntityList);
 					// ====== END =====
 					
@@ -226,6 +222,7 @@ public class OrderService {
 						orderRepo.save(orderListReqDto.toEntity());	// OrderList 테이블과 OrderItem 테이블이 단방향 관계로 설정된 경우 사용 (only One to Many)
 						// orderitemRepo.saveAll(orderitemList); // OrderList 테이블과 OrderItem 테이블이 양방향 관계로 설정된 경우 사용 (One to Many - Many to One)
 						
+						// 장바구니에서 주문 처리된 상품 삭제하기
 						deleteCookies(reqFidList, req, res);
 						
 						map.put("msg", "주문이 접수되었습니다. \n 배송이 준비됩니다.");

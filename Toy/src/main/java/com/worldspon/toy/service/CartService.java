@@ -11,12 +11,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.worldspon.toy.dto.fooditem.FooditemRequestDto;
-import com.worldspon.toy.dto.fooditem.FooditemResponseDto;
 import com.worldspon.toy.entity.Fooditem;
 import com.worldspon.toy.repository.FooditemRepository;
 
@@ -41,7 +39,6 @@ public class CartService {
 	 * ------------------------------------
 	 */
 	public String saveCart(FooditemRequestDto dto,	HttpServletRequest req, HttpServletResponse res) {
-
 		Cookie[] cookies = req.getCookies();
 		String cookieName = "cart";
 		Cookie cookie = new Cookie(cookieName + 0, "");

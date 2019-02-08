@@ -8,8 +8,6 @@ import java.util.List;
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,8 +31,6 @@ import lombok.AllArgsConstructor;
 @Service
 public class FooditemService {
 	
-	private static Logger logger = LoggerFactory.getLogger(FooditemService.class);
-
 	/**
 	 * JPA repository 주입
 	 * lombok 라이브러리의 AllArgsConstructor 어노테이션으로 생성자 자동 처리
@@ -166,10 +162,11 @@ public class FooditemService {
 			{
 				Long fid = fooditemRepo.save(dto.toEntity()).getFid();
 				dto.setFid(fid);	// 자식 테이블에 부모 pk를 저장하기 위해 setter로 값을 초기화
+				
 				// 이미지 파일들 이름 구하기
 				MultipartFile multipartFile = multipartReq.getFile(fileIter.next());
-				
 				HashMap<String, Object> fileNameMap = fileUtils.getFileName(multipartFile, dto.getFoodname());
+				
 				if (fileNameMap.isEmpty())
 				{
 					msg = "상품 등록 중 문제가 발생하였습니다.";
@@ -280,6 +277,7 @@ public class FooditemService {
 				
 				// 수정할 상품 이미지 정보를 조회하여 불러옴 - 자식 테이블 (자식의 id값을 set하기위해 조회를 함)
 				Foodimgfile foodImgFileEntity = foodimgfileRepo.findByFooditem_fid(fid);
+				
 				String beforeImgFileName = foodImgFileEntity.getImgfilename(); // 기존 파일 이름
 				
 				// 파일을 교체하는 것이 아니라면 기존의 파일 정보를 저장함
@@ -343,9 +341,10 @@ public class FooditemService {
 				
 				delProcException = fileUtils.deleteFile(foodImgFileEntity.getImgfilename());
 			} 
-			catch (IllegalArgumentException e) // 쿼리 처리 중 예외 발생 
+			catch (IllegalArgumentException e) 
 			{
 				e.printStackTrace();
+				// fid가 NULL인 경우
 				delProcException = 1;
 			}
 		}
@@ -373,31 +372,32 @@ public class FooditemService {
 		{
 			int changeStatus = Integer.valueOf(map.get("status").toString());
 			String[] fidListStr = map.get("fid").toString().split(","); // [1, 2, 3, 4...]로 저장되는 fid의 값을 Long[]타입으로 가공
-			Long[] fidArr = new Long[fidListStr.length];
+			ArrayList<Long> fidList = new ArrayList<Long>();
 			
 			// String 형의 fid를 Long형으로 변환
 			for (int i = 0; i < fidListStr.length; i += 1)
 			{
 				// [1] 이 문자열에서 substring으로 '[', ']' 문자를 제거
-				fidArr[i] = Long.valueOf(fidListStr[i].substring(1, 2)).longValue();
+				fidList.add(Long.valueOf(fidListStr[i].substring(1, 2)).longValue());
 			}
 			
-			List<Fooditem> changedDtoList = new ArrayList<Fooditem>();
+			// 상태를 변경할 대상 항목들을 검색
+			List<Fooditem> fooditemEntityList = fooditemRepo.findAllById(fidList);
+
+			List<Fooditem> updateDtoList = new ArrayList<Fooditem>();
 			
-			for (int i = 0; i < fidArr.length; i += 1)
+			for (int i = 0; i < fooditemEntityList.size(); i += 1)
 			{
-				// 상태를 변경할 대상 항목을 검색
-				Fooditem fooditemEntity = fooditemRepo.findById(fidArr[i]).get();
-				FooditemResponseDto responseDto = new FooditemResponseDto();
-				BeanUtils.copyProperties(fooditemEntity, responseDto);
-				// 상품의 판매 상태값 변경
-				responseDto.setStatus(changeStatus);
+				FooditemResponseDto fooditemDto = new FooditemResponseDto();
+				BeanUtils.copyProperties(fooditemEntityList.get(i), fooditemDto);
 				
-				changedDtoList.add(responseDto.toEntity());
+				fooditemDto.setStatus(changeStatus);
+				
+				updateDtoList.add(fooditemDto.toEntity());
 			}
 			
 			// 일괄 Update
-			fooditemRepo.saveAll(changedDtoList);
+			fooditemRepo.saveAll(updateDtoList);
 		}
 		catch (NumberFormatException e1)
 		{
@@ -408,7 +408,7 @@ public class FooditemService {
 		catch (IllegalArgumentException e) 
 		{
 			e.printStackTrace();
-			// findStatus가 NULL이거나 changedDtoList가 NULL인 경우
+			// fidList가 NULL이거나 changedDtoList가 NULL인 경우
 			procException = 1;
 		}
 		
