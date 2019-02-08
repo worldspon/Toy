@@ -226,66 +226,7 @@ public class OrderService {
 						orderRepo.save(orderListReqDto.toEntity());	// OrderList 테이블과 OrderItem 테이블이 단방향 관계로 설정된 경우 사용 (only One to Many)
 						// orderitemRepo.saveAll(orderitemList); // OrderList 테이블과 OrderItem 테이블이 양방향 관계로 설정된 경우 사용 (One to Many - Many to One)
 						
-						
-						// 사용자 쿠키 데이터 삭제 (장바구니 상품 정보)
-						// ====== START =====
-						Cookie[] cookies = req.getCookies();
-						if (cookies != null && cookies.length > 0)
-						{
-							for (int i = 0; i < cookies.length; i += 1)
-							{
-								if (!(cookies[i].getName().equals("JSESSIONID")))
-								{
-									// 장바구니에 저장되어있는 상품의 fid값 구하기
-									Long fid = Long.parseLong((cookies[i].getValue().split("\\.")[0]).split(":")[1]);
-									
-									// 주문 신청한 상품은 장바구니에서 쿠키를 삭제함
-									for (Long targetFid : reqFidList) 
-									{
-										if (fid == targetFid)
-										{
-											cookies[i].setValue("");
-											cookies[i].setMaxAge(0);
-											
-											res.addCookie(cookies[i]);
-											break;
-										}
-									}
-								}
-							}
-							
-							// 주문 요청하지 않은 장바구니 상품 정보(쿠키) 정렬
-							ArrayList<Cookie> arrCookie = new ArrayList<Cookie>();
-							int cookieNameIndex = 0;
-							for (int i = 0; i < cookies.length; i += 1)
-							{
-								// [cart2, cart 5] -> [cart0, cart1]
-								if (!(cookies[i].getName().equals("JSESSIONID")) && !(cookies[i].getValue().equals("")))
-								{
-									String newCookieName = "cart" + cookieNameIndex;
-									
-									// 삭제된 쿠키 이후에 존재하는 쿠키 값을 땡겨옴
-									Cookie newCookie = new Cookie(newCookieName, cookies[i].getValue());
-									newCookie.setMaxAge(60 * 60 * 24 * 30); // 쿠키 유효 기간은 30일 (60초 * 60분 * 24시간 * 30일)
-									
-									arrCookie.add(newCookie);
-									
-									// 기존 쿠키들을 지움
-									cookies[i].setValue("");
-									cookies[i].setMaxAge(0);
-									res.addCookie(cookies[i]);
-									
-									cookieNameIndex += 1;
-								}
-							}
-							
-							// 정렬된 상품 정보(쿠키) 생성
-							for (int i = 0; i < arrCookie.size(); i += 1)
-							{
-								res.addCookie(arrCookie.get(i));
-							}
-						}
-						// ====== END =====
+						deleteCookies(reqFidList, req, res);
 						
 						map.put("msg", "주문이 접수되었습니다. \n 배송이 준비됩니다.");
 					}
@@ -357,5 +298,77 @@ public class OrderService {
 		}
 		
 		return updateProcVal;
+	}
+	
+	
+	/**
+	 * 주문 처리 된 상품 장바구니에서 삭제 처리 서비스
+	 * args -------------------------------
+	 * reqFidList		| 삭제할 쿠키의 정보가 담긴 배열 콜렉션
+	 * req				| 쿠키 객체를 핸들링하기 위한 통신 객체
+	 * res				| 쿠키 처리에 대한 응답 객체
+	 * ------------------------------------
+	 */
+	public void deleteCookies(ArrayList<Long> reqFidList, HttpServletRequest req, HttpServletResponse res) {
+		// 사용자 쿠키 데이터 삭제 (장바구니 상품 정보)
+		// ====== START =====
+		Cookie[] cookies = req.getCookies();
+		
+		if (cookies != null && cookies.length > 0)
+		{
+			for (int i = 0; i < cookies.length; i += 1)
+			{
+				if (!(cookies[i].getName().equals("JSESSIONID")))
+				{
+					// 장바구니에 저장되어있는 상품의 fid값 구하기
+					Long fid = Long.parseLong((cookies[i].getValue().split("\\.")[0]).split(":")[1]);
+					
+					// 주문 신청한 상품은 장바구니에서 쿠키를 삭제함
+					for (Long targetFid : reqFidList) 
+					{
+						if (fid == targetFid)
+						{
+							cookies[i].setValue("");
+							cookies[i].setMaxAge(0);
+							
+							res.addCookie(cookies[i]);
+							break;
+						}
+					}
+				}
+			}
+			
+			// 주문 요청하지 않은 장바구니 상품 정보(쿠키) 정렬
+			ArrayList<Cookie> arrCookie = new ArrayList<Cookie>();
+			int cookieNameIndex = 0;
+			for (int i = 0; i < cookies.length; i += 1)
+			{
+				// [cart2, cart 5] -> [cart0, cart1]
+				if (!(cookies[i].getName().equals("JSESSIONID")) && !(cookies[i].getValue().equals("")))
+				{
+					String newCookieName = "cart" + cookieNameIndex;
+					
+					// 삭제된 쿠키 이후에 존재하는 쿠키 값을 땡겨옴
+					Cookie newCookie = new Cookie(newCookieName, cookies[i].getValue());
+					newCookie.setMaxAge(60 * 60 * 24 * 30); // 쿠키 유효 기간은 30일 (60초 * 60분 * 24시간 * 30일)
+					
+					arrCookie.add(newCookie);
+					
+					// 기존 쿠키들을 지움
+					cookies[i].setValue("");
+					cookies[i].setMaxAge(0);
+					res.addCookie(cookies[i]);
+					
+					cookieNameIndex += 1;
+				}
+			}
+			
+			// 정렬된 상품 정보(쿠키) 생성
+			for (int i = 0; i < arrCookie.size(); i += 1)
+			{
+				res.addCookie(arrCookie.get(i));
+			}
+		}
+		// ====== END =====
 	}
 }
